@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>Area Chart</title>
+    <link type="text/css" rel="stylesheet" href="ex.css?3.2"/>
+    <script type="text/javascript" src="protovis-r3.2.js"></script>
+    <style type="text/css">
+
+    body {
+      margin: 0;
+      display: table;
+      height: 100%;
+      width: 100%;
+      font: 14px/134% Helvetica Neue, sans-serif;
+    }
+
+    #center {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    #fig {
+      position: relative;
+      margin: auto;
+      width: 430px;
+      height: 225px;
+    }
+
+    </style>
+  </head>
+  <body><div id="center"><div id="fig">
+    
+    <h3>2002 - 2010</h3>
+    
+    <script type="text/javascript+protovis">
+
+/* data */
+var years = [1225, 1422, 1045, 2161, 1687, 1469, 1026, 958, 247];
+var data2 = pv.range(0, 9, 1).map(function(x) {
+  return {x: new Date(2002+x, 0, 1), y: years[x]};
+});
+
+/* Sizing and scales. */
+var w = 400,
+    h = 200,
+    x = pv.Scale.linear(data2, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 2500).range(0, h);
+
+/* The root panel. */
+var vis2 = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(30)
+    .right(20)
+    .top(5);
+
+/* Y-axis and ticks. */
+vis2.add(pv.Rule)
+    .data(y.ticks(5))
+    .bottom(y)
+    .strokeStyle(function(d) d ? "#eee" : "#000")
+  .anchor("left").add(pv.Label)
+    .text(y.tickFormat);
+
+/* X-axis and ticks. */
+vis2.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function(d) d)
+    .left(x)
+    .bottom(-5)
+    .height(5)
+  .anchor("bottom").add(pv.Label)
+    .text(x.tickFormat);
+
+/* The area with top line. */
+vis2.add(pv.Area)
+    .data(data2)
+    .bottom(1)
+    .left(function(d) x(d.x))
+    .height(function(d) y(d.y))
+    .fillStyle("rgb(121,173,210)")
+  .anchor("top").add(pv.Line)
+    .lineWidth(3);
+
+vis2.render();
+
+    </script>
+    
+    <h6><i> number of posts vs. time </i></h6>
+      
+  </div></div></body>
+</html>
