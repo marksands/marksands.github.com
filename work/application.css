@@ -1,0 +1,21 @@
+
+.drop {
+  border: 1px solid #ddd;
+  margin: 6px;
+  padding: 4px;
+  -moz-box-shadow: 4px 4px 6px #999;
+  -webkit-box-shadow: 4px 4px 6px #999;
+  box-shadow: 4px 4px 6px #999;
+}
+
+#header {
+  margin-top: 20px;
+}
+
+.right {
+  text-align: right;
+}
+
+.viewer {
+    background-color: rgba(0, 0, 0, 1.0);
+}
