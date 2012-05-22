@@ -6,10 +6,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ page.title }}</title>
-  <meta name="author" content="{{ site.author.name }}">
-  <link href='{{ ASSET_PATH }}/css/style.css' rel="stylesheet" media="all">
-  <link href="http://feeds.feedburner.com/{{ site.author.feedbaname }}" rel="alternate" title="{{ page.title }}" type="application/atom+xml">
+  <title>Tags</title>
+  <meta name="author" content="Mark Sands">
+  <link href='/css/style.css' rel="stylesheet" media="all">
+  <link href="http://feeds.feedburner.com/" rel="alternate" title="Tags" type="application/atom+xml">
   <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.0.6/modernizr.min.js"></script>
 </head>
 <body>
@@ -18,7 +18,7 @@
   <header class="the-header">
     <div class="unit-head">
       <div class="unit-inner unit-head-inner">
-        <p class="logo"><a href="{{ HOME_PATH }}">{{ site.title }}</a></p>
+        <p class="logo"><a href="">Mark Sands</a></p>
         <nav class="nav-global">
           <ul>
             <li class="archive"><a href="/archive.html">archive</a></li>
@@ -35,7 +35,30 @@
     <div class="unit-body">
       <div class="unit-inner unit-body-inner">
         <div class="entry-content">
-          {{ content }}
+          <article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Tags</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+          <ul class="tag_box inline">
+  
+</ul>
+
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
         </div>
       </div><!-- unit-inner -->
     </div><!-- unit-body -->
@@ -46,8 +69,8 @@
         <div class="misc vcard">
           <h4>about</h4>
           <ul>
-            <li class="github"><a href="http://github.com/{{ site.author.github }}/" rel="me">github.com/{{ site.author.github }}</a></li>
-            <li class="twitter"><a href="http://twitter.com/{{ site.author.twitter }}/" rel="me">twitter.com/{{ site.author.twitter }}</a></li>
+            <li class="github"><a href="http://github.com/marksands/" rel="me">github.com/marksands</a></li>
+            <li class="twitter"><a href="http://twitter.com/marksands/" rel="me">twitter.com/marksands</a></li>
           </ul>
         </div><!-- misc -->
         <p class="licence">

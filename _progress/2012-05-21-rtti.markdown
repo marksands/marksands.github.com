@@ -1,0 +1,13 @@
+---
+layout: post
+permalink: /2012/05/18/raii-rtti-rtfm.html
+category : Programming
+tags: [programming, C++]
+---
+
+# RAII, RTTI, RTFM
+
+## RTTI
+
+RTTI is __Run-Time Type Information__. RTTI is a C++ mechanism that exposes
+information about an object's data type at runtime.
