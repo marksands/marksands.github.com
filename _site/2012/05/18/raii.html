@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Raii</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+      <div id="page" class="hentry">
+        
+        <header class="the-header">
+          <div class="unit-head">
+            <div class="unit-inner unit-head-inner">
+              <p class="logo"><a href=""></a></p>
+              <nav class="nav-global">
+                <ul>
+                  <li class="github"><a href="http://github.com/marksands">github</a></li>
+                  <li class="twitter"><a href="http://twitter.com/marksands">twitter</a></li>
+                </ul>
+              </nav>
+            </div><!-- unit-inner -->
+          </div><!-- unit-head -->
+        </header>
+        
+        <div class="body" role="main">
+          <div class="unit-body">
+            <div class="unit-inner unit-body-inner">
+              <div class="entry-content">
+                <article class="unit-article layout-post">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Raii</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+          <h1>RAII</h1>
+
+<p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it&#39;s a neat concept once you 
+understand what it means and how it&#39;s used. RAII was born out of C++ and invented 
+by its creator Bjarne Stroustrup.</p>
+
+<p>In C++, the only code that can be guaranteed to be executed after an exception is 
+thrown are the destructors of objects residing on the stack. Resource management 
+needs to be tied to the lifespan of suitable objects in order to gain automatic 
+allocation and reclamation. Resources are acquired during initialization, and 
+guaranteed to be released with the destruction of the same objects.</p>
+
+<p>For local objects allocated on the stack, the languages scoping rules ensure that 
+the destructor is called when its scope ends. Thus, by putting the resource release 
+logic in the destructor, C++&#39;s scoping provides direct support for 
+RAII<a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">¹</a>:</p>
+
+<div class="highlight"><pre><code class="c++"><span class="lineno"> 1</span> <span class="cp">#include &lt;iostream&gt;</span>
+<span class="lineno"> 2</span> <span class="cp">#include &lt;chrono&gt;</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">class</span> <span class="nc">Timer</span> <span class="p">{</span>
+<span class="lineno"> 7</span>     <span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">;</span>
+<span class="lineno"> 8</span>     <span class="nl">public:</span>
+<span class="lineno"> 9</span>     <span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">10</span>         <span class="n">start</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="lineno">11</span>     <span class="p">}</span>
+<span class="lineno">12</span>     <span class="o">~</span><span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">13</span>         <span class="n">finish</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="lineno">14</span>         <span class="n">nanoseconds</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">finish</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+<span class="lineno">15</span>         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Total time: &quot;</span>
+<span class="lineno">16</span>             <span class="o">&lt;&lt;</span> <span class="n">ns</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; nanoseconds&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="lineno">17</span>     <span class="p">}</span>
+<span class="lineno">18</span> <span class="p">};</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">21</span>     <span class="n">Timer</span> <span class="n">t</span><span class="p">;</span>
+<span class="lineno">22</span>     <span class="c1">// some long expensive calculation</span>
+<span class="lineno">23</span> <span class="p">}</span>
+</code></pre></div>
+
+<p>In this snippet, the Timer class demonstrates using RAII to calculate and display
+the time it takes for a portion of code to execute. A Timer object, <code>t</code>, is 
+initialized in the first line of the main function, which will be used 
+to calculate and display the global time the program took to execute. Once some
+long, expensive calculation runs, the main program will exit and the Timer object
+will display the duration it took for the program to execute. Very handy for performance
+debugging.</p>
+
+<h3>Smart Pointers</h3>
+
+<p>Consequently, this is how the C++11 library <code>shared_ptr</code> works. It is a reference
+counting smart pointer that shares ownership, so when the last copy of it goes out
+of scope it will free the managed object. In case you&#39;re wondering, <code>unique_ptr</code> and 
+<code>shared_ptr</code> live in the header <code>&lt;memory&gt;</code>.</p>
+
+<p>A smart pointer is a class that imitates raw pointers by overloading operators.
+<code>unique_ptr</code> is powered by rvalue references, a C++11 feature. While it is not copyable,
+it is movable. With <code>unique_ptr</code> and <code>shared_ptr</code>, <code>std::move</code> can be used as a 
+helper function that moves its resources into a different object. The main difference
+between <code>unique_ptr</code> and <code>shared_ptr</code> is that unique_ptr does not have shared-ownership,
+meaning there is only one reference available at a time<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">²</a>:</p>
+
+<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">2</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="lineno">3</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="lineno">4</span>     <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">nullptr</span><span class="p">);</span>
+<span class="lineno">5</span>     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p2</span><span class="p">;</span>
+<span class="lineno">6</span> <span class="p">}</span>
+</code></pre></div>
+
+<p>One useful example of this is the <code>pimpl</code> idiom, where you have a pointer
+to some class that implements all of its methods. This is useful for breaking 
+out dependencies allowing your program to compile faster.</p>
+
+<p>There is a smarter pointer available called <code>shared_ptr</code>, originally developed
+for the Boost library but now part of the C++11 standard. <code>shared_ptr</code> objects 
+have shared ownership, meaining the last remaining owner of the pointer is responsible 
+for destroying the object, or otherwise releasing the resources associated with 
+the stored pointer<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">³</a>.</p>
+
+<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">2</span>   <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="lineno">3</span>   <span class="n">std</span><span class="o">::</span><span class="n">shard_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp2</span><span class="p">(</span><span class="n">sp</span><span class="p">);</span>
+<span class="lineno">4</span>   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp2</span><span class="p">;</span>
+<span class="lineno">5</span> <span class="p">}</span>
+</code></pre></div>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">[1] RAII</a></li>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[2] unique_ptr/20.7.1</a></li>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[3] shared_ptr/20.7.2.2</a></li>
+</ul>
+
+          <div class="meta">
+            <p class="date-publish">
+              Published:
+              <date class="date-pub" title="2012-05-18T00:00:00-07:00" datetime="2012-05-18T00:00:00-07:00" pubdate>
+              <span class="month"><abbr>May</abbr></span>
+              <span class="day">18</span>
+              <span class="year">2012</span>
+              </date>
+            </p>
+          </div><!-- meta -->
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+      <footer class="unit-foot">
+        <div class="unit-inner unit-foot-inner">
+          <nav class="pagination">
+            <ul>
+              
+              
+              
+              <li class="next"><a class="internal" rel="next"  href="/2013/05/31/builder-pattern.html" title="View Builder Pattern">Builder Pattern &raquo;</a></li>
+              
+            </ul>
+          </nav>
+      </footer>
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+              </div>
+            </div><!-- unit-inner -->
+          </div><!-- unit-body -->
+        </div><!-- body -->
+
+      </div><!-- page -->
+
+      <script>
+          /*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
+          (function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
+      </script>
+
+    </body>
+</html>

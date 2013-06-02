@@ -1,13 +1,11 @@
 ---
 layout: post
-permalink: /2012/05/18/raii-rtti-rtfm.html
+permalink: /2012/05/18/raii.html
 category : Programming
 tags: [programming, C++]
 ---
 
-# RAII, RTTI, RTFM
-
-## RAII
+# RAII
 
 RAII is __Resource Acquisition Is Initialization__, and it's a neat concept once you 
 understand what it means and how it's used. RAII was born out of C++ and invented 
@@ -31,37 +29,33 @@ RAII[¹](http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization):
 using namespace std::chrono;
 
 class Timer {
-  system_clock::time_point start, finish;
-  public:
-  Timer() {
-    start = system_clock::now();
-  }
-  ~Timer() {
-    finish = system_clock::now();
-    nanoseconds ns = finish - start;
-    std::cout << "Total time: "
-      << ns.count() << " nanoseconds" << std::endl;
-  }
+    system_clock::time_point start, finish;
+    public:
+    Timer() {
+        start = system_clock::now();
+    }
+    ~Timer() {
+        finish = system_clock::now();
+        nanoseconds ns = finish - start;
+        std::cout << "Total time: "
+            << ns.count() << " nanoseconds" << std::endl;
+    }
 };
 
 int main() {
-  Timer globalTimer;
-  if(1)
-    Timer localTimer;
+    Timer t;
+    // some long expensive calculation
 }
 
-// Total time: 0 nanoseconds
-// Total time: 70000 nanoseconds
 {% endhighlight %}
 
 In this snippet, the Timer class demonstrates using RAII to calculate and display
-the time it takes for a portion of code to execute. A `globalTimer` object is 
-initialized in the first line of the main function, which will literally be used 
-to calculate and display the global time the program took to execute. A `localTimer` 
-object is initialized within the `if` statment's scope, so the duration of the 
-execution only within the `if` statment will be cauclated and displayed by that object.
-Since the `localTimer` object has a shorter lifespan, it will be displayed first 
-followed by the `globalTimer`'s output.
+the time it takes for a portion of code to execute. A Timer object, `t`, is 
+initialized in the first line of the main function, which will be used 
+to calculate and display the global time the program took to execute. Once some
+long, expensive calculation runs, the main program will exit and the Timer object
+will display the duration it took for the program to execute. Very handy for performance
+debugging.
 
 ### Smart Pointers
 
@@ -79,12 +73,12 @@ meaning there is only one reference available at a time[²](http://www.open-std.
 
 {% highlight c++ linenos %}
 int main() {
-  std::unique_ptr<int> p(new int(42));
-  std::unique_ptr<int> p2 = std::move(p); // p is now empty
-  std::cout << *p2;
+    std::unique_ptr<int> p(new int(42));
+    std::unique_ptr<int> p2 = std::move(p);
+    assert(p == nullptr);
+    std::cout << *p2;
 }
 
-// 42
 {% endhighlight %}
 
 One useful example of this is the `pimpl` idiom, where you have a pointer
@@ -99,12 +93,11 @@ the stored pointer[³](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n
 
 {% highlight c++ linenos %}
 int main() {
-  std::shared_ptr<int> sp(new int(42)); // ref count 1
-  std::shard_ptr<int> sp2(sp)           // ref count 2
+  std::shared_ptr<int> sp(new int(42));
+  std::shard_ptr<int> sp2(sp);
   std::cout << *sp << " " << *sp2;
 }
 
-// 42 42
 {% endhighlight %}
 
 ### References

@@ -1,37 +1,10 @@
-markdown: rdiscount
-
-title : Mark Sands
-
-author :
-  name : Mark Sands
-  email : marksands07@gmail.com
-  github : marksands
-  twitter : marksands
-
-auto: true
+name: Mark Sands
 pygments: true
 
-production_url : http://marksands.github.com
-#
-# comments :
-#   provider : disqus
-#   disqus :
-#     short_name : jekyllbootstrap
-#   livefyre :
-#     site_id : 123
-#   intensedebate :
-#     account : 123abc
-#   facebook :
-#     appid : 123
-#     num_posts: 5
-#     width: 580
-#     colorscheme: light
-#
-# analytics :
-#   provider : google
-#   google :
-#       tracking_id : 'UA-123-12'
-#   getclicky :
-#     site_id :
-#   mixpanel :
-#       token : '_MIXPANEL_TOKEN_'
+markdown: redcarpet
+
+author:
+  name: Mark Sands
+  email: marksands07@gmail.com
+  github: marksands
+  twitter: marksands
