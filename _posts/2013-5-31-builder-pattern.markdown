@@ -71,7 +71,7 @@ Below is an NSAttributedString category with a stripped down version of the bigg
     return [self addAttributes:attributes range:range];
 }
 
-- (NSAttributedString *)addTextColor:(UIColor *)color range:(NSRange)range
+- (NSAttributedString *)addTextColor:(UIColor *)color string:(NSString *)string
 {
     NSRange range = [[self string] rangeOfString:string];
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:(id)color.CGColor forKey:(NSString *)kCTForegroundColorAttributeName];
