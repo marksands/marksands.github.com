@@ -135,6 +135,6 @@ of course, endless.[²](http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.htm
 
 ### References
 
-* [[1] Design Patterns: Elements of Reusable Object-Oriented Software](http://c2.com/cgi/wiki?DesignPatternsBook)
+* [[1] GCC Docs 17.12 Trampolines for Nested Functions](http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html)
 * [[2] Higher-Order Messages in Cocoa](http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date)
 * [[3] Simple HOM](http://blog.metaobject.com/2009/01/simple-hom.html)
