@@ -107,14 +107,17 @@ int main(int argc, char *argv[]) {
         // Modify
         NSArray *smallCasedString = @[ @"small", @"cased", @"words" ];
         NSArray *uppercasedStrings = [[smallCasedString collect] uppercaseString];
+        // ( @"SMALL", @"CASED", @"WORDS" )
         
         // Convert
         NSArray *floats = @[ @(3.14), @(2.71), @(0.577) ];
         NSArray *floatStrings = [[floats collect] stringValue];
+        // ( @"3.14", @"2.71", @"0.577" )
         
         // An exercise for the reader could be to implement a select method to filter results
         NSArray *dogs = @[ @"Scooby", @"Clifford", @"Snoopy" ];
         NSArray *redDogs = [[dogs select] isNamed:@"Clifford"];
+        // ( @"Clifford" )
     }
 #pragma clang diagnostic pop
 }
