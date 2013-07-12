@@ -142,17 +142,20 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 <span class="lineno"> 5</span>         <span class="c1">// Modify</span>
 <span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
 <span class="lineno"> 7</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
-<span class="lineno"> 8</span>         
-<span class="lineno"> 9</span>         <span class="c1">// Convert</span>
-<span class="lineno">10</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="err">@</span><span class="p">(</span><span class="mf">3.14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">2.71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
-<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
-<span class="lineno">12</span>         
-<span class="lineno">13</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
-<span class="lineno">14</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
-<span class="lineno">15</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">bigRedDogs</span> <span class="n">select</span><span class="p">]</span> <span class="n">isNamed</span><span class="o">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
-<span class="lineno">16</span>     <span class="p">}</span>
-<span class="lineno">17</span> <span class="cp">#pragma clang diagnostic pop</span>
-<span class="lineno">18</span> <span class="p">}</span>
+<span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
+<span class="lineno"> 9</span>         
+<span class="lineno">10</span>         <span class="c1">// Convert</span>
+<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="err">@</span><span class="p">(</span><span class="mf">3.14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">2.71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
+<span class="lineno">12</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
+<span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
+<span class="lineno">14</span>         
+<span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
+<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
+<span class="lineno">17</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="n">isNamed</span><span class="o">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
+<span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
+<span class="lineno">21</span> <span class="p">}</span>
 </code></pre></div>
 
 <p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
@@ -166,7 +169,7 @@ of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom
 <h3>References</h3>
 
 <ul>
-<li><a href="http://c2.com/cgi/wiki?DesignPatternsBook">[1] Design Patterns: Elements of Reusable Object-Oriented Software</a></li>
+<li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
 <li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
 <li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
 </ul>
@@ -191,6 +194,10 @@ of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom
               <li class="prev"><a class="internal" rel="prev"  href="/2013/05/31/builder-pattern.html" title="View Builder Pattern">&laquo; Builder Pattern</a></li>
               
               
+              <li class="pipe"> | </li>
+              
+              
+              <li class="next"><a class="internal" rel="next"  href="/2013/07/11/fixing-uicolor.html" title="View Fixing Uicolor">Fixing Uicolor &raquo;</a></li>
               
             </ul>
           </nav>
