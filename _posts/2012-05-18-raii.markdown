@@ -3,6 +3,8 @@ layout: post
 permalink: /2012/05/18/raii.html
 category : Programming
 tags: [programming, C++]
+comments: true
+showads: true
 ---
 
 # RAII

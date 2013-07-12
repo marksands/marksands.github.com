@@ -3,6 +3,8 @@ layout: post
 permalink: /2013/07/11/fixing-uicolor.html
 category : Programming
 tags: [programming, Objective-C]
+comments: true
+showads: true
 ---
 
 # Fixing UIColor

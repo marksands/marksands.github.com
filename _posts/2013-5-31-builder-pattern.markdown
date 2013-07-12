@@ -3,6 +3,8 @@ layout: post
 permalink: /2013/05/31/builder-pattern.html
 category : Programming
 tags: [programming, Objective-C, Design Patterns]
+comments: true
+showads: true
 ---
 
 # The Builder Pattern

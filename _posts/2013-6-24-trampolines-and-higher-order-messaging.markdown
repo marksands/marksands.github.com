@@ -3,6 +3,8 @@ layout: post
 permalink: /2013/06/24/trampolines-and-higher-order-messaging.html
 category : Programming
 tags: [programming, Objective-C]
+comments: true
+showads: true
 ---
 
 # Trampolines & Higher Order Messaging
