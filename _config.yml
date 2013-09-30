@@ -1,6 +1,8 @@
 name: Mark Sands
-pygments: true
+description: Programming Tidbits
+url: http://marksands.github.io
 
+pygments: true
 markdown: redcarpet
 
 author:
