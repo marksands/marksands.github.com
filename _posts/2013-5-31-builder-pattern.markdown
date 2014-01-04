@@ -1,13 +1,12 @@
 ---
 layout: post
 permalink: /2013/05/31/builder-pattern.html
+title: Builder Pattern
 category : Programming
 tags: [programming, Objective-C, Design Patterns]
 comments: true
 showads: true
 ---
-
-# The Builder Pattern
 
 The builder pattern is a creational design pattern. It is used to abstract steps of the construction of complex objects from its representation so that the same construction process 
 can create different representations.[¹](http://c2.com/cgi/wiki?DesignPatternsBook)

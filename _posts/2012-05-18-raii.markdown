@@ -1,13 +1,12 @@
 ---
 layout: post
 permalink: /2012/05/18/raii.html
+title: RAII
 category : Programming
 tags: [programming, C++]
 comments: true
 showads: true
 ---
-
-# RAII
 
 RAII is __Resource Acquisition Is Initialization__, and it's a neat concept once you 
 understand what it means and how it's used. RAII was born out of C++ and invented 

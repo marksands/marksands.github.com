@@ -1,13 +1,12 @@
 ---
 layout: post
 permalink: /2014/01/03/inspecting-third-party-apps.html
+title: Inspecting Third Party Apps
 category : Programming
 tags: [programming, Objective-C]
 comments: true
 showads: true
 ---
-
-# Inspecting Third Party Apps
 
 ### An Alternative Approach
 
@@ -17,7 +16,7 @@ As Peter said in his blog post, the iOS7 jailbreak will allow us to attach the d
 
 ### Jailbreak + Setup
 
-Although Peter's post can get you 60% of the way, I'll reiterate his steps here to save you an extra tab in your browser.
+Although Peter's post can get you 90% of the way, I'll reiterate his steps here to save you an extra tab in your browser.
 
 1. I jailbroke my iPad 3 using the 1.0.1 version of [evasi0n's app](http://evasi0n.com/).
 2. Be sure to install OpenSSH. Once installed, make sure you can ssh into your device via `ssh root@192.168.1.102` using the default password `alpine`. Obviously you should replace this example IP address with your device's wifi address.
