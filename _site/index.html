@@ -65,6 +65,57 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Mocking is Tautological</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2014/05/14/mocking-is-tautological.html">Mocking is Tautological</a></h1>
+            <h3>Black and White</h3>
+
+<p>When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.</p>
+
+<p>On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹</p>
+
+<h3>Dependencies and Decisions</h3>
+
+<p>When many dependencies, or units, are involved in a path or decision then you should write an integration test instead of mocking out dependencies for an &quot;isolated&quot; unit test. The only time this becomes painful is when multiple decisions in a path directly rely on multiple dependencies; this tends to reek of a code smell. One solution is to split dependencies and decisions into separate layers. Gary&#39;s talk above calls this the functional core and the imperative shell. In the imperative shell, many dependencies work together to formulate a single path with zero conditionals and decisions, while the decisions are deferred to each individual unit formulating the functional core. This makes the majority of testing pains go away.</p>
+
+<p>The functional core can be fully unit tested with every decision having a test. And instead of unit testing the imperative shell, a single integration test will suffice for each component. The rules I follow are: when you find yourself testing a component with many dependencies, don&#39;t use mocks; instead, write an integration test. Refactor until most, if not all, decisions are deferred to each dependency and drive out the implementation using TDD.</p>
+
+<h3>A Rant</h3>
+
+<p>This approach confirms most of my suspicions about using mocks in testing. Mocking (done wrong, and it is often done wrong) is tautological. I&#39;ve both written code and I&#39;ve seen code that mocks a dependency, stubs a method to return a result, and verifies that the method was called and the result was the expected output. I&#39;ve never appreciated this style and it usually feels as though I&#39;m ticking a box off of the test code coverage list. I remain unconvinced that this provides any benefits in opposition to an integration test.</p>
+
+<p>With a test suite that reflects the style of mocks mocking mocks mocking mocks, refactoring can be a major testing pain. If you modify, add, or remove a dependency, chances are a lot of the mocks and method stubs in your tests will no longer be valid. I wouldn&#39;t be surprised if such a simple change broke an entire test class littered with mocks.</p>
+
+<h3>A Resolution</h3>
+
+<p>1 Corinthians 1:13 says, &quot;When I was a child, I spoke as a child, I understood as a child, I thought as a child: but when I became a man, I put away childish things.&quot; Fortunately, I have put aside my days of mocking. I have felt the pains and drawn my losses, choosing to revisit testing and figure out how to fix the problem. I have been experimenting with a side project attempting to separate the functional core from the imperative shell. It is not easy to remove every conditional from the shell, but it has definitely been a relief for testing. And now that my unit tests only use real objects and assertions, I no longer have to choose between which testing and mocking framework to include in my project. I would encourage you to try this approach and see for yourself if it changes the way you test your code.</p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="https://www.destroyallsoftware.com/talks/boundaries">[1] Boundaries</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Inspecting Third Party Apps</h1> -->
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
@@ -94,7 +145,7 @@
 <h3>DYLD FTW</h3>
 
 <p>Thankfully, it is possible to perform code injection using the <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">dynamic linker</a>. Using the environment variable <code>DYLD_INSERT_LIBRARIES</code>, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:<a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">²</a></p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">DYLD_INSERT_LIBRARIES
+<div class="highlight"><pre><code class="language-text" data-lang="text">DYLD_INSERT_LIBRARIES
     This  is  a colon separated list of dynamic libraries to load before the ones specified in the
     program.  This lets you test new modules of existing dynamic shared libraries that are used in
     flat-namespace images by loading a temporary dynamic shared library with just the new modules.
@@ -102,11 +153,11 @@
     shared library unless DYLD_FORCE_FLAT_NAMESPACE is also used.
 </code></pre></div>
 <p>Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
+<div class="highlight"><pre><code class="language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 </code></pre></div>
 <p>As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
+<div class="highlight"><pre><code class="language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 </code></pre></div>
 <p>Once you have this set, that&#39;s really all you need to do. Launch an app to get started. If you want to inspect Springboard you&#39;ll have to restart the device first. I use <code>sbreload</code> from the UIKitTools Cydia package, but <code>killall SpringBoard</code> should work too.</p>
@@ -205,8 +256,7 @@ moved the redundant color space checking behind the scenes and provided ourselve
 <span class="lineno">31</span>     <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
 <span class="lineno">32</span> <span class="p">}</span>
 <span class="lineno">33</span> 
-<span class="lineno">34</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">34</span> <span class="k">@end</span></code></pre></div>
 
 <h3>References</h3>
 
@@ -287,8 +337,7 @@ is necessary to silence warnings.</p>
 <span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">tff_initWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="lineno">30</span> <span class="p">}</span>
 <span class="lineno">31</span> 
-<span class="lineno">32</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">32</span> <span class="k">@end</span></code></pre></div>
 
 <p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
 programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
@@ -315,8 +364,7 @@ programmers use <code>do</code> as their method name of choice, but since <code>
 <span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">self</span> <span class="n">selector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">collect</span><span class="o">:</span><span class="p">)];</span>
 <span class="lineno">21</span> <span class="p">}</span>
 <span class="lineno">22</span> 
-<span class="lineno">23</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">23</span> <span class="k">@end</span></code></pre></div>
 
 <p>Here, our <code>NSArray</code> category implements a public <code>collect</code> method that will return our trampoline object to bounce the method argument to the private <code>collect:</code> method 
 that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</p>
@@ -326,25 +374,24 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 <div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 <span class="lineno"> 2</span> <span class="cp">#pragma clang diagnostic push</span>
 <span class="lineno"> 3</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Wincompatible-pointer-types&quot;</span>
-<span class="lineno"> 4</span>     <span class="err">@</span><span class="n">autoreleasepool</span> <span class="p">{</span>
+<span class="lineno"> 4</span>     <span class="p">@</span><span class="n">autoreleasepool</span> <span class="p">{</span>
 <span class="lineno"> 5</span>         <span class="c1">// Modify</span>
-<span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
+<span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
 <span class="lineno"> 7</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
 <span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
 <span class="lineno"> 9</span>         
 <span class="lineno">10</span>         <span class="c1">// Convert</span>
-<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="err">@</span><span class="p">(</span><span class="mf">3.14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">2.71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
+<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="p">@[</span> <span class="p">@(</span><span class="mf">3.14</span><span class="p">),</span> <span class="p">@(</span><span class="mf">2.71</span><span class="p">),</span> <span class="p">@(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
 <span class="lineno">12</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
 <span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
 <span class="lineno">14</span>         
 <span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
-<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
+<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
 <span class="lineno">17</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="n">isNamed</span><span class="o">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
 <span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
 <span class="lineno">19</span>     <span class="p">}</span>
 <span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
-<span class="lineno">21</span> <span class="p">}</span>
-</code></pre></div>
+<span class="lineno">21</span> <span class="p">}</span></code></pre></div>
 
 <p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
 good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
@@ -402,8 +449,7 @@ sample code on how to set the attributed text, which is enough to scare anyone a
 <span class="lineno">5</span>                               <span class="nl">addTextColor:</span><span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;World!&quot;</span><span class="p">];</span>
 <span class="lineno">6</span>                               
 <span class="lineno">7</span> <span class="n">TTTAttributedLabel</span> <span class="o">*</span><span class="n">attributedLabel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TTTAttributedLabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span>
-</code></pre></div>
+<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span></code></pre></div>
 
 <p>Here you can see the effects of the builder pattern in action, which is a much more attractive approach. And the implementation is trivial. 
 Below is an NSAttributedString category with a stripped down version of the bigger picture.</p>
@@ -451,8 +497,7 @@ Below is an NSAttributedString category with a stripped down version of the bigg
 <span class="lineno">41</span>     <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="n">addAttributes</span><span class="o">:</span><span class="n">attributes</span> <span class="n">range</span><span class="o">:</span><span class="n">range</span><span class="p">];</span>
 <span class="lineno">42</span> <span class="p">}</span>
 <span class="lineno">43</span> 
-<span class="lineno">44</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">44</span> <span class="k">@end</span></code></pre></div>
 
 <p>And there you have it. Of course, you can do more than just modify the font and text color. You can see my full implementation on 
 <a href="https://github.com/marksands/NSAttributedString-Builder">GitHub</a>. Please note, however, that this implementation is written specifically 
@@ -462,124 +507,6 @@ to work with TTTAttributedLabel. If you want support for attributed text on UILa
 
 <ul>
 <li><a href="http://c2.com/cgi/wiki?DesignPatternsBook">[1] Design Patterns: Elements of Reusable Object-Oriented Software</a></li>
-</ul>
-
-        </div><!-- entry-content -->
-      </div><!-- bd -->
-
-    </div><!-- content -->
-  </div><!-- unit-inner -->
-</article>
-
-
-
-<article class="unit-article layout-page">
-  <div class="unit-inner unit-article-inner">
-    <div class="content">
-      <header>
-        <div class="unit-head">
-          <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">RAII</h1> -->
-          </div><!-- unit-inner -->
-        </div><!-- unit-head -->
-      </header>
-
-      <div class="bd">
-        <div class="entry-content">
-            <h1><a href="/2012/05/18/raii.html">RAII</a></h1>
-            <p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it&#39;s a neat concept once you 
-understand what it means and how it&#39;s used. RAII was born out of C++ and invented 
-by its creator Bjarne Stroustrup.</p>
-
-<p>In C++, the only code that can be guaranteed to be executed after an exception is 
-thrown are the destructors of objects residing on the stack. Resource management 
-needs to be tied to the lifespan of suitable objects in order to gain automatic 
-allocation and reclamation. Resources are acquired during initialization, and 
-guaranteed to be released with the destruction of the same objects.</p>
-
-<p>For local objects allocated on the stack, the languages scoping rules ensure that 
-the destructor is called when its scope ends. Thus, by putting the resource release 
-logic in the destructor, C++&#39;s scoping provides direct support for 
-RAII<a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">¹</a>:</p>
-
-<div class="highlight"><pre><code class="c++"><span class="lineno"> 1</span> <span class="cp">#include &lt;iostream&gt;</span>
-<span class="lineno"> 2</span> <span class="cp">#include &lt;chrono&gt;</span>
-<span class="lineno"> 3</span> 
-<span class="lineno"> 4</span> <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="p">;</span>
-<span class="lineno"> 5</span> 
-<span class="lineno"> 6</span> <span class="k">class</span> <span class="nc">Timer</span> <span class="p">{</span>
-<span class="lineno"> 7</span>     <span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">;</span>
-<span class="lineno"> 8</span>     <span class="nl">public:</span>
-<span class="lineno"> 9</span>     <span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
-<span class="lineno">10</span>         <span class="n">start</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<span class="lineno">11</span>     <span class="p">}</span>
-<span class="lineno">12</span>     <span class="o">~</span><span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
-<span class="lineno">13</span>         <span class="n">finish</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<span class="lineno">14</span>         <span class="n">nanoseconds</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">finish</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
-<span class="lineno">15</span>         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Total time: &quot;</span>
-<span class="lineno">16</span>             <span class="o">&lt;&lt;</span> <span class="n">ns</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; nanoseconds&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="lineno">17</span>     <span class="p">}</span>
-<span class="lineno">18</span> <span class="p">};</span>
-<span class="lineno">19</span> 
-<span class="lineno">20</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="lineno">21</span>     <span class="n">Timer</span> <span class="n">t</span><span class="p">;</span>
-<span class="lineno">22</span>     <span class="c1">// some long expensive calculation</span>
-<span class="lineno">23</span> <span class="p">}</span>
-</code></pre></div>
-
-<p>In this snippet, the Timer class demonstrates using RAII to calculate and display
-the time it takes for a portion of code to execute. A Timer object, <code>t</code>, is 
-initialized in the first line of the main function, which will be used 
-to calculate and display the global time the program took to execute. Once some
-long, expensive calculation runs, the main program will exit and the Timer object
-will display the duration it took for the program to execute. Very handy for performance
-debugging.</p>
-
-<h3>Smart Pointers</h3>
-
-<p>Consequently, this is how the C++11 library <code>shared_ptr</code> works. It is a reference
-counting smart pointer that shares ownership, so when the last copy of it goes out
-of scope it will free the managed object. In case you&#39;re wondering, <code>unique_ptr</code> and 
-<code>shared_ptr</code> live in the header <code>&lt;memory&gt;</code>.</p>
-
-<p>A smart pointer is a class that imitates raw pointers by overloading operators.
-<code>unique_ptr</code> is powered by rvalue references, a C++11 feature. While it is not copyable,
-it is movable. With <code>unique_ptr</code> and <code>shared_ptr</code>, <code>std::move</code> can be used as a 
-helper function that moves its resources into a different object. The main difference
-between <code>unique_ptr</code> and <code>shared_ptr</code> is that unique_ptr does not have shared-ownership,
-meaning there is only one reference available at a time<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">²</a>:</p>
-
-<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="lineno">2</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
-<span class="lineno">3</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-<span class="lineno">4</span>     <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">nullptr</span><span class="p">);</span>
-<span class="lineno">5</span>     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p2</span><span class="p">;</span>
-<span class="lineno">6</span> <span class="p">}</span>
-</code></pre></div>
-
-<p>One useful example of this is the <code>pimpl</code> idiom, where you have a pointer
-to some class that implements all of its methods. This is useful for breaking 
-out dependencies allowing your program to compile faster.</p>
-
-<p>There is a smarter pointer available called <code>shared_ptr</code>, originally developed
-for the Boost library but now part of the C++11 standard. <code>shared_ptr</code> objects 
-have shared ownership, meaining the last remaining owner of the pointer is responsible 
-for destroying the object, or otherwise releasing the resources associated with 
-the stored pointer<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">³</a>.</p>
-
-<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="lineno">2</span>   <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
-<span class="lineno">3</span>   <span class="n">std</span><span class="o">::</span><span class="n">shard_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp2</span><span class="p">(</span><span class="n">sp</span><span class="p">);</span>
-<span class="lineno">4</span>   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp2</span><span class="p">;</span>
-<span class="lineno">5</span> <span class="p">}</span>
-</code></pre></div>
-
-<h3>References</h3>
-
-<ul>
-<li><a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">[1] RAII</a></li>
-<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[2] unique_ptr/20.7.1</a></li>
-<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[3] shared_ptr/20.7.2.2</a></li>
 </ul>
 
         </div><!-- entry-content -->

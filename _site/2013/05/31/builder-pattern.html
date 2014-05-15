@@ -65,6 +65,7 @@
           <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Builder Pattern</h1> -->
             
+            
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
       </header>
@@ -89,8 +90,7 @@ sample code on how to set the attributed text, which is enough to scare anyone a
 <span class="lineno">5</span>                               <span class="nl">addTextColor:</span><span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;World!&quot;</span><span class="p">];</span>
 <span class="lineno">6</span>                               
 <span class="lineno">7</span> <span class="n">TTTAttributedLabel</span> <span class="o">*</span><span class="n">attributedLabel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TTTAttributedLabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span>
-</code></pre></div>
+<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span></code></pre></div>
 
 <p>Here you can see the effects of the builder pattern in action, which is a much more attractive approach. And the implementation is trivial. 
 Below is an NSAttributedString category with a stripped down version of the bigger picture.</p>
@@ -138,8 +138,7 @@ Below is an NSAttributedString category with a stripped down version of the bigg
 <span class="lineno">41</span>     <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="n">addAttributes</span><span class="o">:</span><span class="n">attributes</span> <span class="n">range</span><span class="o">:</span><span class="n">range</span><span class="p">];</span>
 <span class="lineno">42</span> <span class="p">}</span>
 <span class="lineno">43</span> 
-<span class="lineno">44</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">44</span> <span class="k">@end</span></code></pre></div>
 
 <p>And there you have it. Of course, you can do more than just modify the font and text color. You can see my full implementation on 
 <a href="https://github.com/marksands/NSAttributedString-Builder">GitHub</a>. Please note, however, that this implementation is written specifically 

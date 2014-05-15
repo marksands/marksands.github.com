@@ -65,6 +65,7 @@
           <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Inspecting Third Party Apps</h1> -->
             
+            
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
       </header>
@@ -93,7 +94,7 @@
 <h3>DYLD FTW</h3>
 
 <p>Thankfully, it is possible to perform code injection using the <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">dynamic linker</a>. Using the environment variable <code>DYLD_INSERT_LIBRARIES</code>, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:<a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">²</a></p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">DYLD_INSERT_LIBRARIES
+<div class="highlight"><pre><code class="language-text" data-lang="text">DYLD_INSERT_LIBRARIES
     This  is  a colon separated list of dynamic libraries to load before the ones specified in the
     program.  This lets you test new modules of existing dynamic shared libraries that are used in
     flat-namespace images by loading a temporary dynamic shared library with just the new modules.
@@ -101,11 +102,11 @@
     shared library unless DYLD_FORCE_FLAT_NAMESPACE is also used.
 </code></pre></div>
 <p>Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
+<div class="highlight"><pre><code class="language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 </code></pre></div>
 <p>As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
+<div class="highlight"><pre><code class="language-text" data-lang="text">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 </code></pre></div>
 <p>Once you have this set, that&#39;s really all you need to do. Launch an app to get started. If you want to inspect Springboard you&#39;ll have to restart the device first. I use <code>sbreload</code> from the UIKitTools Cydia package, but <code>killall SpringBoard</code> should work too.</p>
@@ -158,6 +159,10 @@ launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
               <li class="prev"><a class="internal" rel="prev"  href="/2013/07/11/fixing-uicolor.html" title="View Fixing UIColor">&laquo; Fixing UIColor</a></li>
               
               
+              <li class="pipe"> | </li>
+              
+              
+              <li class="next"><a class="internal" rel="next"  href="/2014/05/14/mocking-is-tautological.html" title="View Mocking is Tautological">Mocking is Tautological &raquo;</a></li>
               
             </ul>
           </nav>

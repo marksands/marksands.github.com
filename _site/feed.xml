@@ -7,6 +7,41 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Mocking is Tautological</title>
+				<description>&lt;h3&gt;Black and White&lt;/h3&gt;
+
+&lt;p&gt;When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹&lt;/p&gt;
+
+&lt;h3&gt;Dependencies and Decisions&lt;/h3&gt;
+
+&lt;p&gt;When many dependencies, or units, are involved in a path or decision then you should write an integration test instead of mocking out dependencies for an &amp;quot;isolated&amp;quot; unit test. The only time this becomes painful is when multiple decisions in a path directly rely on multiple dependencies; this tends to reek of a code smell. One solution is to split dependencies and decisions into separate layers. Gary&amp;#39;s talk above calls this the functional core and the imperative shell. In the imperative shell, many dependencies work together to formulate a single path with zero conditionals and decisions, while the decisions are deferred to each individual unit formulating the functional core. This makes the majority of testing pains go away.&lt;/p&gt;
+
+&lt;p&gt;The functional core can be fully unit tested with every decision having a test. And instead of unit testing the imperative shell, a single integration test will suffice for each component. The rules I follow are: when you find yourself testing a component with many dependencies, don&amp;#39;t use mocks; instead, write an integration test. Refactor until most, if not all, decisions are deferred to each dependency and drive out the implementation using TDD.&lt;/p&gt;
+
+&lt;h3&gt;A Rant&lt;/h3&gt;
+
+&lt;p&gt;This approach confirms most of my suspicions about using mocks in testing. Mocking (done wrong, and it is often done wrong) is tautological. I&amp;#39;ve both written code and I&amp;#39;ve seen code that mocks a dependency, stubs a method to return a result, and verifies that the method was called and the result was the expected output. I&amp;#39;ve never appreciated this style and it usually feels as though I&amp;#39;m ticking a box off of the test code coverage list. I remain unconvinced that this provides any benefits in opposition to an integration test.&lt;/p&gt;
+
+&lt;p&gt;With a test suite that reflects the style of mocks mocking mocks mocking mocks, refactoring can be a major testing pain. If you modify, add, or remove a dependency, chances are a lot of the mocks and method stubs in your tests will no longer be valid. I wouldn&amp;#39;t be surprised if such a simple change broke an entire test class littered with mocks.&lt;/p&gt;
+
+&lt;h3&gt;A Resolution&lt;/h3&gt;
+
+&lt;p&gt;1 Corinthians 1:13 says, &amp;quot;When I was a child, I spoke as a child, I understood as a child, I thought as a child: but when I became a man, I put away childish things.&amp;quot; Fortunately, I have put aside my days of mocking. I have felt the pains and drawn my losses, choosing to revisit testing and figure out how to fix the problem. I have been experimenting with a side project attempting to separate the functional core from the imperative shell. It is not easy to remove every conditional from the shell, but it has definitely been a relief for testing. And now that my unit tests only use real objects and assertions, I no longer have to choose between which testing and mocking framework to include in my project. I would encourage you to try this approach and see for yourself if it changes the way you test your code.&lt;/p&gt;
+
+&lt;h3&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.destroyallsoftware.com/talks/boundaries&quot;&gt;[1] Boundaries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Wed, 14 May 2014 00:00:00 -0500</pubDate>
+				<link>http://marksands.github.io/2014/05/14/mocking-is-tautological.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2014/05/14/mocking-is-tautological.html</guid>
+			</item>
+		
+			<item>
 				<title>Inspecting Third Party Apps</title>
 				<description>&lt;h3&gt;An Alternative Approach&lt;/h3&gt;
 
@@ -29,7 +64,7 @@
 &lt;h3&gt;DYLD FTW&lt;/h3&gt;
 
 &lt;p&gt;Thankfully, it is possible to perform code injection using the &lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html&quot;&gt;dynamic linker&lt;/a&gt;. Using the environment variable &lt;code&gt;DYLD_INSERT_LIBRARIES&lt;/code&gt;, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html&quot;&gt;²&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;DYLD_INSERT_LIBRARIES
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;DYLD_INSERT_LIBRARIES
     This  is  a colon separated list of dynamic libraries to load before the ones specified in the
     program.  This lets you test new modules of existing dynamic shared libraries that are used in
     flat-namespace images by loading a temporary dynamic shared library with just the new modules.
@@ -37,11 +72,11 @@
     shared library unless DYLD_FORCE_FLAT_NAMESPACE is also used.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &amp;#39;&amp;#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
 launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &amp;#39;&amp;#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Once you have this set, that&amp;#39;s really all you need to do. Launch an app to get started. If you want to inspect Springboard you&amp;#39;ll have to restart the device first. I use &lt;code&gt;sbreload&lt;/code&gt; from the UIKitTools Cydia package, but &lt;code&gt;killall SpringBoard&lt;/code&gt; should work too.&lt;/p&gt;
@@ -124,8 +159,7 @@ moved the redundant color space checking behind the scenes and provided ourselve
 &lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;33&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;References&lt;/h3&gt;
 
@@ -190,8 +224,7 @@ is necessary to silence warnings.&lt;/p&gt;
 &lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tff_initWithTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aTarget&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on &lt;code&gt;NSArray&lt;/code&gt; to add a &lt;code&gt;collect&lt;/code&gt; method. You might see some 
 programmers use &lt;code&gt;do&lt;/code&gt; as their method name of choice, but since &lt;code&gt;do&lt;/code&gt; is a keyword, I will avoid that route.&lt;/p&gt;
@@ -218,8 +251,7 @@ programmers use &lt;code&gt;do&lt;/code&gt; as their method name of choice, but 
 &lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TFFTrampoline&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;trampolineWithTarget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Here, our &lt;code&gt;NSArray&lt;/code&gt; category implements a public &lt;code&gt;collect&lt;/code&gt; method that will return our trampoline object to bounce the method argument to the private &lt;code&gt;collect:&lt;/code&gt; method 
 that uses the forwarded &lt;code&gt;NSInvocation&lt;/code&gt; to assist with the bouncing.&lt;/p&gt;
@@ -229,25 +261,24 @@ that uses the forwarded &lt;code&gt;NSInvocation&lt;/code&gt; to assist with the
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#pragma clang diagnostic push&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#pragma clang diagnostic ignored &amp;quot;-Wincompatible-pointer-types&amp;quot;&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;autoreleasepool&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;autoreleasepool&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// Modify&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smallCasedString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;small&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;cased&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;words&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smallCasedString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@[&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;small&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;cased&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;words&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uppercasedStrings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smallCasedString&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uppercaseString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// ( @&amp;quot;SMALL&amp;quot;, @&amp;quot;CASED&amp;quot;, @&amp;quot;WORDS&amp;quot; )&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;         
 &lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// Convert&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;floats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;3.14&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;2.71&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.577&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;floats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@[&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;3.14&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;2.71&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.577&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;floatStrings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;floats&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stringValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// ( @&amp;quot;3.14&amp;quot;, @&amp;quot;2.71&amp;quot;, @&amp;quot;0.577&amp;quot; )&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;         
 &lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// An exercise for the reader could be to implement a select method to filter results&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Scooby&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Clifford&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Snoopy&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;@[&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Scooby&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Clifford&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;Snoopy&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redDogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dogs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isNamed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;Clifford&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// ( @&amp;quot;Clifford&amp;quot; )&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#pragma clang diagnostic pop&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;And that&amp;#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
 good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
@@ -289,8 +320,7 @@ sample code on how to set the attributed text, which is enough to scare anyone a
 &lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;                               &lt;span class=&quot;nl&quot;&gt;addTextColor:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blueColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;World!&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;                               
 &lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TTTAttributedLabel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributedLabel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TTTAttributedLabel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attributedLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributedText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attributedLabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributedText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Here you can see the effects of the builder pattern in action, which is a much more attractive approach. And the implementation is trivial. 
 Below is an NSAttributedString category with a stripped down version of the bigger picture.&lt;/p&gt;
@@ -338,8 +368,7 @@ Below is an NSAttributedString category with a stripped down version of the bigg
 &lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;addAttributes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;42&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;43&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;44&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;44&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;And there you have it. Of course, you can do more than just modify the font and text color. You can see my full implementation on 
 &lt;a href=&quot;https://github.com/marksands/NSAttributedString-Builder&quot;&gt;GitHub&lt;/a&gt;. Please note, however, that this implementation is written specifically 
@@ -373,7 +402,7 @@ the destructor is called when its scope ends. Thus, by putting the resource rele
 logic in the destructor, C++&amp;#39;s scoping provides direct support for 
 RAII&lt;a href=&quot;http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization&quot;&gt;¹&lt;/a&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c++&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c--&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;iostream&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;chrono&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; 
 &lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chrono&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -395,8 +424,7 @@ RAII&lt;a href=&quot;http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initia
 &lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// some long expensive calculation&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;In this snippet, the Timer class demonstrates using RAII to calculate and display
 the time it takes for a portion of code to execute. A Timer object, &lt;code&gt;t&lt;/code&gt;, is 
@@ -420,13 +448,12 @@ helper function that moves its resources into a different object. The main diffe
 between &lt;code&gt;unique_ptr&lt;/code&gt; and &lt;code&gt;shared_ptr&lt;/code&gt; is that unique_ptr does not have shared-ownership,
 meaning there is only one reference available at a time&lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf&quot;&gt;²&lt;/a&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c++&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c--&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;move&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nullptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;One useful example of this is the &lt;code&gt;pimpl&lt;/code&gt; idiom, where you have a pointer
 to some class that implements all of its methods. This is useful for breaking 
@@ -438,12 +465,11 @@ have shared ownership, meaining the last remaining owner of the pointer is respo
 for destroying the object, or otherwise releasing the resources associated with 
 the stored pointer&lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf&quot;&gt;³&lt;/a&gt;.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c++&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;c--&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shared_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shard_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot; &amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;References&lt;/h3&gt;
 

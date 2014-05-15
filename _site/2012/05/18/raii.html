@@ -65,6 +65,7 @@
           <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">RAII</h1> -->
             
+            
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
       </header>
@@ -87,7 +88,7 @@ the destructor is called when its scope ends. Thus, by putting the resource rele
 logic in the destructor, C++&#39;s scoping provides direct support for 
 RAII<a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">¹</a>:</p>
 
-<div class="highlight"><pre><code class="c++"><span class="lineno"> 1</span> <span class="cp">#include &lt;iostream&gt;</span>
+<div class="highlight"><pre><code class="c--"><span class="lineno"> 1</span> <span class="cp">#include &lt;iostream&gt;</span>
 <span class="lineno"> 2</span> <span class="cp">#include &lt;chrono&gt;</span>
 <span class="lineno"> 3</span> 
 <span class="lineno"> 4</span> <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="p">;</span>
@@ -109,8 +110,7 @@ RAII<a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization
 <span class="lineno">20</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 <span class="lineno">21</span>     <span class="n">Timer</span> <span class="n">t</span><span class="p">;</span>
 <span class="lineno">22</span>     <span class="c1">// some long expensive calculation</span>
-<span class="lineno">23</span> <span class="p">}</span>
-</code></pre></div>
+<span class="lineno">23</span> <span class="p">}</span></code></pre></div>
 
 <p>In this snippet, the Timer class demonstrates using RAII to calculate and display
 the time it takes for a portion of code to execute. A Timer object, <code>t</code>, is 
@@ -134,13 +134,12 @@ helper function that moves its resources into a different object. The main diffe
 between <code>unique_ptr</code> and <code>shared_ptr</code> is that unique_ptr does not have shared-ownership,
 meaning there is only one reference available at a time<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">²</a>:</p>
 
-<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="c--"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 <span class="lineno">2</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
 <span class="lineno">3</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
 <span class="lineno">4</span>     <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">nullptr</span><span class="p">);</span>
 <span class="lineno">5</span>     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p2</span><span class="p">;</span>
-<span class="lineno">6</span> <span class="p">}</span>
-</code></pre></div>
+<span class="lineno">6</span> <span class="p">}</span></code></pre></div>
 
 <p>One useful example of this is the <code>pimpl</code> idiom, where you have a pointer
 to some class that implements all of its methods. This is useful for breaking 
@@ -152,12 +151,11 @@ have shared ownership, meaining the last remaining owner of the pointer is respo
 for destroying the object, or otherwise releasing the resources associated with 
 the stored pointer<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">³</a>.</p>
 
-<div class="highlight"><pre><code class="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="c--"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 <span class="lineno">2</span>   <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
 <span class="lineno">3</span>   <span class="n">std</span><span class="o">::</span><span class="n">shard_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp2</span><span class="p">(</span><span class="n">sp</span><span class="p">);</span>
 <span class="lineno">4</span>   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp2</span><span class="p">;</span>
-<span class="lineno">5</span> <span class="p">}</span>
-</code></pre></div>
+<span class="lineno">5</span> <span class="p">}</span></code></pre></div>
 
 <h3>References</h3>
 

@@ -65,6 +65,7 @@
           <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Trampolines & Higher Order Messaging</h1> -->
             
+            
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
       </header>
@@ -121,8 +122,7 @@ is necessary to silence warnings.</p>
 <span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">tff_initWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="lineno">30</span> <span class="p">}</span>
 <span class="lineno">31</span> 
-<span class="lineno">32</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">32</span> <span class="k">@end</span></code></pre></div>
 
 <p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
 programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
@@ -149,8 +149,7 @@ programmers use <code>do</code> as their method name of choice, but since <code>
 <span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">self</span> <span class="n">selector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">collect</span><span class="o">:</span><span class="p">)];</span>
 <span class="lineno">21</span> <span class="p">}</span>
 <span class="lineno">22</span> 
-<span class="lineno">23</span> <span class="k">@end</span>
-</code></pre></div>
+<span class="lineno">23</span> <span class="k">@end</span></code></pre></div>
 
 <p>Here, our <code>NSArray</code> category implements a public <code>collect</code> method that will return our trampoline object to bounce the method argument to the private <code>collect:</code> method 
 that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</p>
@@ -160,25 +159,24 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 <div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 <span class="lineno"> 2</span> <span class="cp">#pragma clang diagnostic push</span>
 <span class="lineno"> 3</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Wincompatible-pointer-types&quot;</span>
-<span class="lineno"> 4</span>     <span class="err">@</span><span class="n">autoreleasepool</span> <span class="p">{</span>
+<span class="lineno"> 4</span>     <span class="p">@</span><span class="n">autoreleasepool</span> <span class="p">{</span>
 <span class="lineno"> 5</span>         <span class="c1">// Modify</span>
-<span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
+<span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
 <span class="lineno"> 7</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
 <span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
 <span class="lineno"> 9</span>         
 <span class="lineno">10</span>         <span class="c1">// Convert</span>
-<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="err">@</span><span class="p">(</span><span class="mf">3.14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">2.71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
+<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="p">@[</span> <span class="p">@(</span><span class="mf">3.14</span><span class="p">),</span> <span class="p">@(</span><span class="mf">2.71</span><span class="p">),</span> <span class="p">@(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
 <span class="lineno">12</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
 <span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
 <span class="lineno">14</span>         
 <span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
-<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
+<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
 <span class="lineno">17</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="n">isNamed</span><span class="o">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
 <span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
 <span class="lineno">19</span>     <span class="p">}</span>
 <span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
-<span class="lineno">21</span> <span class="p">}</span>
-</code></pre></div>
+<span class="lineno">21</span> <span class="p">}</span></code></pre></div>
 
 <p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
 good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
