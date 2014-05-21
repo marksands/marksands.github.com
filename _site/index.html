@@ -65,6 +65,47 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Effective Programming</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2014/05/20/effective-programming.html">Effective Programming</a></h1>
+            <p>Some friends and I have started up a new podcast at Effective Programming. We&#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development<a href="http://podcast.effectiveprogramming.com">¹</a>.</p>
+
+<h4>Episode 1 - TDD in the Balance</h4>
+
+<p>Episode 1 was a healthy discussion of the pros and cons of <a href="http://podcast.effectiveprogramming.com/2014/05/15/tdd-in-the-balance.html">TDD</a>.</p>
+
+<h4>Episode 2 - iOS Eventing Frameworks</h4>
+
+<p>Episode 2 was about <a href="http://podcast.effectiveprogramming.com/2014/05/19/ios-eventing-frameworks.html">iOS communication patterns</a> where we discussed 6 techniques of eventing in iOS while following along with a <a href="https://github.com/marksands/CommunicationPatterns">project</a> that I wrote to heed the discussion.</p>
+
+<p>We would love it if you would check us out, <a href="https://itunes.apple.com/us/podcast/effective-programming-podcast">subscribe on iTunes</a>, and give us a rating! Let us know what you think on twitter at <a href="http://www.twitter.com/effprog">@effprog</a>!</p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://www.effectiveprogramming.com/">[1] Effective Programming</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Mocking is Tautological</h1> -->
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
@@ -407,106 +448,6 @@ of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom
 <li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
 <li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
 <li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
-</ul>
-
-        </div><!-- entry-content -->
-      </div><!-- bd -->
-
-    </div><!-- content -->
-  </div><!-- unit-inner -->
-</article>
-
-
-
-<article class="unit-article layout-page">
-  <div class="unit-inner unit-article-inner">
-    <div class="content">
-      <header>
-        <div class="unit-head">
-          <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">Builder Pattern</h1> -->
-          </div><!-- unit-inner -->
-        </div><!-- unit-head -->
-      </header>
-
-      <div class="bd">
-        <div class="entry-content">
-            <h1><a href="/2013/05/31/builder-pattern.html">Builder Pattern</a></h1>
-            <p>The builder pattern is a creational design pattern. It is used to abstract steps of the construction of complex objects from its representation so that the same construction process 
-can create different representations.<a href="http://c2.com/cgi/wiki?DesignPatternsBook">¹</a></p>
-
-<p>Complex objects that the builder pattern can be useful towards, for example, include building mazes, characters in video games, and perhaps even baking. However, these examples are 
-somewhat of a stretch and don&#39;t provide any common ground for beginners. One thing I&#39;ve found the builder pattern to be useful for is for building attributed labels.</p>
-
-<p>Take, for example, Mattt Thompson&#39;s <a href="https://github.com/mattt/TTTAttributedLabel">TTTAttributedLabel</a>. It has some <a href="https://github.com/mattt/TTTAttributedLabel#example-usage">pretty ugly</a> 
-sample code on how to set the attributed text, which is enough to scare anyone away from attributed strings. Fortunately, this can be improved. One way to improve this is by extending 
-<code>NSAttributedString</code> to use the builder pattern.</p>
-
-<div class="highlight"><pre><code class="objective-c"><span class="lineno">1</span> <span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">string</span> <span class="o">=</span>  <span class="p">[[[[[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">initWithString</span><span class="o">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
-<span class="lineno">2</span>                                  <span class="nl">addFont:</span><span class="p">[</span><span class="n">UIFont</span> <span class="n">systemFontOfSize</span><span class="o">:</span><span class="mi">18</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
-<span class="lineno">3</span>                                 <span class="nl">addTextColor:</span><span class="p">[</span><span class="n">UIColor</span> <span class="n">redColor</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
-<span class="lineno">4</span>                                <span class="nl">addFont:</span><span class="p">[</span><span class="n">UIFont</span> <span class="n">systemFontOfSize</span><span class="o">:</span><span class="mi">12</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;Hello&quot;</span><span class="p">]</span>
-<span class="lineno">5</span>                               <span class="nl">addTextColor:</span><span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]</span> <span class="n">string</span><span class="o">:</span><span class="s">@&quot;World!&quot;</span><span class="p">];</span>
-<span class="lineno">6</span>                               
-<span class="lineno">7</span> <span class="n">TTTAttributedLabel</span> <span class="o">*</span><span class="n">attributedLabel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TTTAttributedLabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span></code></pre></div>
-
-<p>Here you can see the effects of the builder pattern in action, which is a much more attractive approach. And the implementation is trivial. 
-Below is an NSAttributedString category with a stripped down version of the bigger picture.</p>
-
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">NSAttributedString</span> <span class="nl">(Builder)</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addAttributes:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">attributes</span> <span class="nf">range:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span><span class="p">;</span>
-<span class="lineno"> 4</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addFont:</span><span class="p">(</span><span class="n">UIFont</span> <span class="o">*</span><span class="p">)</span><span class="nv">font</span> <span class="nf">string:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span><span class="p">;</span>
-<span class="lineno"> 5</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addTextColor:</span><span class="p">(</span><span class="n">UIColor</span> <span class="o">*</span><span class="p">)</span><span class="nv">color</span> <span class="nf">string:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span><span class="p">;</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="k">@end</span>
-<span class="lineno"> 8</span> 
-<span class="lineno"> 9</span> <span class="k">@implementation</span> <span class="nc">NSAttributedString</span> <span class="nl">(Builder)</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addAttributes:</span><span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">attributes</span>
-<span class="lineno">12</span>                                 <span class="nl">range:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span>
-<span class="lineno">13</span> <span class="p">{</span>
-<span class="lineno">14</span>     <span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">mutableString</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="n">mutableCopy</span><span class="p">];</span>
-<span class="lineno">15</span>     
-<span class="lineno">16</span>     <span class="k">if</span> <span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">location</span> <span class="o">!=</span> <span class="n">NSNotFound</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno">17</span>         <span class="k">for</span> <span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">key</span> <span class="k">in</span> <span class="p">[</span><span class="n">attributes</span> <span class="n">allKeys</span><span class="p">])</span> <span class="p">{</span>
-<span class="lineno">18</span>             <span class="kt">id</span> <span class="n">value</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
-<span class="lineno">19</span>             <span class="p">[</span><span class="n">mutableString</span> <span class="n">addAttribute</span><span class="o">:</span><span class="n">key</span> <span class="n">value</span><span class="o">:</span><span class="n">value</span> <span class="n">range</span><span class="o">:</span><span class="n">range</span><span class="p">];</span>
-<span class="lineno">20</span>         <span class="p">}</span>
-<span class="lineno">21</span>     <span class="p">}</span>
-<span class="lineno">22</span>     
-<span class="lineno">23</span>     <span class="k">return</span> <span class="p">[</span><span class="n">mutableString</span> <span class="n">copy</span><span class="p">];</span>
-<span class="lineno">24</span> <span class="p">}</span>
-<span class="lineno">25</span> 
-<span class="lineno">26</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addFont:</span><span class="p">(</span><span class="n">UIFont</span> <span class="o">*</span><span class="p">)</span><span class="nv">font</span> <span class="nf">string:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span>
-<span class="lineno">27</span> <span class="p">{</span>
-<span class="lineno">28</span>     <span class="n">NSRange</span> <span class="n">range</span> <span class="o">=</span> <span class="p">[[</span><span class="n">self</span> <span class="n">string</span><span class="p">]</span> <span class="n">rangeOfString</span><span class="o">:</span><span class="n">string</span><span class="p">];</span>
-<span class="lineno">29</span>     
-<span class="lineno">30</span>     <span class="n">CTFontRef</span> <span class="n">ctfont</span> <span class="o">=</span> <span class="n">CTFontCreateWithName</span><span class="p">((</span><span class="n">__bridge</span> <span class="n">CFStringRef</span><span class="p">)</span><span class="n">font</span><span class="p">.</span><span class="n">fontName</span><span class="p">,</span> <span class="n">font</span><span class="p">.</span><span class="n">pointSize</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-<span class="lineno">31</span>     <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDictionary</span> <span class="n">dictionaryWithObject</span><span class="o">:</span><span class="p">(</span><span class="n">__bridge</span> <span class="kt">id</span><span class="p">)(</span><span class="n">ctfont</span><span class="p">)</span> <span class="n">forKey</span><span class="o">:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">kCTFontAttributeName</span><span class="p">];</span>
-<span class="lineno">32</span>     <span class="n">CFRelease</span><span class="p">(</span><span class="n">ctfont</span><span class="p">);</span>
-<span class="lineno">33</span>     
-<span class="lineno">34</span>     <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="n">addAttributes</span><span class="o">:</span><span class="n">attributes</span> <span class="n">range</span><span class="o">:</span><span class="n">range</span><span class="p">];</span>
-<span class="lineno">35</span> <span class="p">}</span>
-<span class="lineno">36</span> 
-<span class="lineno">37</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addTextColor:</span><span class="p">(</span><span class="n">UIColor</span> <span class="o">*</span><span class="p">)</span><span class="nv">color</span> <span class="nf">string:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span>
-<span class="lineno">38</span> <span class="p">{</span>
-<span class="lineno">39</span>     <span class="n">NSRange</span> <span class="n">range</span> <span class="o">=</span> <span class="p">[[</span><span class="n">self</span> <span class="n">string</span><span class="p">]</span> <span class="n">rangeOfString</span><span class="o">:</span><span class="n">string</span><span class="p">];</span>
-<span class="lineno">40</span>     <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDictionary</span> <span class="n">dictionaryWithObject</span><span class="o">:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="n">CGColor</span> <span class="n">forKey</span><span class="o">:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">kCTForegroundColorAttributeName</span><span class="p">];</span>
-<span class="lineno">41</span>     <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="n">addAttributes</span><span class="o">:</span><span class="n">attributes</span> <span class="n">range</span><span class="o">:</span><span class="n">range</span><span class="p">];</span>
-<span class="lineno">42</span> <span class="p">}</span>
-<span class="lineno">43</span> 
-<span class="lineno">44</span> <span class="k">@end</span></code></pre></div>
-
-<p>And there you have it. Of course, you can do more than just modify the font and text color. You can see my full implementation on 
-<a href="https://github.com/marksands/NSAttributedString-Builder">GitHub</a>. Please note, however, that this implementation is written specifically 
-to work with TTTAttributedLabel. If you want support for attributed text on UILabel in iOS6, check out the <a href="https://github.com/marksands/NSAttributedString-Builder/tree/iOS6">iOS6 branch</a>.</p>
-
-<h3>References</h3>
-
-<ul>
-<li><a href="http://c2.com/cgi/wiki?DesignPatternsBook">[1] Design Patterns: Elements of Reusable Object-Oriented Software</a></li>
 </ul>
 
         </div><!-- entry-content -->
