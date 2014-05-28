@@ -7,6 +7,60 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>How Apple Cheats</title>
+				<description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaining they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3&gt;UIPopoverController on the iPhone&lt;/h3&gt;
+
+&lt;p&gt;One UIKit component iBooks uses is UIPopoverController. This is frustrating because UIPopoverController is reservered for iPad development only. So how does iBooks implement an iPod/iPhone compatible UIPopoverController? I &lt;a href=&quot;http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html&quot;&gt;inspected&lt;/a&gt; iBooks on a jailbroken iPod touch to verify that the popover was in fact the UIPopoverController class and not a cheap replacement. To be sure I wasn&amp;#39;t crazy, I created a new iOS project targeted for iPhone and spun up a quick &lt;code&gt;UIPopoverController&lt;/code&gt; Hello World app. Sure enough, it crashed &lt;code&gt;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&lt;/code&gt; If this is true, then how on earth is Apple getting around this?&lt;/p&gt;
+
+&lt;h3&gt;The Secret Sauce&lt;/h3&gt;
+
+&lt;p&gt;In order to find out Apple&amp;#39;s secret sauce, I opened &lt;a href=&quot;http://www.hopperapp.com/&quot;&gt;Hopper&lt;/a&gt; to dig a little deeper. Here&amp;#39;s sort of what Apple&amp;#39;s code may look like under the covers when creating a UIPopoverController.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initWithContentViewController:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIViewController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;viewController&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(([[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UIUserInterfaceIdiomPad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIPopoverController&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_popoversDisabled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;raise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSInvalidArgumentException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;          &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;    
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what&amp;#39;s this private class method &lt;code&gt;_popoversDisabled&lt;/code&gt;? Let&amp;#39;s open that up to find out.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;_popoversDisabled&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSBundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.iBooks&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.mobilesafari&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.itunesu&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.Maps&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Say what?! Did Apple seriously grant access to four of their native apps by hardcoding their bundle identifiers? Yep, they sure did².&lt;/p&gt;
+
+&lt;p&gt;In fact, you don&amp;#39;t have to do anything special to verify this. If you change your &lt;code&gt;UIPopoverController&lt;/code&gt; Hello World project&amp;#39;s Info.plist bundle identifier to &lt;code&gt;com.apple.iBooks&lt;/code&gt; or &lt;code&gt;com.apple.itunesu&lt;/code&gt;, then voilà, It works!&lt;/p&gt;
+
+&lt;h3&gt;What now?&lt;/h3&gt;
+
+&lt;p&gt;It&amp;#39;s interesting to see how Apple bends the rules for their benefit, but I think there is something more telling here. The fact of the matter is, &lt;code&gt;UIPopoverController&lt;/code&gt; works on the iPhone and iPod touch out of the box. Apple simply has it locked down for now. Will iOS 8 finally bring &lt;code&gt;UIPopoverController&lt;/code&gt; support to the iPhone and iPod touch? One can hope! At least we only have to wait until next week to find out.&lt;/p&gt;
+
+&lt;h3&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;[1] iBooks and Private APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[2] +[UIPoverController _popoversDisabled] My rudimentary debugging skills must note that it&amp;#39;s possible I overlooked something and more apps have their hands untied than just these four&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Tue, 27 May 2014 00:00:00 -0500</pubDate>
+				<link>http://marksands.github.io/2014/05/27/how-apple-cheats.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2014/05/27/how-apple-cheats.html</guid>
+			</item>
+		
+			<item>
 				<title>Effective Programming</title>
 				<description>&lt;p&gt;Some friends and I have started up a new podcast at Effective Programming. We&amp;#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development&lt;a href=&quot;http://podcast.effectiveprogramming.com&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
