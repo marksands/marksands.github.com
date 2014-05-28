@@ -8,7 +8,7 @@ comments: true
 showads: true
 ---
 
-As every iOS developer knows, Apple can do whatever they want with their own native apps, meaining they can and do use private APIs. It's not too surprising, after all, it is their domain and they are in control. However, Apple's overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse[¹](http://www.marco.org/2010/04/06/ibooks-and-private-apis).
+As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It's not too surprising, after all, it is their domain and they are in control. However, Apple's overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse[¹](http://www.marco.org/2010/04/06/ibooks-and-private-apis).
 
 ### UIPopoverController on the iPhone
 
