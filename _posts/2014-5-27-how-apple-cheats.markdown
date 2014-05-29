@@ -16,7 +16,7 @@ One UIKit component iBooks uses is UIPopoverController. This is frustrating beca
 
 ### The Secret Sauce
 
-In order to find out Apple's secret sauce, I opened [Hopper](http://www.hopperapp.com/) to dig a little deeper. Here's sort of what Apple's code may look like under the covers when creating a UIPopoverController.
+In order to find out Apple's secret sauce, I opened [Hopper](http://www.hopperapp.com/) to dig a little deeper. Here's sort of what Apple's code <s>may look like</s> looks like under the covers when creating a UIPopoverController.
 
 {% highlight objective-c linenos %}
 

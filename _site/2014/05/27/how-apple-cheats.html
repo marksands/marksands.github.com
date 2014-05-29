@@ -73,7 +73,7 @@
       <div class="bd">
         <div class="entry-content">
           <h1>How Apple Cheats</h1>
-          <p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaining they can and do use private APIs. It&#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
+          <p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
 
 <h3>UIPopoverController on the iPhone</h3>
 
@@ -81,7 +81,7 @@
 
 <h3>The Secret Sauce</h3>
 
-<p>In order to find out Apple&#39;s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here&#39;s sort of what Apple&#39;s code may look like under the covers when creating a UIPopoverController.</p>
+<p>In order to find out Apple&#39;s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here&#39;s sort of what Apple&#39;s code <s>may look like</s> looks like under the covers when creating a UIPopoverController.</p>
 
 <div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithContentViewController:</span><span class="p">(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
 <span class="lineno"> 2</span>  <span class="k">if</span> <span class="p">(([[</span><span class="n">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="n">respondsToSelector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
@@ -175,20 +175,34 @@
 
       </div><!-- page -->
 
-      <script>
-          /*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
-          (function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
-      </script>
+		<script>
+			/*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
+			(function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
+		</script>
       
-      <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        ga('create', 'UA-41405801-1', 'marksands.github.io');
-        ga('send', 'pageview');
-      </script>
+			ga('create', 'UA-41405801-1', 'marksands.github.io');
+			ga('send', 'pageview');
+		</script>
+
+		<script type="text/javascript">var _kmq = _kmq || [];
+			var _kmk = _kmk || '61c42d0613ba9e478d7963a3e2e30d87c185d1bf';
+			function _kms(u){
+			  setTimeout(function(){
+			    var d = document, f = d.getElementsByTagName('script')[0],
+			    s = d.createElement('script');
+			    s.type = 'text/javascript'; s.async = true; s.src = u;
+			    f.parentNode.insertBefore(s, f);
+			  }, 1);
+			}
+			_kms('//i.kissmetrics.com/i.js');
+			_kms('//doug1izaerwt3.cloudfront.net/' + _kmk + '.1.js');
+		</script>
 
     </body>
 </html>

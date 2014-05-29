@@ -8,7 +8,7 @@
 		
 			<item>
 				<title>How Apple Cheats</title>
-				<description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaining they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
+				<description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3&gt;UIPopoverController on the iPhone&lt;/h3&gt;
 
@@ -16,7 +16,7 @@
 
 &lt;h3&gt;The Secret Sauce&lt;/h3&gt;
 
-&lt;p&gt;In order to find out Apple&amp;#39;s secret sauce, I opened &lt;a href=&quot;http://www.hopperapp.com/&quot;&gt;Hopper&lt;/a&gt; to dig a little deeper. Here&amp;#39;s sort of what Apple&amp;#39;s code may look like under the covers when creating a UIPopoverController.&lt;/p&gt;
+&lt;p&gt;In order to find out Apple&amp;#39;s secret sauce, I opened &lt;a href=&quot;http://www.hopperapp.com/&quot;&gt;Hopper&lt;/a&gt; to dig a little deeper. Here&amp;#39;s sort of what Apple&amp;#39;s code &lt;s&gt;may look like&lt;/s&gt; looks like under the covers when creating a UIPopoverController.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initWithContentViewController:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIViewController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;viewController&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(([[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
