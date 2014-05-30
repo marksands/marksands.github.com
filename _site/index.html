@@ -65,6 +65,33 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Effective Pair Programming</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2014/05/30/effective-pair-programming.html">Effective Pair Programming</a></h1>
+            <h4>Episode 3 - Effective Pair Programming</h4>
+
+<p>The ongoing effort by <a href="http://www.effectiveprogramming.com/">Effective Programming</a> continues the saga with another episode, this time with a discussion around the pros and cons of pair programming. We talk about buying houses, Top Gun, and playing Warcraft III. Check it out! <a href="https://itunes.apple.com/us/podcast/effective-programming-podcast/id878947397?mt=2">Effective Pair Programming</a>.</p>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">How Apple Cheats</h1> -->
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
@@ -280,100 +307,6 @@ launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 <ul>
 <li><a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">[1] How to Inspect the View Hierarchy of 3rd-party Apps</a></li>
 <li><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">[2] DYLD(1)</a></li>
-</ul>
-
-        </div><!-- entry-content -->
-      </div><!-- bd -->
-
-    </div><!-- content -->
-  </div><!-- unit-inner -->
-</article>
-
-
-
-<article class="unit-article layout-page">
-  <div class="unit-inner unit-article-inner">
-    <div class="content">
-      <header>
-        <div class="unit-head">
-          <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">Fixing UIColor</h1> -->
-          </div><!-- unit-inner -->
-        </div><!-- unit-head -->
-      </header>
-
-      <div class="bd">
-        <div class="entry-content">
-            <h1><a href="/2013/07/11/fixing-uicolor.html">Fixing UIColor</a></h1>
-            <h3>UIColor</h3>
-
-<p><code>UIColor</code> is a commonly used class that represents color and sometimes opacity. As it turns out, <code>UIColor</code> is a class cluster made up of a couple of private concrete subclasses. 
-Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.<a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">¹</a></p>
-
-<h3>Red, Green, Blue</h3>
-
-<p>As of iOS 6, subclasses of the <code>UIColor</code> class cluster include <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h"><code>UIDeviceWhiteColor</code></a> 
-and <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h"><code>UIDeviceRGBColor</code></a>. 
-Unfortunately for the programmer, only <code>UIDeviceRGBColor</code> knows what red, green, and blue are, making it challenging to get the color components from a generic <code>UIColor</code> object.</p>
-
-<p>According to Apple, <code>UIColor</code>&#39;s method <code>getRed:green:blue:alpha:</code> will return the red, green, and blue color components if the color is within the RGB color space. 
-If the color is in a compatible color space, the color is converted into RGB format and its components are returned to your application. 
-If the color is not in a compatible color space, the parameters are unchanged.<a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">²</a> 
-And therein lies the problem.</p>
-
-<p>Say we have an API that accepts a <code>UIColor</code> object and uses its color components for some arbitrary computation. One might think, &quot;<code>getRed:green:blue:alpha</code> to the rescue!&quot; 
-Sadly, this bruteforce approach will only work if the <code>UIColor</code> object is of the RGB color space, or the <code>UIDeviceRGBColor</code> class. The only approach is to inspect and retreive 
-the color components using the Core Graphics functions <code>CGColorGetNumberOfComponents(color.CGColor)</code> and <code>CGColorGetComponents(color.CGColor)</code>. This approach quickly doesn&#39;t scale if you 
-are constantly retreiving the color components for various reasons, so it would be ideal if <code>UIColor</code> handled this for us under the hood. For the curious, I have 
-<a href="http://openradar.appspot.com/radar?id=3114410">created a radar</a> in hopes to address this issue.</p>
-
-<h3>A Universal Selector</h3>
-
-<p>Luckily for us, we have <em>objc/funtime.h</em> that will provide exactly what we want. Using method swizzling, we can create an alternative to <code>getRed:green:blue:alpha</code> that 
-checks the number of the color components using <code>getRed:green:blue:alpha</code> for <code>UIDeviceRGBColor</code> objects and <code>getWhite:alpha</code> for <code>UIDeviceWhiteColor</code> objects. The color 
-components from <code>UIDeviceWhiteColor</code> objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
-moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.</p>
-
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="cp">#import &lt;objc/runtime.h&gt;</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">@implementation</span> <span class="nc">UIColor</span> <span class="nl">(ColorComponents)</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">initialize</span>
-<span class="lineno"> 6</span> <span class="p">{</span>
-<span class="lineno"> 7</span>     <span class="k">if</span> <span class="p">(</span><span class="n">self</span> <span class="o">==</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">class</span><span class="p">])</span>
-<span class="lineno"> 8</span>     <span class="p">{</span>
-<span class="lineno"> 9</span>         <span class="n">Method</span> <span class="n">oldMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">UIColor</span><span class="p">.</span><span class="n">class</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">getRed</span><span class="o">:</span><span class="n">green</span><span class="o">:</span><span class="n">blue</span><span class="o">:</span><span class="n">alpha</span><span class="o">:</span><span class="p">));</span>
-<span class="lineno">10</span>         <span class="n">Method</span> <span class="n">newMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">UIColor</span><span class="p">.</span><span class="n">class</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="n">eds_getRed</span><span class="o">:</span><span class="n">green</span><span class="o">:</span><span class="n">blue</span><span class="o">:</span><span class="n">alpha</span><span class="o">:</span><span class="p">));</span>
-<span class="lineno">11</span>         <span class="n">method_exchangeImplementations</span><span class="p">(</span><span class="n">oldMethod</span><span class="p">,</span> <span class="n">newMethod</span><span class="p">);</span>
-<span class="lineno">12</span>     <span class="p">}</span>
-<span class="lineno">13</span> <span class="p">}</span>
-<span class="lineno">14</span> 
-<span class="lineno">15</span> <span class="k">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">eds_getRed:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">red</span> <span class="nf">green:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">green</span> <span class="nf">blue:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">blue</span> <span class="nf">alpha:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">alpha</span>
-<span class="lineno">16</span> <span class="p">{</span>
-<span class="lineno">17</span>     <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno">18</span>         <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="n">eds_getRed</span><span class="o">:</span><span class="n">red</span> <span class="n">green</span><span class="o">:</span><span class="n">green</span> <span class="n">blue</span><span class="o">:</span><span class="n">blue</span> <span class="n">alpha</span><span class="o">:</span><span class="n">alpha</span><span class="p">];</span>
-<span class="lineno">19</span>     <span class="p">}</span>
-<span class="lineno">20</span>     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno">21</span>         <span class="n">CGFloat</span> <span class="n">white</span><span class="p">;</span>
-<span class="lineno">22</span>         <span class="n">CGFloat</span> <span class="n">m_alpha</span><span class="p">;</span>
-<span class="lineno">23</span>         <span class="k">if</span> <span class="p">([</span><span class="n">self</span> <span class="n">getWhite</span><span class="o">:&amp;</span><span class="n">white</span> <span class="n">alpha</span><span class="o">:&amp;</span><span class="n">m_alpha</span><span class="p">])</span> <span class="p">{</span>
-<span class="lineno">24</span>             <span class="o">*</span><span class="n">red</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
-<span class="lineno">25</span>             <span class="o">*</span><span class="n">green</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
-<span class="lineno">26</span>             <span class="o">*</span><span class="n">blue</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
-<span class="lineno">27</span>             <span class="o">*</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">m_alpha</span><span class="p">;</span>
-<span class="lineno">28</span>             <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
-<span class="lineno">29</span>         <span class="p">}</span>
-<span class="lineno">30</span>     <span class="p">}</span>
-<span class="lineno">31</span>     <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
-<span class="lineno">32</span> <span class="p">}</span>
-<span class="lineno">33</span> 
-<span class="lineno">34</span> <span class="k">@end</span></code></pre></div>
-
-<h3>References</h3>
-
-<ul>
-<li><a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">[1] Cocoa Fundamentals Guide</a></li>
-<li><a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">[2] getRed:green:blue:alpha:</a></li>
 </ul>
 
         </div><!-- entry-content -->

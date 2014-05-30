@@ -7,6 +7,17 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Effective Pair Programming</title>
+				<description>&lt;h4&gt;Episode 3 - Effective Pair Programming&lt;/h4&gt;
+
+&lt;p&gt;The ongoing effort by &lt;a href=&quot;http://www.effectiveprogramming.com/&quot;&gt;Effective Programming&lt;/a&gt; continues the saga with another episode, this time with a discussion around the pros and cons of pair programming. We talk about buying houses, Top Gun, and playing Warcraft III. Check it out! &lt;a href=&quot;https://itunes.apple.com/us/podcast/effective-programming-podcast/id878947397?mt=2&quot;&gt;Effective Pair Programming&lt;/a&gt;.&lt;/p&gt;
+</description>
+				<pubDate>Fri, 30 May 2014 00:00:00 -0500</pubDate>
+				<link>http://marksands.github.io/2014/05/30/effective-pair-programming.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2014/05/30/effective-pair-programming.html</guid>
+			</item>
+		
+			<item>
 				<title>How Apple Cheats</title>
 				<description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
