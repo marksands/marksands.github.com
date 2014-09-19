@@ -110,11 +110,11 @@
 
 <p>In order to find out Apple&#39;s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here&#39;s sort of what Apple&#39;s code <s>may look like</s> looks like under the covers when creating a UIPopoverController.</p>
 
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithContentViewController:</span><span class="p">(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
-<span class="lineno"> 2</span>  <span class="k">if</span> <span class="p">(([[</span><span class="n">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="n">respondsToSelector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
-<span class="lineno"> 3</span>      <span class="k">if</span> <span class="p">([[</span><span class="n">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="n">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno"> 4</span>          <span class="k">if</span> <span class="p">([</span><span class="n">UIPopoverController</span> <span class="n">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
-<span class="lineno"> 5</span>              <span class="p">[</span><span class="n">NSException</span> <span class="n">raise</span><span class="o">:</span><span class="n">NSInvalidArgumentException</span> <span class="n">format</span><span class="o">:</span><span class="s">@&quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&quot;</span><span class="p">];</span>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithContentViewController:</span><span class="p">(</span><span class="bp">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
+<span class="lineno"> 2</span>  <span class="k">if</span> <span class="p">(([[</span><span class="bp">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
+<span class="lineno"> 3</span>      <span class="k">if</span> <span class="p">([[</span><span class="bp">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="n">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 4</span>          <span class="k">if</span> <span class="p">([</span><span class="bp">UIPopoverController</span> <span class="n">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
+<span class="lineno"> 5</span>              <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="n">NSInvalidArgumentException</span> <span class="nl">format</span><span class="p">:</span><span class="s">@&quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&quot;</span><span class="p">];</span>
 <span class="lineno"> 6</span>          <span class="p">}</span>
 <span class="lineno"> 7</span>      <span class="p">}</span>
 <span class="lineno"> 8</span>  <span class="p">}</span>    
@@ -123,10 +123,10 @@
 
 <p>As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what&#39;s this private class method <code>_popoversDisabled</code>? Let&#39;s open that up to find out.</p>
 
-<div class="highlight"><pre><code class="objective-c"><span class="lineno">1</span> <span class="k">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">_popoversDisabled</span> <span class="p">{</span>
-<span class="lineno">2</span>     <span class="n">NSString</span> <span class="o">*</span><span class="n">bundleIdentifier</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">bundleIdentifier</span><span class="p">];</span>
-<span class="lineno">3</span>     <span class="k">if</span> <span class="p">([</span><span class="n">bundleIdentifier</span> <span class="n">isEqualToString</span><span class="o">:</span><span class="s">@&quot;com.apple.iBooks&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="n">isEqualToString</span><span class="o">:</span><span class="s">@&quot;com.apple.mobilesafari&quot;</span><span class="p">]</span> <span class="o">||</span> 
-<span class="lineno">4</span>       <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="n">isEqualToString</span><span class="o">:</span><span class="s">@&quot;com.apple.itunesu&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="n">isEqualToString</span><span class="o">:</span><span class="s">@&quot;com.apple.Maps&quot;</span><span class="p">])</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno">1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">_popoversDisabled</span> <span class="p">{</span>
+<span class="lineno">2</span>     <span class="bp">NSString</span> <span class="o">*</span><span class="n">bundleIdentifier</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">bundleIdentifier</span><span class="p">];</span>
+<span class="lineno">3</span>     <span class="k">if</span> <span class="p">([</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.iBooks&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.mobilesafari&quot;</span><span class="p">]</span> <span class="o">||</span> 
+<span class="lineno">4</span>       <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.itunesu&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.Maps&quot;</span><span class="p">])</span> <span class="p">{</span>
 <span class="lineno">5</span>       <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
 <span class="lineno">6</span>   <span class="p">}</span>
 <span class="lineno">7</span>   <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
@@ -307,6 +307,459 @@ launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 <ul>
 <li><a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">[1] How to Inspect the View Hierarchy of 3rd-party Apps</a></li>
 <li><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">[2] DYLD(1)</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Fixing UIColor</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2013/07/11/fixing-uicolor.html">Fixing UIColor</a></h1>
+            <h3>UIColor</h3>
+
+<p><code>UIColor</code> is a commonly used class that represents color and sometimes opacity. As it turns out, <code>UIColor</code> is a class cluster made up of a couple of private concrete subclasses. 
+Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.<a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">¹</a></p>
+
+<h3>Red, Green, Blue</h3>
+
+<p>As of iOS 6, subclasses of the <code>UIColor</code> class cluster include <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h"><code>UIDeviceWhiteColor</code></a> 
+and <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h"><code>UIDeviceRGBColor</code></a>. 
+Unfortunately for the programmer, only <code>UIDeviceRGBColor</code> knows what red, green, and blue are, making it challenging to get the color components from a generic <code>UIColor</code> object.</p>
+
+<p>According to Apple, <code>UIColor</code>&#39;s method <code>getRed:green:blue:alpha:</code> will return the red, green, and blue color components if the color is within the RGB color space. 
+If the color is in a compatible color space, the color is converted into RGB format and its components are returned to your application. 
+If the color is not in a compatible color space, the parameters are unchanged.<a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">²</a> 
+And therein lies the problem.</p>
+
+<p>Say we have an API that accepts a <code>UIColor</code> object and uses its color components for some arbitrary computation. One might think, &quot;<code>getRed:green:blue:alpha</code> to the rescue!&quot; 
+Sadly, this bruteforce approach will only work if the <code>UIColor</code> object is of the RGB color space, or the <code>UIDeviceRGBColor</code> class. The only approach is to inspect and retreive 
+the color components using the Core Graphics functions <code>CGColorGetNumberOfComponents(color.CGColor)</code> and <code>CGColorGetComponents(color.CGColor)</code>. This approach quickly doesn&#39;t scale if you 
+are constantly retreiving the color components for various reasons, so it would be ideal if <code>UIColor</code> handled this for us under the hood. For the curious, I have 
+<a href="http://openradar.appspot.com/radar?id=3114410">created a radar</a> in hopes to address this issue.</p>
+
+<h3>A Universal Selector</h3>
+
+<p>Luckily for us, we have <em>objc/funtime.h</em> that will provide exactly what we want. Using method swizzling, we can create an alternative to <code>getRed:green:blue:alpha</code> that 
+checks the number of the color components using <code>getRed:green:blue:alpha</code> for <code>UIDeviceRGBColor</code> objects and <code>getWhite:alpha</code> for <code>UIDeviceWhiteColor</code> objects. The color 
+components from <code>UIDeviceWhiteColor</code> objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
+moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="cp">#import &lt;objc/runtime.h&gt;</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">@implementation</span> <span class="bp">UIColor</span> <span class="nl">(ColorComponents)</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">initialize</span>
+<span class="lineno"> 6</span> <span class="p">{</span>
+<span class="lineno"> 7</span>     <span class="k">if</span> <span class="p">(</span><span class="nb">self</span> <span class="o">==</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="k">class</span><span class="p">])</span>
+<span class="lineno"> 8</span>     <span class="p">{</span>
+<span class="lineno"> 9</span>         <span class="n">Method</span> <span class="n">oldMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="bp">UIColor</span><span class="p">.</span><span class="k">class</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">getRed</span><span class="p">:</span><span class="nl">green</span><span class="p">:</span><span class="nl">blue</span><span class="p">:</span><span class="nl">alpha</span><span class="p">:));</span>
+<span class="lineno">10</span>         <span class="n">Method</span> <span class="n">newMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="bp">UIColor</span><span class="p">.</span><span class="k">class</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">eds_getRed</span><span class="p">:</span><span class="nl">green</span><span class="p">:</span><span class="nl">blue</span><span class="p">:</span><span class="nl">alpha</span><span class="p">:));</span>
+<span class="lineno">11</span>         <span class="n">method_exchangeImplementations</span><span class="p">(</span><span class="n">oldMethod</span><span class="p">,</span> <span class="n">newMethod</span><span class="p">);</span>
+<span class="lineno">12</span>     <span class="p">}</span>
+<span class="lineno">13</span> <span class="p">}</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span> <span class="p">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">eds_getRed:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">red</span> <span class="nf">green:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">green</span> <span class="nf">blue:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">blue</span> <span class="nf">alpha:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="nv">alpha</span>
+<span class="lineno">16</span> <span class="p">{</span>
+<span class="lineno">17</span>     <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="bp">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">18</span>         <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">eds_getRed</span><span class="p">:</span><span class="n">red</span> <span class="nl">green</span><span class="p">:</span><span class="n">green</span> <span class="nl">blue</span><span class="p">:</span><span class="n">blue</span> <span class="nl">alpha</span><span class="p">:</span><span class="n">alpha</span><span class="p">];</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span>     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="bp">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">21</span>         <span class="n">CGFloat</span> <span class="n">white</span><span class="p">;</span>
+<span class="lineno">22</span>         <span class="n">CGFloat</span> <span class="n">m_alpha</span><span class="p">;</span>
+<span class="lineno">23</span>         <span class="k">if</span> <span class="p">([</span><span class="nb">self</span> <span class="nl">getWhite</span><span class="p">:</span><span class="o">&amp;</span><span class="n">white</span> <span class="nl">alpha</span><span class="p">:</span><span class="o">&amp;</span><span class="n">m_alpha</span><span class="p">])</span> <span class="p">{</span>
+<span class="lineno">24</span>             <span class="o">*</span><span class="n">red</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="lineno">25</span>             <span class="o">*</span><span class="n">green</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="lineno">26</span>             <span class="o">*</span><span class="n">blue</span> <span class="o">=</span> <span class="n">white</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="lineno">27</span>             <span class="o">*</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">m_alpha</span><span class="p">;</span>
+<span class="lineno">28</span>             <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+<span class="lineno">29</span>         <span class="p">}</span>
+<span class="lineno">30</span>     <span class="p">}</span>
+<span class="lineno">31</span>     <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
+<span class="lineno">32</span> <span class="p">}</span>
+<span class="lineno">33</span> 
+<span class="lineno">34</span> <span class="k">@end</span></code></pre></div>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">[1] Cocoa Fundamentals Guide</a></li>
+<li><a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">[2] getRed:green:blue:alpha:</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Trampolines & Higher Order Messaging</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2013/06/24/trampolines-and-higher-order-messaging.html">Trampolines & Higher Order Messaging</a></h1>
+            <h3>Trampolines</h3>
+
+<p>A trampoline is a small piece of code that is created at run time when the address of a nested function is taken. 
+It normally resides on the stack, in the stack frame of the containing function. The word trampoline is used because execution jumps 
+into the trampoline object and then immediately jumps out.<a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">¹</a></p>
+
+<p>A trampoline object in Objective-C is a subclass of <code>NSProxy</code> that is returned by a method and acts like a delegate by forwarding messages to another object. 
+This brings us to higher order messaging.</p>
+
+<h3>Higher Order Messaging</h3>
+
+<p>Higher order messaging allows messages that have messages as arguments. This is analogous to languages that treat functions as a first-class data type, 
+like Lisp, Haskell, and PHP do. Even C and its descendants can use function pointers, although it&#39;s not as pretty. Objective-C is a perfect candidate for 
+higher order messaging, or HOM, since the language is known for its message passing traits.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
+
+<p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code>NSArray</code> and assumes ARC is enabled. The <code>#pragma</code> cruff 
+is necessary to silence warnings.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">TFFTrampoline</span> : <span class="bp">NSProxy</span> <span class="p">{</span>
+<span class="lineno"> 2</span>     <span class="kt">id</span> <span class="n">tff_target</span><span class="p">;</span>
+<span class="lineno"> 3</span>     <span class="kt">SEL</span> <span class="n">tff_selector</span><span class="p">;</span>
+<span class="lineno"> 4</span> <span class="p">}</span>
+<span class="lineno"> 5</span> <span class="p">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">trampolineWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">@end</span>
+<span class="lineno"> 7</span>  
+<span class="lineno"> 8</span> <span class="k">@implementation</span> <span class="nc">TFFTrampoline</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation:</span><span class="p">(</span><span class="bp">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
+<span class="lineno">11</span> <span class="cp">#pragma clang diagnostic push</span>
+<span class="lineno">12</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span>
+<span class="lineno">13</span>     <span class="kt">id</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">tff_target</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">tff_selector</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">anInvocation</span><span class="p">];</span>
+<span class="lineno">14</span>     <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">setReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">result</span><span class="p">];</span>
+<span class="lineno">15</span> <span class="cp">#pragma clang diagnostic pop</span>
+<span class="lineno">16</span> <span class="p">}</span>
+<span class="lineno">17</span>  
+<span class="lineno">18</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
+<span class="lineno">19</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="nl">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="lineno">20</span> <span class="p">}</span>
+<span class="lineno">21</span>  
+<span class="lineno">22</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tff_initWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+<span class="lineno">23</span>     <span class="n">tff_target</span> <span class="o">=</span> <span class="n">aTarget</span><span class="p">;</span>
+<span class="lineno">24</span>     <span class="n">tff_selector</span> <span class="o">=</span> <span class="n">aSelector</span><span class="p">;</span>
+<span class="lineno">25</span>     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
+<span class="lineno">26</span> <span class="p">}</span>
+<span class="lineno">27</span>  
+<span class="lineno">28</span> <span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+<span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="lineno">30</span> <span class="p">}</span>
+<span class="lineno">31</span> 
+<span class="lineno">32</span> <span class="k">@end</span></code></pre></div>
+
+<p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
+programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
+<span class="lineno"> 2</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span><span class="p">;</span>
+<span class="lineno"> 3</span> <span class="k">@end</span>
+<span class="lineno"> 4</span>   
+<span class="lineno"> 5</span> <span class="k">@implementation</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">collect:</span><span class="p">(</span><span class="bp">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
+<span class="lineno"> 8</span>     <span class="bp">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
+<span class="lineno"> 9</span>     
+<span class="lineno">10</span>     <span class="k">for</span> <span class="p">(</span><span class="kt">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">11</span>         <span class="n">__unsafe_unretained</span> <span class="kt">id</span> <span class="n">resultObject</span><span class="p">;</span>
+<span class="lineno">12</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">invokeWithTarget</span><span class="p">:</span><span class="n">obj</span><span class="p">];</span>
+<span class="lineno">13</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">getReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">resultObject</span><span class="p">];</span>
+<span class="lineno">14</span>         <span class="p">[</span><span class="n">resultArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">resultObject</span><span class="p">];</span>
+<span class="lineno">15</span>     <span class="p">}</span>
+<span class="lineno">16</span>     <span class="k">return</span> <span class="n">resultArray</span><span class="p">;</span>
+<span class="lineno">17</span> <span class="p">}</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span> <span class="p">{</span>
+<span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="nb">self</span> <span class="nl">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">collect</span><span class="p">:)];</span>
+<span class="lineno">21</span> <span class="p">}</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span> <span class="k">@end</span></code></pre></div>
+
+<p>Here, our <code>NSArray</code> category implements a public <code>collect</code> method that will return our trampoline object to bounce the method argument to the private <code>collect:</code> method 
+that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</p>
+
+<p>Last but not least, below is an example of how one would use this implementation.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+<span class="lineno"> 2</span> <span class="cp">#pragma clang diagnostic push</span>
+<span class="lineno"> 3</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Wincompatible-pointer-types&quot;</span>
+<span class="lineno"> 4</span>     <span class="k">@autoreleasepool</span> <span class="p">{</span>
+<span class="lineno"> 5</span>         <span class="c1">// Modify</span>
+<span class="lineno"> 6</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno"> 7</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
+<span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
+<span class="lineno"> 9</span>         
+<span class="lineno">10</span>         <span class="c1">// Convert</span>
+<span class="lineno">11</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="l">@[</span> <span class="l">@(</span><span class="mf">3.14</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">2.71</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">0.577</span><span class="l">)</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno">12</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
+<span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
+<span class="lineno">14</span>         
+<span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
+<span class="lineno">16</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno">17</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="nl">isNamed</span><span class="p">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
+<span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
+<span class="lineno">21</span> <span class="p">}</span></code></pre></div>
+
+<p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
+good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
+internalized in this manner.</p>
+
+<p>There are many more uses for HOM than iteration, but methods such as <code>collect</code> seem to be the most commonly used higher-order methods. Another use 
+case could be a protocol checker to act as a proxy for an object and only pass messages through that are part of a given protocol, but the possibilities are, 
+of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
+<li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
+<li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Builder Pattern</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2013/05/31/builder-pattern.html">Builder Pattern</a></h1>
+            <p>The builder pattern is a creational design pattern. It is used to abstract steps of the construction of complex objects from its representation so that the same construction process 
+can create different representations.<a href="http://c2.com/cgi/wiki?DesignPatternsBook">¹</a></p>
+
+<p>Complex objects that the builder pattern can be useful towards, for example, include building mazes, characters in video games, and perhaps even baking. However, these examples are 
+somewhat of a stretch and don&#39;t provide any common ground for beginners. One thing I&#39;ve found the builder pattern to be useful for is for building attributed labels.</p>
+
+<p>Take, for example, Mattt Thompson&#39;s <a href="https://github.com/mattt/TTTAttributedLabel">TTTAttributedLabel</a>. It has some <a href="https://github.com/mattt/TTTAttributedLabel#example-usage">pretty ugly</a> 
+sample code on how to set the attributed text, which is enough to scare anyone away from attributed strings. Fortunately, this can be improved. One way to improve this is by extending 
+<code>NSAttributedString</code> to use the builder pattern.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno">1</span> <span class="bp">NSAttributedString</span> <span class="o">*</span><span class="n">string</span> <span class="o">=</span>  <span class="p">[[[[[[</span><span class="bp">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString</span><span class="p">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
+<span class="lineno">2</span>                                  <span class="nl">addFont</span><span class="p">:[</span><span class="bp">UIFont</span> <span class="nl">systemFontOfSize</span><span class="p">:</span><span class="mi">18</span><span class="p">]</span> <span class="nl">string</span><span class="p">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
+<span class="lineno">3</span>                                 <span class="nl">addTextColor</span><span class="p">:[</span><span class="bp">UIColor</span> <span class="n">redColor</span><span class="p">]</span> <span class="nl">string</span><span class="p">:</span><span class="s">@&quot;Hello World!&quot;</span><span class="p">]</span>
+<span class="lineno">4</span>                                <span class="nl">addFont</span><span class="p">:[</span><span class="bp">UIFont</span> <span class="nl">systemFontOfSize</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="nl">string</span><span class="p">:</span><span class="s">@&quot;Hello&quot;</span><span class="p">]</span>
+<span class="lineno">5</span>                               <span class="nl">addTextColor</span><span class="p">:[</span><span class="bp">UIColor</span> <span class="n">blueColor</span><span class="p">]</span> <span class="nl">string</span><span class="p">:</span><span class="s">@&quot;World!&quot;</span><span class="p">];</span>
+<span class="lineno">6</span>                               
+<span class="lineno">7</span> <span class="n">TTTAttributedLabel</span> <span class="o">*</span><span class="n">attributedLabel</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TTTAttributedLabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+<span class="lineno">8</span> <span class="n">attributedLabel</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">string</span><span class="p">;</span></code></pre></div>
+
+<p>Here you can see the effects of the builder pattern in action, which is a much more attractive approach. And the implementation is trivial. 
+Below is an NSAttributedString category with a stripped down version of the bigger picture.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="bp">NSAttributedString</span> <span class="nl">(Builder)</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addAttributes:</span><span class="p">(</span><span class="bp">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">attributes</span> <span class="nf">range:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span><span class="p">;</span>
+<span class="lineno"> 4</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addFont:</span><span class="p">(</span><span class="bp">UIFont</span> <span class="o">*</span><span class="p">)</span><span class="nv">font</span> <span class="nf">string:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span><span class="p">;</span>
+<span class="lineno"> 5</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addTextColor:</span><span class="p">(</span><span class="bp">UIColor</span> <span class="o">*</span><span class="p">)</span><span class="nv">color</span> <span class="nf">string:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span><span class="p">;</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="k">@end</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="k">@implementation</span> <span class="bp">NSAttributedString</span> <span class="nl">(Builder)</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addAttributes:</span><span class="p">(</span><span class="bp">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">attributes</span>
+<span class="lineno">12</span>                                 <span class="nf">range:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span>
+<span class="lineno">13</span> <span class="p">{</span>
+<span class="lineno">14</span>     <span class="bp">NSMutableAttributedString</span> <span class="o">*</span><span class="n">mutableString</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="n">mutableCopy</span><span class="p">];</span>
+<span class="lineno">15</span>     
+<span class="lineno">16</span>     <span class="k">if</span> <span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">location</span> <span class="o">!=</span> <span class="n">NSNotFound</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">17</span>         <span class="k">for</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="n">key</span> <span class="k">in</span> <span class="p">[</span><span class="n">attributes</span> <span class="n">allKeys</span><span class="p">])</span> <span class="p">{</span>
+<span class="lineno">18</span>             <span class="kt">id</span> <span class="n">value</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
+<span class="lineno">19</span>             <span class="p">[</span><span class="n">mutableString</span> <span class="nl">addAttribute</span><span class="p">:</span><span class="n">key</span> <span class="nl">value</span><span class="p">:</span><span class="n">value</span> <span class="nl">range</span><span class="p">:</span><span class="n">range</span><span class="p">];</span>
+<span class="lineno">20</span>         <span class="p">}</span>
+<span class="lineno">21</span>     <span class="p">}</span>
+<span class="lineno">22</span>     
+<span class="lineno">23</span>     <span class="k">return</span> <span class="p">[</span><span class="n">mutableString</span> <span class="k">copy</span><span class="p">];</span>
+<span class="lineno">24</span> <span class="p">}</span>
+<span class="lineno">25</span> 
+<span class="lineno">26</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addFont:</span><span class="p">(</span><span class="bp">UIFont</span> <span class="o">*</span><span class="p">)</span><span class="nv">font</span> <span class="nf">string:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span>
+<span class="lineno">27</span> <span class="p">{</span>
+<span class="lineno">28</span>     <span class="n">NSRange</span> <span class="n">range</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">string</span><span class="p">]</span> <span class="nl">rangeOfString</span><span class="p">:</span><span class="n">string</span><span class="p">];</span>
+<span class="lineno">29</span>     
+<span class="lineno">30</span>     <span class="n">CTFontRef</span> <span class="n">ctfont</span> <span class="o">=</span> <span class="n">CTFontCreateWithName</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFStringRef</span><span class="p">)</span><span class="n">font</span><span class="p">.</span><span class="n">fontName</span><span class="p">,</span> <span class="n">font</span><span class="p">.</span><span class="n">pointSize</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="lineno">31</span>     <span class="bp">NSDictionary</span> <span class="o">*</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDictionary</span> <span class="nl">dictionaryWithObject</span><span class="p">:(</span><span class="k">__bridge</span> <span class="kt">id</span><span class="p">)(</span><span class="n">ctfont</span><span class="p">)</span> <span class="nl">forKey</span><span class="p">:(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">kCTFontAttributeName</span><span class="p">];</span>
+<span class="lineno">32</span>     <span class="n">CFRelease</span><span class="p">(</span><span class="n">ctfont</span><span class="p">);</span>
+<span class="lineno">33</span>     
+<span class="lineno">34</span>     <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">addAttributes</span><span class="p">:</span><span class="n">attributes</span> <span class="nl">range</span><span class="p">:</span><span class="n">range</span><span class="p">];</span>
+<span class="lineno">35</span> <span class="p">}</span>
+<span class="lineno">36</span> 
+<span class="lineno">37</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSAttributedString</span> <span class="o">*</span><span class="p">)</span><span class="nf">addTextColor:</span><span class="p">(</span><span class="bp">UIColor</span> <span class="o">*</span><span class="p">)</span><span class="nv">color</span> <span class="nf">string:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">string</span>
+<span class="lineno">38</span> <span class="p">{</span>
+<span class="lineno">39</span>     <span class="n">NSRange</span> <span class="n">range</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">string</span><span class="p">]</span> <span class="nl">rangeOfString</span><span class="p">:</span><span class="n">string</span><span class="p">];</span>
+<span class="lineno">40</span>     <span class="bp">NSDictionary</span> <span class="o">*</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSDictionary</span> <span class="nl">dictionaryWithObject</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">color</span><span class="p">.</span><span class="bp">CGColor</span> <span class="nl">forKey</span><span class="p">:(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">kCTForegroundColorAttributeName</span><span class="p">];</span>
+<span class="lineno">41</span>     <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">addAttributes</span><span class="p">:</span><span class="n">attributes</span> <span class="nl">range</span><span class="p">:</span><span class="n">range</span><span class="p">];</span>
+<span class="lineno">42</span> <span class="p">}</span>
+<span class="lineno">43</span> 
+<span class="lineno">44</span> <span class="k">@end</span></code></pre></div>
+
+<p>And there you have it. Of course, you can do more than just modify the font and text color. You can see my full implementation on 
+<a href="https://github.com/marksands/NSAttributedString-Builder">GitHub</a>. Please note, however, that this implementation is written specifically 
+to work with TTTAttributedLabel. If you want support for attributed text on UILabel in iOS6, check out the <a href="https://github.com/marksands/NSAttributedString-Builder/tree/iOS6">iOS6 branch</a>.</p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://c2.com/cgi/wiki?DesignPatternsBook">[1] Design Patterns: Elements of Reusable Object-Oriented Software</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">RAII</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2012/05/18/raii.html">RAII</a></h1>
+            <p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it&#39;s a neat concept once you 
+understand what it means and how it&#39;s used. RAII was born out of C++ and invented 
+by its creator Bjarne Stroustrup.</p>
+
+<p>In C++, the only code that can be guaranteed to be executed after an exception is 
+thrown are the destructors of objects residing on the stack. Resource management 
+needs to be tied to the lifespan of suitable objects in order to gain automatic 
+allocation and reclamation. Resources are acquired during initialization, and 
+guaranteed to be released with the destruction of the same objects.</p>
+
+<p>For local objects allocated on the stack, the languages scoping rules ensure that 
+the destructor is called when its scope ends. Thus, by putting the resource release 
+logic in the destructor, C++&#39;s scoping provides direct support for 
+RAII<a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">¹</a>:</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="lineno"> 1</span> <span class="cp">#include &lt;iostream&gt;</span>
+<span class="lineno"> 2</span> <span class="cp">#include &lt;chrono&gt;</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">class</span> <span class="nc">Timer</span> <span class="p">{</span>
+<span class="lineno"> 7</span>     <span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span> <span class="n">start</span><span class="p">,</span> <span class="n">finish</span><span class="p">;</span>
+<span class="lineno"> 8</span>     <span class="k">public</span><span class="o">:</span>
+<span class="lineno"> 9</span>     <span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">10</span>         <span class="n">start</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="lineno">11</span>     <span class="p">}</span>
+<span class="lineno">12</span>     <span class="o">~</span><span class="n">Timer</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">13</span>         <span class="n">finish</span> <span class="o">=</span> <span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="lineno">14</span>         <span class="n">nanoseconds</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">finish</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+<span class="lineno">15</span>         <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Total time: &quot;</span>
+<span class="lineno">16</span>             <span class="o">&lt;&lt;</span> <span class="n">ns</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; nanoseconds&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="lineno">17</span>     <span class="p">}</span>
+<span class="lineno">18</span> <span class="p">};</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">21</span>     <span class="n">Timer</span> <span class="n">t</span><span class="p">;</span>
+<span class="lineno">22</span>     <span class="c1">// some long expensive calculation</span>
+<span class="lineno">23</span> <span class="p">}</span></code></pre></div>
+
+<p>In this snippet, the Timer class demonstrates using RAII to calculate and display
+the time it takes for a portion of code to execute. A Timer object, <code>t</code>, is 
+initialized in the first line of the main function, which will be used 
+to calculate and display the global time the program took to execute. Once some
+long, expensive calculation runs, the main program will exit and the Timer object
+will display the duration it took for the program to execute. Very handy for performance
+debugging.</p>
+
+<h3>Smart Pointers</h3>
+
+<p>Consequently, this is how the C++11 library <code>shared_ptr</code> works. It is a reference
+counting smart pointer that shares ownership, so when the last copy of it goes out
+of scope it will free the managed object. In case you&#39;re wondering, <code>unique_ptr</code> and 
+<code>shared_ptr</code> live in the header <code>&lt;memory&gt;</code>.</p>
+
+<p>A smart pointer is a class that imitates raw pointers by overloading operators.
+<code>unique_ptr</code> is powered by rvalue references, a C++11 feature. While it is not copyable,
+it is movable. With <code>unique_ptr</code> and <code>shared_ptr</code>, <code>std::move</code> can be used as a 
+helper function that moves its resources into a different object. The main difference
+between <code>unique_ptr</code> and <code>shared_ptr</code> is that unique_ptr does not have shared-ownership,
+meaning there is only one reference available at a time<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">²</a>:</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">2</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="lineno">3</span>     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="lineno">4</span>     <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="lineno">5</span>     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p2</span><span class="p">;</span>
+<span class="lineno">6</span> <span class="p">}</span></code></pre></div>
+
+<p>One useful example of this is the <code>pimpl</code> idiom, where you have a pointer
+to some class that implements all of its methods. This is useful for breaking 
+out dependencies allowing your program to compile faster.</p>
+
+<p>There is a smarter pointer available called <code>shared_ptr</code>, originally developed
+for the Boost library but now part of the C++11 standard. <code>shared_ptr</code> objects 
+have shared ownership, meaining the last remaining owner of the pointer is responsible 
+for destroying the object, or otherwise releasing the resources associated with 
+the stored pointer<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">³</a>.</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="lineno">1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">2</span>   <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="lineno">3</span>   <span class="n">std</span><span class="o">::</span><span class="n">shard_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp2</span><span class="p">(</span><span class="n">sp</span><span class="p">);</span>
+<span class="lineno">4</span>   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">sp2</span><span class="p">;</span>
+<span class="lineno">5</span> <span class="p">}</span></code></pre></div>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">[1] RAII</a></li>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[2] unique_ptr/20.7.1</a></li>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">[3] shared_ptr/20.7.2.2</a></li>
 </ul>
 
         </div><!-- entry-content -->

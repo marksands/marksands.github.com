@@ -91,35 +91,35 @@ higher order messaging, or HOM, since the language is known for its message pass
 <p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code>NSArray</code> and assumes ARC is enabled. The <code>#pragma</code> cruff 
 is necessary to silence warnings.</p>
 
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">TFFTrampoline</span> : <span class="nc">NSProxy</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">TFFTrampoline</span> : <span class="bp">NSProxy</span> <span class="p">{</span>
 <span class="lineno"> 2</span>     <span class="kt">id</span> <span class="n">tff_target</span><span class="p">;</span>
 <span class="lineno"> 3</span>     <span class="kt">SEL</span> <span class="n">tff_selector</span><span class="p">;</span>
 <span class="lineno"> 4</span> <span class="p">}</span>
-<span class="lineno"> 5</span> <span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
+<span class="lineno"> 5</span> <span class="p">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">trampolineWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
 <span class="lineno"> 6</span> <span class="k">@end</span>
 <span class="lineno"> 7</span>  
 <span class="lineno"> 8</span> <span class="k">@implementation</span> <span class="nc">TFFTrampoline</span>
 <span class="lineno"> 9</span> 
-<span class="lineno">10</span> <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation:</span><span class="p">(</span><span class="n">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
+<span class="lineno">10</span> <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation:</span><span class="p">(</span><span class="bp">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
 <span class="lineno">11</span> <span class="cp">#pragma clang diagnostic push</span>
 <span class="lineno">12</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span>
-<span class="lineno">13</span>     <span class="kt">id</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">tff_target</span> <span class="n">performSelector</span><span class="o">:</span><span class="n">tff_selector</span> <span class="n">withObject</span><span class="o">:</span><span class="n">anInvocation</span><span class="p">];</span>
-<span class="lineno">14</span>     <span class="p">[</span><span class="n">anInvocation</span> <span class="n">setReturnValue</span><span class="o">:&amp;</span><span class="n">result</span><span class="p">];</span>
+<span class="lineno">13</span>     <span class="kt">id</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">tff_target</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">tff_selector</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">anInvocation</span><span class="p">];</span>
+<span class="lineno">14</span>     <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">setReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">result</span><span class="p">];</span>
 <span class="lineno">15</span> <span class="cp">#pragma clang diagnostic pop</span>
 <span class="lineno">16</span> <span class="p">}</span>
 <span class="lineno">17</span>  
-<span class="lineno">18</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
-<span class="lineno">19</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="n">objectAtIndex</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span> <span class="n">methodSignatureForSelector</span><span class="o">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="lineno">18</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
+<span class="lineno">19</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="nl">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="lineno">20</span> <span class="p">}</span>
 <span class="lineno">21</span>  
-<span class="lineno">22</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tff_initWithTarget:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+<span class="lineno">22</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tff_initWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
 <span class="lineno">23</span>     <span class="n">tff_target</span> <span class="o">=</span> <span class="n">aTarget</span><span class="p">;</span>
 <span class="lineno">24</span>     <span class="n">tff_selector</span> <span class="o">=</span> <span class="n">aSelector</span><span class="p">;</span>
-<span class="lineno">25</span>     <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
+<span class="lineno">25</span>     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
 <span class="lineno">26</span> <span class="p">}</span>
 <span class="lineno">27</span>  
-<span class="lineno">28</span> <span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
-<span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">tff_initWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="lineno">28</span> <span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+<span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="lineno">30</span> <span class="p">}</span>
 <span class="lineno">31</span> 
 <span class="lineno">32</span> <span class="k">@end</span></code></pre></div>
@@ -127,26 +127,26 @@ is necessary to silence warnings.</p>
 <p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
 programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
 
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">NSArray</span> <span class="nl">(Collect)</span>
-<span class="lineno"> 2</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
+<span class="lineno"> 2</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span><span class="p">;</span>
 <span class="lineno"> 3</span> <span class="k">@end</span>
 <span class="lineno"> 4</span>   
-<span class="lineno"> 5</span> <span class="k">@implementation</span> <span class="nc">NSArray</span> <span class="nl">(Collect)</span>
+<span class="lineno"> 5</span> <span class="k">@implementation</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
 <span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="k">-</span> <span class="p">(</span><span class="n">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">collect:</span><span class="p">(</span><span class="n">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
-<span class="lineno"> 8</span>     <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
+<span class="lineno"> 7</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">collect:</span><span class="p">(</span><span class="bp">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
+<span class="lineno"> 8</span>     <span class="bp">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
 <span class="lineno"> 9</span>     
-<span class="lineno">10</span>     <span class="k">for</span> <span class="p">(</span><span class="kt">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">10</span>     <span class="k">for</span> <span class="p">(</span><span class="kt">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
 <span class="lineno">11</span>         <span class="n">__unsafe_unretained</span> <span class="kt">id</span> <span class="n">resultObject</span><span class="p">;</span>
-<span class="lineno">12</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="n">invokeWithTarget</span><span class="o">:</span><span class="n">obj</span><span class="p">];</span>
-<span class="lineno">13</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="n">getReturnValue</span><span class="o">:&amp;</span><span class="n">resultObject</span><span class="p">];</span>
-<span class="lineno">14</span>         <span class="p">[</span><span class="n">resultArray</span> <span class="n">addObject</span><span class="o">:</span><span class="n">resultObject</span><span class="p">];</span>
+<span class="lineno">12</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">invokeWithTarget</span><span class="p">:</span><span class="n">obj</span><span class="p">];</span>
+<span class="lineno">13</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">getReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">resultObject</span><span class="p">];</span>
+<span class="lineno">14</span>         <span class="p">[</span><span class="n">resultArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">resultObject</span><span class="p">];</span>
 <span class="lineno">15</span>     <span class="p">}</span>
 <span class="lineno">16</span>     <span class="k">return</span> <span class="n">resultArray</span><span class="p">;</span>
 <span class="lineno">17</span> <span class="p">}</span>
 <span class="lineno">18</span> 
-<span class="lineno">19</span> <span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span> <span class="p">{</span>
-<span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">self</span> <span class="n">selector</span><span class="o">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">collect</span><span class="o">:</span><span class="p">)];</span>
+<span class="lineno">19</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span> <span class="p">{</span>
+<span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="nb">self</span> <span class="nl">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">collect</span><span class="p">:)];</span>
 <span class="lineno">21</span> <span class="p">}</span>
 <span class="lineno">22</span> 
 <span class="lineno">23</span> <span class="k">@end</span></code></pre></div>
@@ -156,23 +156,23 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 
 <p>Last but not least, below is an example of how one would use this implementation.</p>
 
-<div class="highlight"><pre><code class="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 <span class="lineno"> 2</span> <span class="cp">#pragma clang diagnostic push</span>
 <span class="lineno"> 3</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Wincompatible-pointer-types&quot;</span>
-<span class="lineno"> 4</span>     <span class="p">@</span><span class="n">autoreleasepool</span> <span class="p">{</span>
+<span class="lineno"> 4</span>     <span class="k">@autoreleasepool</span> <span class="p">{</span>
 <span class="lineno"> 5</span>         <span class="c1">// Modify</span>
-<span class="lineno"> 6</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="p">];</span>
-<span class="lineno"> 7</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
+<span class="lineno"> 6</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno"> 7</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
 <span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
 <span class="lineno"> 9</span>         
 <span class="lineno">10</span>         <span class="c1">// Convert</span>
-<span class="lineno">11</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="p">@[</span> <span class="p">@(</span><span class="mf">3.14</span><span class="p">),</span> <span class="p">@(</span><span class="mf">2.71</span><span class="p">),</span> <span class="p">@(</span><span class="mf">0.577</span><span class="p">)</span> <span class="p">];</span>
-<span class="lineno">12</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
+<span class="lineno">11</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="l">@[</span> <span class="l">@(</span><span class="mf">3.14</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">2.71</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">0.577</span><span class="l">)</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno">12</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
 <span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
 <span class="lineno">14</span>         
 <span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
-<span class="lineno">16</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="p">];</span>
-<span class="lineno">17</span>         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="n">isNamed</span><span class="o">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
+<span class="lineno">16</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="l">]</span><span class="p">;</span>
+<span class="lineno">17</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="nl">isNamed</span><span class="p">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
 <span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
 <span class="lineno">19</span>     <span class="p">}</span>
 <span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
