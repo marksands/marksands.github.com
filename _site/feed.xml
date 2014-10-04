@@ -7,6 +7,26 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Aviator</title>
+				<description>&lt;h4&gt;Aviator&lt;/h4&gt;
+
+&lt;p&gt;Recently, I became interested in the process of building Xcode plugins, digging into the private headers, using hopper to dissect the framework, and experimenting with the existing plugins already available on the web. I switch back and forth quite a bit between AppCode and Xcode, mainly  using AppCode for its superior refactoring tools. Besides refactoring tools, AppCode has a lot of great shortcuts that I wish Xcode has. ⌥↩ adds missing imports and ⇧⌘T toggles between unit tests and source files. &lt;a href=&quot;https://github.com/markohlebar/Peckham&quot;&gt;Peckham&lt;/a&gt; is a plugin that already exists and does a decent job at adding missing imports, though I wish it was as simple as ⌥↩. That left me with ⇧⌘T as a good intro to Xcode plugin creation. If you&amp;#39;re interested in how to get started creating Xcode plugins, Artsy has a &lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;great blog post&lt;/a&gt;&lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I spent an evening experiementing, and, within a few hours, &lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;Aviator&lt;/a&gt; was born. Aviator currently only supports the ⇧⌘T shortcut to toggle between a unit test and its source file counterpart. I&amp;#39;d like to extend Aviator to add more missing Xcode shortcuts, so expect more from this in the future. I&amp;#39;m looking for ideas on what to add next, so let me know and I&amp;#39;ll see what I can do&lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;²&lt;/a&gt;!&lt;/p&gt;
+
+&lt;h3&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;[1] Building the Xcode Plugin Snapshots&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;[2] Aviator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Fri, 26 Sep 2014 00:00:00 -0500</pubDate>
+				<link>http://marksands.github.io/2014/09/26/aviator.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2014/09/26/aviator.html</guid>
+			</item>
+		
+			<item>
 				<title>Effective Pair Programming</title>
 				<description>&lt;h4&gt;Episode 3 - Effective Pair Programming&lt;/h4&gt;
 
