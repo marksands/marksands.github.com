@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Pragma Poison</title>
+        <title>2015 Goals</title>
         <meta name="viewport" content="width=device-width">
 
         <!-- syntax highlighting CSS -->
@@ -63,7 +63,7 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">Pragma Poison</h1> -->
+            <!-- <h1 class="h2 entry-title">2015 Goals</h1> -->
             
             
           </div><!-- unit-inner -->
@@ -72,47 +72,29 @@
 
       <div class="bd">
         <div class="entry-content">
-          <h1>Pragma Poison</h1>
-          <h3>stringValue</h3>
+          <h1>2015 Goals</h1>
+          <h3>2015 Goals</h3>
 
-<p>It can be tempting to convert NSNumbers to strings by calling <code>stringValue</code>. It&#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&#39;s necessary. You may think calling <code>[@8.8 stringValue]</code> returns &quot;8.8&quot;, but you&#39;d be wrong; it actually returns &quot;8.800000000000001&quot;. Let&#39;s take a look at what&#39;s going on behind the scenes when we call stringValue to find out why this is happening.</p>
+<p>As the new year approaches, I&#39;ve began to think of some goals of mine. Rather than make goals, I&#39;ve always tried to improve on an as-needed basis; why wait till the beginning of the new year? It&#39;s close enough to the new year this time that I am willing to make an exception and wait a few days. Here are 3 goals of mine that I wish to accomplish over the following 12 months.</p>
 
-<h3>Behind the Scenes</h3>
+<h4>1. Take Piano Lessons</h4>
 
-<p>According to Apple&#39;s documentation regarding <code>stringValue</code>:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">¹</a></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">The string is created by invoking descriptionWithLocale: where locale is nil.
-</code></pre></div>
-<p>So far so good. Let&#39;s see what <code>descriptionWithLocale:nil</code> is doing. Also according to Apple&#39;s documentation:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">²</a></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">To obtain the string representation, this method invokes NSString’s initWithFormat:locale: method, 
-supplying the format based on the type the NSNumber object was created with:
-</code></pre></div>
-<p>and goes on to list the format specifiers that the NSNumber value is casted to. From the chart, we can see that a double gets <code>%0.16g</code> as the format specifier.</p>
+<p>My first goal is to re-enroll in piano lessons. I took piano growing up until I graduated high school and moved away from my hometown piano teacher. I&#39;ve missed playing the piano and often wish I was back up to speed to be able to entertain my wife and kids. I&#39;ve already started searching for a teach in or near my neighborhood. Here&#39;s hoping it works out soon!</p>
 
-<p>Let&#39;s take what we&#39;ve found and turn it into a single method call. So, <code>[@8.8 stringValue]</code> actually becomes <code>[[NSString alloc] initWithFormat:@&quot;%.16g&quot; locale:nil, 8.8]</code>. Now it makes sense why we are getting 16 digits instead of 2! Floating point conversion isn&#39;t perfect, so that&#39;s why we see some numbers like 8.8 become &quot;8.800000000000001&quot; and others such as 8.9 become &quot;8.9&quot;.</p>
+<h4>2. Learn to Knit</h4>
 
-<h3>#pragma GCC poison stringValue</h3>
+<p>The second goal of mine is to learn how to knit. I&#39;ve been recently amazed at the crafts that my friends and relatives have made, especially over the Christmas season. Being able to make your own clothes and accessories is such a valuable skill to posess. It seems so obvious that everyone should learn how to at least sew or knit, especially when the creative juices start flowing as you open your closet door. This one will definitely be the most challenging goal of mine, so any tips for good resources to learn is appreciated.</p>
 
-<p>The bottom line is, in most cases, you never want 16 digits when converting simple doubles into a string. So now that we&#39;ve deduced how <code>stringValue</code> can turn a 2 digit number into a 16 digit number, how do we prevent our peers from using this API? I came across a <a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">stackoverflow post</a> for my answer. I tried a similar approach with creating a category and assigning <code>UNAVAILABLE_ATTRIBUTE</code>, but that wasn&#39;t working for me either.<a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">³</a></p>
+<h4>3. Play Chess</h4>
 
-<p>It turns out GCC originally provided a solution to this problem to poison certain identifiers. Thankfully clang has adopted this protocol as well. The posion pragma is designed to work with C symbols, but you can leave off the colon of your selector to make it work with Objective-C. Finally, all you need to do now is add <code>#pragma GCC poison stringValue</code> in your precompiled header and start replacing those calls with <code>NSNumberFormatter</code>!</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">#pragma GCC poison stringValue
-
-ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
-</code></pre></div>
-<h3>References</h3>
-
-<ul>
-<li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">[1] stringValue</a></li>
-<li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">[2] descriptionWithLocale:</a></li>
-<li><a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">[3] stackoverflow</a></li>
-</ul>
+<p>My final goal is to play chess. I&#39;m not aiming to be a great chess player, as the goal of the game is to win, so hopefully I do that the majority of the time. I know the rules of the game and I&#39;ve played at times, but I am a terrible chess player. When I play chess, I find myself rushing the moves and not thinking or pacing myself enough to be aware of my surroundings. I relate this very closely to software craftsmanship, garnering patience and awareness of the system architecture. What I want out of playing chess is really to learn to be more patient. Hopefully after a while, I will learn to be more patient on my tasks and be more focused because of it.</p>
 
           <div class="meta">
             <p class="date-publish">
               Published:
-              <date class="date-pub" title="2014-10-16T00:00:00-05:00" datetime="2014-10-16T00:00:00-05:00" pubdate>
-              <span class="month"><abbr>October</abbr></span>
-              <span class="day">16</span>
+              <date class="date-pub" title="2014-12-29T00:00:00-06:00" datetime="2014-12-29T00:00:00-06:00" pubdate>
+              <span class="month"><abbr>December</abbr></span>
+              <span class="day">29</span>
               <span class="year">2014</span>
               </date>
             </p>
@@ -143,13 +125,9 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
           <nav class="pagination">
             <ul>
               
-              <li class="prev"><a class="internal" rel="prev"  href="/2014/09/26/aviator.html" title="View Aviator">&laquo; Aviator</a></li>
+              <li class="prev"><a class="internal" rel="prev"  href="/2014/10/16/pragma-poison.html" title="View Pragma Poison">&laquo; Pragma Poison</a></li>
               
               
-              <li class="pipe"> | </li>
-              
-              
-              <li class="next"><a class="internal" rel="next"  href="/2014/12/29/2015-goals.html" title="View 2015 Goals">2015 Goals &raquo;</a></li>
               
             </ul>
           </nav>
