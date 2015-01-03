@@ -65,6 +65,63 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Reacting to Reactive Cocoa Part II</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2015/1/2/reacting-to-reactive-cocoa-part-ii.html">Reacting to Reactive Cocoa Part II</a></h1>
+            <h3>Baby&#39;s First Monad</h3>
+
+<p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&#39;m supposed to be doing this the Reactive Cocoa way.</p>
+
+<p>Without much searching around, I decided to place my best foot forward and see how far I could get without tripping. From what I&#39;ve seen in the past, the macro <code>RAC</code> will magically populate an object with data by assigning it to something called a <code>RACSignal</code>. So that&#39;s where I began: <code>RAC(self, movies) = [self fetchMoviesSignal];</code> Now I just needed to see what this <code>fetchMoviesSignal</code> entailed.</p>
+
+<h3>RACSignal</h3>
+
+<p><code>RACSignal</code> appears to be the workhorse of reactive cocoa. When inspecting the headers, we&#39;re told that <code>RACSignal</code> inherits from <code>RACStream</code>, which is <em>a class that represents a monad, upon which many stream-based operations can be built</em> (it looks complicated, so I closed the header to regain my attention).</p>
+
+<p>Since I already had AFNetworking imported, I decided to expirment with wrapping it in a new signal object. As it turns out, it was fairly straightforward. This is what I ended up with:</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="p">-</span> <span class="p">(</span><span class="n">RACSignal</span> <span class="o">*</span><span class="p">)</span><span class="nf">fetchMoviesSignal</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">RACSignal</span> <span class="nl">createSignal</span><span class="p">:</span><span class="o">^</span><span class="n">RACDisposable</span> <span class="o">*</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">RACSubscriber</span><span class="o">&gt;</span> <span class="n">subscriber</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">[[</span><span class="n">AFHTTPRequestOperationManager</span> <span class="n">manager</span><span class="p">]</span> <span class="nl">GET</span><span class="p">:</span><span class="s">@&quot;movieapi.com/showtimes&quot;</span> <span class="nl">parameters</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">success</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">AFHTTPRequestOperation</span> <span class="o">*</span><span class="n">operation</span><span class="p">,</span> <span class="kt">id</span> <span class="n">responseObject</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">[</span><span class="n">subscriber</span> <span class="nl">sendNext</span><span class="p">:</span><span class="n">responseObject</span><span class="p">];</span>
+            <span class="p">[</span><span class="n">subscriber</span> <span class="n">sendCompleted</span><span class="p">];</span>
+        <span class="p">}</span> <span class="nl">failure</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">AFHTTPRequestOperation</span> <span class="o">*</span><span class="n">operation</span><span class="p">,</span> <span class="bp">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">[</span><span class="n">subscriber</span> <span class="nl">sendError</span><span class="p">:</span><span class="n">error</span><span class="p">];</span>
+        <span class="p">}];</span>
+        <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Before I got here, I had to ask myself what a subscriber was. The documentation for the subscriber states that it <em>represents any object which can directly receive values from a RACSignal</em>. The header file for the <code>RACSubscriber</code> protocol was actually very informative.<a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">²</a> <code>sendNext:</code>, <code>sendCompleted</code>, and <code>sendError:</code> all made perfect sense to me at the time. When I built and ran, and saw that my movies array was populated with the JSON response from the GET request, I felt all warm and fuzzy.</p>
+
+<p>Even though I didn&#39;t accomplish much, I took quite some time before arriving at this. I did a lot of reading the header files and other blog posts I came across to make sure I wasn&#39;t way off track. I think next time I will try to bite off a little more and see what all I can accomplish in the UI. I&#39;ll need to populate my table with the showtimes and movie posters, so it sounds like I have my work cut out for me yet!</p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">[1] Reacting to Reactive Cocoa Part I</a></li>
+<li><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">[2] RACSubscriber.h</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Reacting to Reactive Cocoa Part I</h1> -->
           </div><!-- unit-inner -->
         </div><!-- unit-head -->

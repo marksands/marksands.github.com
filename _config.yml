@@ -2,7 +2,7 @@ name: Mark Sands
 description: Programming Tidbits
 url: http://marksands.github.io
 
-pygments: true
+highlighter: pygments
 markdown: redcarpet
 
 author:
