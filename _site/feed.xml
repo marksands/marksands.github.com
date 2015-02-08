@@ -7,6 +7,21 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Reacting to Reactive Cocoa Part IV</title>
+				<description>&lt;h3&gt;Switching Gears&lt;/h3&gt;
+
+&lt;p&gt;You may not be surprised when I say that I&amp;#39;m taking a break from learning Reactive Cocoa. Several of my coworkers are diving into swift, and with the imminent release of Reactive Cocoa 3.0, I decided to switch gears.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#39;m going to recreate this app entirely in swift from the ground up. My hope is that after the project releases, then I can transition back to Reactive Cocoa using the newer version in swift.&lt;/p&gt;
+
+&lt;p&gt;I think it&amp;#39;s a wiser decision overall, given how I&amp;#39;ll need to learn swift eventually. Reactive cocoa is transitioning over, so it just makes sense for me to transition over as well. Once I feel efficient enough, then I can pick up Reactive Cocoa once more.&lt;/p&gt;
+</description>
+				<pubDate>Sat, 07 Feb 2015 00:00:00 -0600</pubDate>
+				<link>http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</guid>
+			</item>
+		
+			<item>
 				<title>Reacting to Reactive Cocoa Part III</title>
 				<description>&lt;h3&gt;Asynchronously Loading Images&lt;/h3&gt;
 
@@ -349,41 +364,6 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
 				<pubDate>Tue, 20 May 2014 00:00:00 -0500</pubDate>
 				<link>http://marksands.github.io/2014/05/20/effective-programming.html</link>
 				<guid isPermaLink="true">http://marksands.github.io/2014/05/20/effective-programming.html</guid>
-			</item>
-		
-			<item>
-				<title>Mocking is Tautological</title>
-				<description>&lt;h3&gt;Black and White&lt;/h3&gt;
-
-&lt;p&gt;When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.&lt;/p&gt;
-
-&lt;p&gt;On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹&lt;/p&gt;
-
-&lt;h3&gt;Dependencies and Decisions&lt;/h3&gt;
-
-&lt;p&gt;When many dependencies, or units, are involved in a path or decision then you should write an integration test instead of mocking out dependencies for an &amp;quot;isolated&amp;quot; unit test. The only time this becomes painful is when multiple decisions in a path directly rely on multiple dependencies; this tends to reek of a code smell. One solution is to split dependencies and decisions into separate layers. Gary&amp;#39;s talk above calls this the functional core and the imperative shell. In the imperative shell, many dependencies work together to formulate a single path with zero conditionals and decisions, while the decisions are deferred to each individual unit formulating the functional core. This makes the majority of testing pains go away.&lt;/p&gt;
-
-&lt;p&gt;The functional core can be fully unit tested with every decision having a test. And instead of unit testing the imperative shell, a single integration test will suffice for each component. The rules I follow are: when you find yourself testing a component with many dependencies, don&amp;#39;t use mocks; instead, write an integration test. Refactor until most, if not all, decisions are deferred to each dependency and drive out the implementation using TDD.&lt;/p&gt;
-
-&lt;h3&gt;A Rant&lt;/h3&gt;
-
-&lt;p&gt;This approach confirms most of my suspicions about using mocks in testing. Mocking (done wrong, and it is often done wrong) is tautological. I&amp;#39;ve both written code and I&amp;#39;ve seen code that mocks a dependency, stubs a method to return a result, and verifies that the method was called and the result was the expected output. I&amp;#39;ve never appreciated this style and it usually feels as though I&amp;#39;m ticking a box off of the test code coverage list. I remain unconvinced that this provides any benefits in opposition to an integration test.&lt;/p&gt;
-
-&lt;p&gt;With a test suite that reflects the style of mocks mocking mocks mocking mocks, refactoring can be a major testing pain. If you modify, add, or remove a dependency, chances are a lot of the mocks and method stubs in your tests will no longer be valid. I wouldn&amp;#39;t be surprised if such a simple change broke an entire test class littered with mocks.&lt;/p&gt;
-
-&lt;h3&gt;A Resolution&lt;/h3&gt;
-
-&lt;p&gt;1 Corinthians 1:13 says, &amp;quot;When I was a child, I spoke as a child, I understood as a child, I thought as a child: but when I became a man, I put away childish things.&amp;quot; Fortunately, I have put aside my days of mocking. I have felt the pains and drawn my losses, choosing to revisit testing and figure out how to fix the problem. I have been experimenting with a side project attempting to separate the functional core from the imperative shell. It is not easy to remove every conditional from the shell, but it has definitely been a relief for testing. And now that my unit tests only use real objects and assertions, I no longer have to choose between which testing and mocking framework to include in my project. I would encourage you to try this approach and see for yourself if it changes the way you test your code.&lt;/p&gt;
-
-&lt;h3&gt;References&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.destroyallsoftware.com/talks/boundaries&quot;&gt;[1] Boundaries&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-				<pubDate>Wed, 14 May 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/05/14/mocking-is-tautological.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/05/14/mocking-is-tautological.html</guid>
 			</item>
 		
 	</channel>
