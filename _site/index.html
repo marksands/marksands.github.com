@@ -65,6 +65,128 @@
       <header>
         <div class="unit-head">
           <div class="unit-inner unit-head-inner">
+            <!-- <h1 class="h2 entry-title">Reacting to Reactive Cocoa Part III</h1> -->
+          </div><!-- unit-inner -->
+        </div><!-- unit-head -->
+      </header>
+
+      <div class="bd">
+        <div class="entry-content">
+            <h1><a href="/2015/1/7/reacting-to-reactive-cocoa-part-iii.html">Reacting to Reactive Cocoa Part III</a></h1>
+            <h3>Asynchronously Loading Images</h3>
+
+<p>One of my first endevours into the realm of expanding my <code>RACObserve</code>-fu was to asynchronously load a <code>UIImage</code> from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using <code>AFNetworking</code>&#39;s built-in mechanism or a third party caching library such as <code>SDWebImage</code> would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I&#39;ve so graciously poured.</p>
+
+<p>This one was hard. I gave it several attempts before finally coming to a working solution, but I never did find the answer I wanted.</p>
+
+<h3>Attempt 1</h3>
+
+<p>I never got my first attempt at this to work, but I&#39;ll show the broken code nonetheless. I began my endevour by shamelessly stealing a code snippet from a project on GitHub called <a href="https://github.com/ashfurrow/FunctionalReactivePixels/blob/aef9b670ec5f14d496049c9e214f99513ca579df/FRP/FRPPhotoImporter.m#L46-L58">Functional Reactive Pixels</a>. The code snippet is slightly different from what I ended up with, but the overal theme is the same: I create an <code>NSURLRequest</code>, use the <code>rac_sendAsynchronousRequest</code> category method, call <code>reduceEach</code> to deflate the <code>RACTuple</code> into the appropriate parameters, return the <code>NSData</code> from the response, deliver the signal on the main thread, map the <code>NSData</code> again to return the <code>UIImage</code> form of the bytes, and eventually finish with a call to <code>publish</code> and <code>autoconnect</code> (whew!).</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c">    <span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">posterImageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">movie</span><span class="p">.</span><span class="n">posterURL</span><span class="p">)</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="bp">NSURLRequest</span> <span class="o">*</span><span class="n">request</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLRequest</span> <span class="nl">requestWithURL</span><span class="p">:</span><span class="n">value</span><span class="p">];</span>
+        <span class="k">return</span> <span class="p">[[[[[[</span><span class="bp">NSURLConnection</span> <span class="nl">rac_sendAsynchronousRequest</span><span class="p">:</span><span class="n">request</span><span class="p">]</span> <span class="nl">reduceEach</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="bp">NSURLResponse</span> <span class="o">*</span><span class="n">response</span><span class="p">,</span> <span class="bp">NSData</span> <span class="o">*</span><span class="n">data</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">;</span>
+        <span class="p">}]</span> <span class="nl">deliverOn</span><span class="p">:[</span><span class="n">RACScheduler</span> <span class="n">mainThreadScheduler</span><span class="p">]]</span>
+                <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="bp">NSData</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="bp">UIImage</span> <span class="nl">imageWithData</span><span class="p">:</span><span class="n">data</span><span class="p">];</span>
+                <span class="p">}]</span> <span class="n">publish</span><span class="p">]</span> <span class="n">autoconnect</span><span class="p">];</span>
+    <span class="p">}];</span>
+</code></pre></div>
+<p>All of this made intuitive sense to me, except the final two methods <code>publish</code> and <code>autoconnect</code>. An inspection of <code>publish</code> shows that it wraps a signal into a <code>RACMulticastConnection</code> object, while the <code>autoconnect</code> returns the multicast connection object as a signal. The recurring mystery object that kept creeping up was this <code>RACDisposable</code> object that I hadn&#39;t bothered, at least at this point, to investigate.</p>
+
+<p>Ultimately, this code never worked. Each time it ran, it would crash and throw this exception burried in the giant stack trace (have I mentioned how large the stack traces become when using Reactive Cocoa?):</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">2015-01-07 20:23:12.809 BestMovieDeal[5998:117268] *** Terminating app due to uncaught exception &#39;NSInvalidArgumentException&#39;, reason: &#39;-[RACDynamicSignal size]: unrecognized selector sent to instance 0x7f8ad1c6a180&#39;
+</code></pre></div>
+<h3>Attempt 2</h3>
+
+<p>My second try was to slim down my first approach, using only what I thought was absolutely necessary to make it work. I removed the final 3 lines of the block and returned the <code>UIImage</code> instead of the <code>NSData</code> object to be mapped over again and then returned as an image. This looked promising, but unfortunately gave me the identical stack trace as the first attempt.</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c">    <span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">posterImageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">movie</span><span class="p">.</span><span class="n">posterURL</span><span class="p">)</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="bp">NSURLRequest</span> <span class="o">*</span><span class="n">request</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURLRequest</span> <span class="nl">requestWithURL</span><span class="p">:</span><span class="n">value</span><span class="p">];</span>
+        <span class="k">return</span> <span class="p">[[[</span><span class="bp">NSURLConnection</span> <span class="nl">rac_sendAsynchronousRequest</span><span class="p">:</span><span class="n">request</span><span class="p">]</span>
+                    <span class="nl">reduceEach</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="bp">NSURLResponse</span> <span class="o">*</span><span class="n">response</span><span class="p">,</span> <span class="bp">NSData</span> <span class="o">*</span><span class="n">data</span><span class="p">){</span>
+                        <span class="k">return</span> <span class="p">[</span><span class="bp">UIImage</span> <span class="nl">imageWithData</span><span class="p">:</span><span class="n">data</span><span class="p">];</span>
+                    <span class="p">}]</span> <span class="nl">deliverOn</span><span class="p">:[</span><span class="n">RACScheduler</span> <span class="n">mainThreadScheduler</span><span class="p">]];</span>
+    <span class="p">}];</span>
+</code></pre></div>
+<p>Something still isn&#39;t right, but it&#39;s very hard to deduce what is wrong. I did see <code>-[UIImageView setImage:] + 316</code> in the stack trace, so I feel like I am on the right track; it just looks like either it&#39;s not an image being set on it or something else is awry. And unfortunately, setting a breakpoint on the line with the statement <code>[UIImage imageWithData:data]</code> never gets called. I gave an amateur shot at some lldb spelunking, but it went much slower than what I was used to and I never got anywhere. The next step is to take some time to learn about the missing pieces and find a working solution.</p>
+
+<h3>Attempt 27</h3>
+
+<p>This time I decided to take a step back. I didn&#39;t <em>need</em> the images to be asynchronously loaded in order to display them. The simplest way that I was sure would work, was to use good ol&#39; <code>+[NSData dataWithContentsOfURL:]</code>. </p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">posterImageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">movie</span><span class="p">.</span><span class="n">posterURL</span><span class="p">)</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">UIImage</span> <span class="nl">imageWithData</span><span class="p">:[</span><span class="bp">NSData</span> <span class="nl">dataWithContentsOfURL</span><span class="p">:</span><span class="n">value</span><span class="p">]];</span>
+<span class="p">}];</span>
+</code></pre></div>
+<p>Success! It was, of course, slow, but it worked.</p>
+
+<h3>Attempt 342</h3>
+
+<p>Since I had a synchronous solution, my next attempt was to see if I could turn it into an asynchronous solution. From what I&#39;ve gathered, <code>deliverOn:[RACScheduler scheduler]</code> will create a signal that delivers subsequent events on a background thread, and <code>deliverOn:[RACScheduler mainThreadScheduler]</code> will deliver events on the main thread. In the spirit of Reactive Cocoa, I combined the two and came up with this:</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">posterImageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">movie</span><span class="p">.</span><span class="n">posterURL</span><span class="p">)</span> <span class="nl">deliverOn</span><span class="p">:[</span><span class="n">RACScheduler</span> <span class="n">scheduler</span><span class="p">]]</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">NSData</span> <span class="nl">dataWithContentsOfURL</span><span class="p">:</span><span class="n">value</span><span class="p">];</span>
+<span class="p">}]</span> <span class="nl">deliverOn</span><span class="p">:[</span><span class="n">RACScheduler</span> <span class="n">mainThreadScheduler</span><span class="p">]]</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="bp">NSData</span> <span class="o">*</span><span class="n">data</span><span class="p">){</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">UIImage</span> <span class="nl">imageWithData</span><span class="p">:</span><span class="n">data</span><span class="p">];</span>
+<span class="p">}];</span>
+</code></pre></div>
+<p>I finally landed a way to asynchronously load images to populate tableview cells, but I&#39;m not settling on this solution because <code>+[UIImage imageWithData]</code> can be slow.</p>
+
+<h3>Attempt N</h3>
+
+<p>In my efforts to find the Holy Grail of how to go about asycnrhonously loading images using Reactive Cocoa, I stumbled across a very interesting <a href="https://github.com/ReactiveCocoa/ReactiveViewModel/issues/16">GitHub issue</a>.² The gentleman in this thread appears to have a working solution using <code>+[NSURLConnection rac_sendAsynchronousRequest:]</code>, but is struggling with a higher level problem. Ash Furrow chimed in on the thread referencing an <a href="https://github.com/ashfurrow/FunctionalReactivePixels/issues/27">issue</a> from his project to see a different solution.³ The code in their dicsussion started out like this:</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">photoModel</span><span class="p">.</span><span class="n">thumbnailData</span><span class="p">)</span> <span class="nl">ignore</span><span class="p">:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">RACSignal</span> <span class="nl">createSignal</span><span class="p">:</span><span class="o">^</span><span class="n">RACDisposable</span> <span class="o">*</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">RACSubscriber</span><span class="o">&gt;</span> <span class="n">subscriber</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">[[</span><span class="n">RACScheduler</span> <span class="nl">schedulerWithPriority</span><span class="p">:</span><span class="n">RACSchedulerPriorityHigh</span><span class="p">]</span> <span class="nl">schedule</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+            <span class="p">[</span><span class="n">value</span> <span class="nl">af_decompressedImageFromJPEGDataWithCallback</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span><span class="n">decompressedImage</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="p">[</span><span class="n">subscriber</span> <span class="nl">sendNext</span><span class="p">:</span><span class="n">decompressedImage</span><span class="p">];</span>
+                 <span class="p">[</span><span class="n">subscriber</span> <span class="n">sendCompleted</span><span class="p">];</span>
+             <span class="p">}];</span>
+        <span class="p">}];</span>
+        <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="p">}];</span>
+<span class="p">}]</span> <span class="n">switchToLatest</span><span class="p">];</span>
+</code></pre></div>
+<p>What&#39;s interesting is that they are creating and returning a signal within their <code>map:</code> block, as opposed to decompressing on the main thread and returning a value object. It makes me wonder why the examples I&#39;ve seen didn&#39;t have to do that, and simply chaining it with <code>reduceEach:</code> was good enough.</p>
+
+<p>When discussing cancelling the background operation, <a href="https://github.com/kastiglione">Dave Lee</a> chimed in, &quot;You could use <code>-subscribeOn:</code> which also takes care of handling cancelation. Even if you don&#39;t, since <code>-schedule:</code> returns a disposable, which can be returned as the result of <code>+createSignal:</code>.&quot;</p>
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c">    <span class="n">RAC</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">imageView</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">RACObserve</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">photoModel</span><span class="p">.</span><span class="n">thumbnailData</span><span class="p">)</span> <span class="nl">ignore</span><span class="p">:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">map</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="n">RACSignal</span> <span class="nl">createSignal</span><span class="p">:</span><span class="o">^</span><span class="n">RACDisposable</span> <span class="o">*</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="n">RACSubscriber</span><span class="o">&gt;</span> <span class="n">subscriber</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">[</span><span class="n">value</span> <span class="nl">af_decompressedImageFromJPEGDataWithCallback</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="bp">UIImage</span> <span class="o">*</span><span class="n">decompressedImage</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="p">[</span><span class="n">subscriber</span> <span class="nl">sendNext</span><span class="p">:</span><span class="n">decompressedImage</span><span class="p">];</span>
+                 <span class="p">[</span><span class="n">subscriber</span> <span class="n">sendCompleted</span><span class="p">];</span>
+             <span class="p">}];</span>
+            <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+        <span class="p">}]</span> <span class="nl">subscribeOn</span><span class="p">:[</span><span class="n">RACScheduler</span> <span class="n">scheduler</span><span class="p">]];</span>
+    <span class="p">}]</span> <span class="n">switchToLatest</span><span class="p">];</span>
+</code></pre></div>
+<p><code>switchToLatest</code> is new to me, and a quick look at the docs says that it &quot;Returns a signal which passes through <code>next</code>s and <code>error</code>s from the latest signal sent by the receiver, and sends <code>completed</code> when both the receiver and the last sent signal complete.&quot; My best guess is since the subscriber of the image is now subscribing to a signal-returning-a-signal, the <code>switchToLatest</code> will ensure that the original subscriber will be sent the <code>next</code> event which will contain a value object: the decompressed <code>UIImage</code>.</p>
+
+<h3>Conclusion</h3>
+
+<p>I never did return to this problem, and left the slower implementation in the code. There are bigger things ahead, and I don&#39;t want this one to slow me down any more. If anyone reading this can steer me in the right direction, I&#39;d appreciate it!</p>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="https://github.com/ashfurrow/FunctionalReactivePixels/blob/aef9b670ec5f14d496049c9e214f99513ca579df/FRP/FRPPhotoImporter.m#L46-L58">[1] Functional Reactive Pixels - FRPPhotoImporter.m:L46-58</a></li>
+<li><a href="https://github.com/ReactiveCocoa/ReactiveViewModel/issues/16">[2] Binding asynchronously loaded images from a view-model</a></li>
+<li><a href="https://github.com/ashfurrow/FunctionalReactivePixels/issues/27">[3] Bad scrolling performance</a></li>
+</ul>
+
+        </div><!-- entry-content -->
+      </div><!-- bd -->
+
+    </div><!-- content -->
+  </div><!-- unit-inner -->
+</article>
+
+
+
+<article class="unit-article layout-page">
+  <div class="unit-inner unit-article-inner">
+    <div class="content">
+      <header>
+        <div class="unit-head">
+          <div class="unit-inner unit-head-inner">
             <!-- <h1 class="h2 entry-title">Reacting to Reactive Cocoa Part II</h1> -->
           </div><!-- unit-inner -->
         </div><!-- unit-head -->
