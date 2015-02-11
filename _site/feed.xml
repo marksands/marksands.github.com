@@ -7,6 +7,89 @@
 		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>A Debugging Story</title>
+				<description>&lt;h3&gt;Forward&lt;/h3&gt;
+
+&lt;p&gt;The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I&amp;#39;ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you&amp;#39;ll have learned something along the way.&lt;/p&gt;
+
+&lt;h3&gt;Unrecognized Selector Sent To Instance&lt;/h3&gt;
+
+&lt;p&gt;It began with initializing Parse. A simple call to &lt;code&gt;[Parse setApplicationid:@&amp;quot;jumbledString&amp;quot; clientId:@&amp;quot;anotherString&amp;quot;];&lt;/code&gt; in the first line of &lt;code&gt;applicationDidFinishLaunching:withOptions:&lt;/code&gt;. This is very standard procedure, and the Parse documentation even says to do this. Unfortunately, the app would consistently crash on this line with &lt;code&gt;[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To make a long story short, I&amp;#39;ll leave out the obvious debugging tidbits and drive closer to the point.&lt;/p&gt;
+
+&lt;p&gt;Using a different, older version of Parse.framework didn&amp;#39;t help either, so it was time to look at the stack trace more carefully to see where exactly the crash was happening. Here&amp;#39;s the relevant parts of the stack trace:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; #0: `-[NSFileManager _URLForReplacingItemAtURL:error:]
+ #1: `_NSCreateTemporaryFile_Protected + 404
+ #2: `_NSWriteDataToFileWithExtendedAttributes + 276
+ #3: `_NSWriteBytesToFileWithExtendedAttributes + 76
+ #4: `writeStringToURLOrPath + 240
+ #5: `-[NSString writeToFile:atomically:encoding:error:] +
+ #6: `+[PFInternalUtils checkCacheApplicationId] + 700 at PFInternalUtils.m:239
+ #7: `+[Parse setApplicationId:clientKey:] + 134 at Parse.m:54
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Register Read&lt;/h3&gt;
+
+&lt;p&gt;I put a symbolic breakpoint on &lt;code&gt;-[NSString writeToFile:atomically:encoding:error:]&lt;/code&gt; to see if anything looked suspicious. When the breakpoint hit, I opened lldb and did a &lt;code&gt;register read&lt;/code&gt; to dump the assembly registers to see if anything stood out. Take a look:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;(lldb) register read
+General Purpose Registers:
+        r0 = 0x0015f7b8  @&amp;quot;jumbledString&amp;quot;
+        r1 = 0x29115a7b  &amp;quot;writeToFile:atomically:encoding:error:&amp;quot;
+        r2 = 0x14641a30
+        r3 = 0x00000001
+        r4 = 0x14641a30
+        r5 = 0x0015f7b8  @&amp;quot;anotherString&amp;quot;
+        r6 = 0x00000000
+        r7 = 0x0031d5ec
+        r8 = 0x0014e996  &amp;quot;dataFilePath:&amp;quot;
+        r9 = 0x00000000
+       r10 = 0x14641000
+       r11 = 0x290ea935  &amp;quot;fileExistsAtPath:&amp;quot;
+       r12 = 0x2618d131  Foundation`-[NSString writeToFile:atomically:encoding:error:] + 1
+        sp = 0x0031d5b8
+        lr = 0x0012679d  Aerie`+[PFInternalUtils checkCacheApplicationId] + 701 at PFInternalUtils.m:239
+        pc = 0x2618d130  Foundation`-[NSString writeToFile:atomically:encoding:error:]
+      cpsr = 0x60000030
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Clearly it was writing something to file at a particular path, and that&amp;#39;s where things went awry. I figured if I could get the exact path it was writing to, and the contents, maybe I could bypass this check and Parse would magically work. Fortunately, register 10 had what we needed:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;(lldb) po 0x14641000
+/var/mobile/Containers/Data/Application/17F2392D-56EF-4259-84AD-1CD9EEA58E89/Library/Private Documents/Parse/applicationId
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I assumed applicationId was a file that held the applicationId string, for whatever reason. The existence of &lt;code&gt;fileExistsAtPath:&lt;/code&gt; in the registers led me to believe that if I created this file at this exact path, all would be well. So I got rid of the call to Parse, and temporarily replaced it with a series of commands to write the applicationId to a file at that location.&lt;/p&gt;
+
+&lt;p&gt;Shockingly, I got the same crash &lt;code&gt;[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance&lt;/code&gt;. Now this led me down an entirely different rabbit whole that I&amp;#39;ll spare you from (it involved POSIX file permissions, and chmodding a bunch of directories).&lt;/p&gt;
+
+&lt;h3&gt;-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/h3&gt;
+
+&lt;p&gt;I decided to open Hopper.app and look at the internals of &lt;code&gt;-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/code&gt;. Sure enough, I spotted a call to &lt;code&gt;stringByReplacingOccurrancesOfString:withString:&lt;/code&gt; halfway down the disassembled code:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CFBundleGetValueForInfoDictionaryKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CFBundleGetMainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;CFBundleName&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var_16&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;stringByReplacingOccurrencesOfString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;withString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;:&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This was the eureka moment I&amp;#39;d been waiting for. The rax register should be an &lt;code&gt;NSString&lt;/code&gt;, but it&amp;#39;s somehow getting converted to a boolean object. To make sure I wasn&amp;#39;t crazy, I copied &lt;code&gt;CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), @&amp;quot;CFBundleName&amp;quot;);&lt;/code&gt; into my AppDelegate to see what value was returned from the function. Calling print object on the &lt;code&gt;CFTypeRef&lt;/code&gt; gave me a plain old 0. I was curious what I would see when I looked at what was set on the BundleName of the Info.plist.&lt;/p&gt;
+
+&lt;h3&gt;Corrupt Info.plist&lt;/h3&gt;
+
+&lt;p&gt;Not surprisingly, the type column of the bundle name said Boolean and the value was NO. A quick revert to the plist and everything worked out great. I was pretty sure this was a mistake, so I checked the commit history to see if this whether always the case: &lt;code&gt;git log -p --follow Project/Info.plist&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-diff&quot; data-lang=&quot;diff&quot;&gt;&lt;span class=&quot;gu&quot;&gt;@@ -11,7 +11,7 @@&lt;/span&gt;
+        &amp;lt;key&amp;gt;CFBundleInfoDictionaryVersion&amp;lt;/key&amp;gt;
+        &amp;lt;string&amp;gt;6.0&amp;lt;/string&amp;gt;
+        &amp;lt;key&amp;gt;CFBundleName&amp;lt;/key&amp;gt;
+&lt;span class=&quot;gd&quot;&gt;-       &amp;lt;string&amp;gt;$(PRODUCT_NAME)&amp;lt;/string&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;gi&quot;&gt;+       &amp;lt;false/&amp;gt;&lt;/span&gt;
+        &amp;lt;key&amp;gt;CFBundlePackageType&amp;lt;/key&amp;gt;
+        &amp;lt;string&amp;gt;APPL&amp;lt;/string&amp;gt;
+        &amp;lt;key&amp;gt;CFBundleShortVersionString&amp;lt;/key&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Lo and behold, it was indeed an accident. But sometimes, accidents present the most interesting problems. Who knew that having a faulty bundle name would prevent you from writing files to disk?&lt;/p&gt;
+
+&lt;p&gt;To recap: we started with a crash, a stack trace, inspecting registers, a poor attempt at monkey patching, disassembling Foundation using Hopper.app, and finally circling back to the corrupt Info.plist file. Careful eyes probably could have spotted this mistake by searching through the commit history, but that&amp;#39;s not always the case. At any rate, I had a lot of fun doing some code spelunking!&lt;/p&gt;
+</description>
+				<pubDate>Tue, 10 Feb 2015 00:00:00 -0600</pubDate>
+				<link>http://marksands.github.io/2015/2/10/a-debugging-story.html</link>
+				<guid isPermaLink="true">http://marksands.github.io/2015/2/10/a-debugging-story.html</guid>
+			</item>
+		
+			<item>
 				<title>Reacting to Reactive Cocoa Part IV</title>
 				<description>&lt;h3&gt;Switching Gears&lt;/h3&gt;
 
@@ -339,31 +422,6 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
 				<pubDate>Tue, 27 May 2014 00:00:00 -0500</pubDate>
 				<link>http://marksands.github.io/2014/05/27/how-apple-cheats.html</link>
 				<guid isPermaLink="true">http://marksands.github.io/2014/05/27/how-apple-cheats.html</guid>
-			</item>
-		
-			<item>
-				<title>Effective Programming</title>
-				<description>&lt;p&gt;Some friends and I have started up a new podcast at Effective Programming. We&amp;#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development&lt;a href=&quot;http://podcast.effectiveprogramming.com&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h4&gt;Episode 1 - TDD in the Balance&lt;/h4&gt;
-
-&lt;p&gt;Episode 1 was a healthy discussion of the pros and cons of &lt;a href=&quot;http://podcast.effectiveprogramming.com/2014/05/15/tdd-in-the-balance.html&quot;&gt;TDD&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h4&gt;Episode 2 - iOS Eventing Frameworks&lt;/h4&gt;
-
-&lt;p&gt;Episode 2 was about &lt;a href=&quot;http://podcast.effectiveprogramming.com/2014/05/19/ios-eventing-frameworks.html&quot;&gt;iOS communication patterns&lt;/a&gt; where we discussed 6 techniques of eventing in iOS while following along with a &lt;a href=&quot;https://github.com/marksands/CommunicationPatterns&quot;&gt;project&lt;/a&gt; that I wrote to heed the discussion.&lt;/p&gt;
-
-&lt;p&gt;We would love it if you would check us out, &lt;a href=&quot;https://itunes.apple.com/us/podcast/effective-programming-podcast&quot;&gt;subscribe on iTunes&lt;/a&gt;, and give us a rating! Let us know what you think on twitter at &lt;a href=&quot;http://www.twitter.com/effprog&quot;&gt;@effprog&lt;/a&gt;!&lt;/p&gt;
-
-&lt;h3&gt;References&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://www.effectiveprogramming.com/&quot;&gt;[1] Effective Programming&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-				<pubDate>Tue, 20 May 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/05/20/effective-programming.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/05/20/effective-programming.html</guid>
 			</item>
 		
 	</channel>
