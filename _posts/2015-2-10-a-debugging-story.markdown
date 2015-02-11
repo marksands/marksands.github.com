@@ -68,7 +68,7 @@ I assumed applicationId was a file that held the applicationId string, for whate
 
 Shockingly, I got the same crash `[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance`. Now this led me down an entirely different rabbit whole that I'll spare you from (it involved POSIX file permissions, and chmodding a bunch of directories).
 
-### -[NSFileManager _URLForReplacingItemAtURL:error:]
+### _URLForReplacingItemAtURL:error:
 
 I decided to open Hopper.app and look at the internals of `-[NSFileManager _URLForReplacingItemAtURL:error:]`. Sure enough, I spotted a call to `stringByReplacingOccurrancesOfString:withString:` halfway down the disassembled code:
 

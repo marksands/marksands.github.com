@@ -59,7 +59,7 @@ General Purpose Registers:
 
 &lt;p&gt;Shockingly, I got the same crash &lt;code&gt;[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance&lt;/code&gt;. Now this led me down an entirely different rabbit whole that I&amp;#39;ll spare you from (it involved POSIX file permissions, and chmodding a bunch of directories).&lt;/p&gt;
 
-&lt;h3&gt;-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/h3&gt;
+&lt;h3&gt;_URLForReplacingItemAtURL:error:&lt;/h3&gt;
 
 &lt;p&gt;I decided to open Hopper.app and look at the internals of &lt;code&gt;-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/code&gt;. Sure enough, I spotted a call to &lt;code&gt;stringByReplacingOccurrancesOfString:withString:&lt;/code&gt; halfway down the disassembled code:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CFBundleGetValueForInfoDictionaryKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CFBundleGetMainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;CFBundleName&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;

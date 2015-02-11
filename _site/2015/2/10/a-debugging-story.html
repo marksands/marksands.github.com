@@ -126,7 +126,7 @@ General Purpose Registers:
 
 <p>Shockingly, I got the same crash <code>[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance</code>. Now this led me down an entirely different rabbit whole that I&#39;ll spare you from (it involved POSIX file permissions, and chmodding a bunch of directories).</p>
 
-<h3>-[NSFileManager _URLForReplacingItemAtURL:error:]</h3>
+<h3>_URLForReplacingItemAtURL:error:</h3>
 
 <p>I decided to open Hopper.app and look at the internals of <code>-[NSFileManager _URLForReplacingItemAtURL:error:]</code>. Sure enough, I spotted a call to <code>stringByReplacingOccurrancesOfString:withString:</code> halfway down the disassembled code:</p>
 <div class="highlight"><pre><code class="language-objc" data-lang="objc">    <span class="n">rax</span> <span class="o">=</span> <span class="n">CFBundleGetValueForInfoDictionaryKey</span><span class="p">(</span><span class="n">CFBundleGetMainBundle</span><span class="p">(),</span> <span class="s">@&quot;CFBundleName&quot;</span><span class="p">);</span>
