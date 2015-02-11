@@ -360,7 +360,7 @@ th, td {
 .unit-article p code, .unit-article li code {
   /* margin: 0 2px; */
   /* padding: 2px 5px; */
-  white-space: nowrap;
+  /* white-space: nowrap; */
   border: 1px solid #F4F4F4;
   background-color: #F8F8F8;
   -webkit-border-radius: 3px;
