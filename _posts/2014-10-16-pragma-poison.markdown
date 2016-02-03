@@ -12,6 +12,8 @@ showads: true
 
 It can be tempting to convert NSNumbers to strings by calling `stringValue`. It's definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that's necessary. You may think calling `[@8.8 stringValue]` returns "8.8", but you'd be wrong; it actually returns "8.800000000000001". Let's take a look at what's going on behind the scenes when we call stringValue to find out why this is happening.
 
+<!-- more -->
+
 ### Behind the Scenes
 
 According to Apple's documentation regarding `stringValue`:[¹](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue)

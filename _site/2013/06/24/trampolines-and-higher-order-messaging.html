@@ -1,90 +1,176 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Trampolines & Higher Order Messaging</title>
-        <meta name="viewport" content="width=device-width">
+<html class="no-js">
+  <head>
+	<meta charset="utf-8">
+	<title>Trampolines & Higher Order Messaging | Mark Sands</title>
+	<meta name="description" content="TrampolinesA trampoline is a small piece of code that is created at run time when the address of a nested function is taken. It normally resides on the stack...">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-Frame-Options" content="sameorigin">
 
-        <!-- syntax highlighting CSS -->
-        <link rel="stylesheet" href="/css/syntax.css">
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/main.css">
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
-    </head>
-    <body>
+	<!-- Canonical -->
+	<link rel="canonical" href="http://marksands.github.io/2013/06/24/trampolines-and-higher-order-messaging.html">
 
-      <div id="page" class="hentry">
-        
-        <header class="the-header">
-          <div class="unit-head">
-            <div class="unit-inner unit-head-inner">
-              <p class="logo"><a href=""></a></p>
-              <nav class="nav-global">
-                <ul>
-                  <li class="github"><a href="http://github.com/marksands">github</a></li>
-                  <li class="twitter"><a href="http://twitter.com/marksands">twitter</a></li>
-                </ul>
-              </nav>
-            </div><!-- unit-inner -->
-          </div><!-- unit-head -->
-        </header>
-        
-        <div class="body" role="main">
-          
-          <!-- begin ads -->
-          <article class="unit-article layout-page">
-            <div class="unit-inner unit-article-inner">
-              <div class="content">
-                <div class="bd">
-                  <div class="entry-content">
-					<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-					<!-- github responsive -->
-					<ins class="adsbygoogle"
-					     style="display:block"
-					     data-ad-client="ca-pub-5267577598224051"
-					     data-ad-slot="6247920616"
-					     data-ad-format="auto"></ins>
-					<script>
-					(adsbygoogle = window.adsbygoogle || []).push({});
-					</script>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-          <!-- end ads -->
-          
-          <div class="unit-body">
-            <div class="unit-inner unit-body-inner">
-              <div class="entry-content">
-                <article class="unit-article layout-post">
-  <div class="unit-inner unit-article-inner">
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<!-- Google Fonts -->
+	
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+
+	<!-- KaTeX -->
+	
+
+	<!-- Google Analytics -->
+	
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-41405801-1', 'auto');
+	ga('send', 'pageview');
+	</script>
+	
+</head>
+
+  <body>
+    <header class="site-header">
+	<div class="branding">
+		
+		<a href="/">
+			<img class="avatar" src="https://secure.gravatar.com/avatar/7a6e4cc366f8f533b056936cf9bcb85d?s=100" alt=""/>
+		</a>
+		
+		<h1 class="site-title">
+			<a href="/">Mark Sands</a>
+		</h1>
+	</div>
+	<nav class="site-nav">
+		<ul>
+			
+			
+			
+			
+			<li>
+				<a class="page-link" href="/about/">
+					About
+				</a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="mailto:marksands07@gmail.com" title="Email">
+		<i class="fa fa-fw fa-envelope"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/marksands" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://twitter.com/marksands" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+
+		</ul>
+	</nav>
+</header>
+
     <div class="content">
-      <header>
-        <div class="unit-head">
-          <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">Trampolines & Higher Order Messaging</h1> -->
-            
-            
-          </div><!-- unit-inner -->
-        </div><!-- unit-head -->
-      </header>
-
-      <div class="bd">
-        <div class="entry-content">
-          <h1>Trampolines & Higher Order Messaging</h1>
-          <h3>Trampolines</h3>
+      <article >
+  <header style="background-image: url('/')">
+    <h1 class="title">Trampolines & Higher Order Messaging</h1>
+    <p class="meta">
+    June 24, 2013
+    
+    </p>
+  </header>
+  <section class="post-content"><h3 id="trampolines">Trampolines</h3>
 
 <p>A trampoline is a small piece of code that is created at run time when the address of a nested function is taken. 
 It normally resides on the stack, in the stack frame of the containing function. The word trampoline is used because execution jumps 
 into the trampoline object and then immediately jumps out.<a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">¹</a></p>
 
+<!-- more -->
+
 <p>A trampoline object in Objective-C is a subclass of <code>NSProxy</code> that is returned by a method and acts like a delegate by forwarding messages to another object. 
 This brings us to higher order messaging.</p>
 
-<h3>Higher Order Messaging</h3>
+<h3 id="higher-order-messaging">Higher Order Messaging</h3>
 
 <p>Higher order messaging allows messages that have messages as arguments. This is analogous to languages that treat functions as a first-class data type, 
 like Lisp, Haskell, and PHP do. Even C and its descendants can use function pointers, although it&#39;s not as pretty. Objective-C is a perfect candidate for 
@@ -92,94 +178,91 @@ higher order messaging, or HOM, since the language is known for its message pass
 
 <p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code>NSArray</code> and assumes ARC is enabled. The <code>#pragma</code> cruff 
 is necessary to silence warnings.</p>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@interface</span> <span class="nc">TFFTrampoline</span> <span class="p">:</span> <span class="nc">NSProxy</span> <span class="p">{</span>
+    <span class="n">id</span> <span class="n">tff_target</span><span class="p">;</span>
+    <span class="n">SEL</span> <span class="n">tff_selector</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">+</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
+<span class="k">@end</span>
 
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="nc">TFFTrampoline</span> : <span class="bp">NSProxy</span> <span class="p">{</span>
-<span class="lineno"> 2</span>     <span class="kt">id</span> <span class="n">tff_target</span><span class="p">;</span>
-<span class="lineno"> 3</span>     <span class="kt">SEL</span> <span class="n">tff_selector</span><span class="p">;</span>
-<span class="lineno"> 4</span> <span class="p">}</span>
-<span class="lineno"> 5</span> <span class="p">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">trampolineWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
-<span class="lineno"> 6</span> <span class="k">@end</span>
-<span class="lineno"> 7</span>  
-<span class="lineno"> 8</span> <span class="k">@implementation</span> <span class="nc">TFFTrampoline</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span> <span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation:</span><span class="p">(</span><span class="bp">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
-<span class="lineno">11</span> <span class="cp">#pragma clang diagnostic push</span>
-<span class="lineno">12</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span>
-<span class="lineno">13</span>     <span class="kt">id</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">tff_target</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">tff_selector</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">anInvocation</span><span class="p">];</span>
-<span class="lineno">14</span>     <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">setReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">result</span><span class="p">];</span>
-<span class="lineno">15</span> <span class="cp">#pragma clang diagnostic pop</span>
-<span class="lineno">16</span> <span class="p">}</span>
-<span class="lineno">17</span>  
-<span class="lineno">18</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
-<span class="lineno">19</span>     <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="nl">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
-<span class="lineno">20</span> <span class="p">}</span>
-<span class="lineno">21</span>  
-<span class="lineno">22</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tff_initWithTarget:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
-<span class="lineno">23</span>     <span class="n">tff_target</span> <span class="o">=</span> <span class="n">aTarget</span><span class="p">;</span>
-<span class="lineno">24</span>     <span class="n">tff_selector</span> <span class="o">=</span> <span class="n">aSelector</span><span class="p">;</span>
-<span class="lineno">25</span>     <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
-<span class="lineno">26</span> <span class="p">}</span>
-<span class="lineno">27</span>  
-<span class="lineno">28</span> <span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:(</span><span class="kt">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
-<span class="lineno">29</span>     <span class="k">return</span> <span class="p">[[</span><span class="nb">self</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nl">selector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
-<span class="lineno">30</span> <span class="p">}</span>
-<span class="lineno">31</span> 
-<span class="lineno">32</span> <span class="k">@end</span></code></pre></div>
+<span class="k">@implementation</span> <span class="nc">TFFTrampoline</span>
 
+<span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation</span><span class="p">:(</span><span class="n">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
+<span class="cp">#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+</span>    <span class="n">id</span> <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">tff_target</span> <span class="nf">performSelector</span><span class="p">:</span><span class="n">tff_selector</span> <span class="nf">withObject</span><span class="p">:</span><span class="n">anInvocation</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">anInvocation</span> <span class="nf">setReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">result</span><span class="p">];</span>
+<span class="cp">#pragma clang diagnostic pop
+</span><span class="p">}</span>
+
+<span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector</span><span class="p">:(</span><span class="n">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="nf">objectAtIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="nf">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+    <span class="n">tff_target</span> <span class="o">=</span> <span class="n">aTarget</span><span class="p">;</span>
+    <span class="n">tff_selector</span> <span class="o">=</span> <span class="n">aSelector</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">+</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nf">selector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="k">@end</span>
+</code></pre></div>
 <p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
 programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@interface</span> <span class="nc">NSArray</span> <span class="p">(</span><span class="nl">Collect</span><span class="p">)</span>
+<span class="err">-</span> <span class="err">(</span><span class="nc">id</span><span class="p">)</span><span class="n">collect</span><span class="p">;</span>
+<span class="k">@end</span>
 
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="k">@interface</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
-<span class="lineno"> 2</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span><span class="p">;</span>
-<span class="lineno"> 3</span> <span class="k">@end</span>
-<span class="lineno"> 4</span>   
-<span class="lineno"> 5</span> <span class="k">@implementation</span> <span class="bp">NSArray</span> <span class="nl">(Collect)</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="p">-</span> <span class="p">(</span><span class="bp">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">collect:</span><span class="p">(</span><span class="bp">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
-<span class="lineno"> 8</span>     <span class="bp">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
-<span class="lineno"> 9</span>     
-<span class="lineno">10</span>     <span class="k">for</span> <span class="p">(</span><span class="kt">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno">11</span>         <span class="n">__unsafe_unretained</span> <span class="kt">id</span> <span class="n">resultObject</span><span class="p">;</span>
-<span class="lineno">12</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">invokeWithTarget</span><span class="p">:</span><span class="n">obj</span><span class="p">];</span>
-<span class="lineno">13</span>         <span class="p">[</span><span class="n">anInvocation</span> <span class="nl">getReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">resultObject</span><span class="p">];</span>
-<span class="lineno">14</span>         <span class="p">[</span><span class="n">resultArray</span> <span class="nl">addObject</span><span class="p">:</span><span class="n">resultObject</span><span class="p">];</span>
-<span class="lineno">15</span>     <span class="p">}</span>
-<span class="lineno">16</span>     <span class="k">return</span> <span class="n">resultArray</span><span class="p">;</span>
-<span class="lineno">17</span> <span class="p">}</span>
-<span class="lineno">18</span> 
-<span class="lineno">19</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">collect</span> <span class="p">{</span>
-<span class="lineno">20</span>     <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="nl">trampolineWithTarget</span><span class="p">:</span><span class="nb">self</span> <span class="nl">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">collect</span><span class="p">:)];</span>
-<span class="lineno">21</span> <span class="p">}</span>
-<span class="lineno">22</span> 
-<span class="lineno">23</span> <span class="k">@end</span></code></pre></div>
+<span class="k">@implementation</span> <span class="nc">NSArray</span> <span class="p">(</span><span class="nl">Collect</span><span class="p">)</span>
 
+<span class="err">-</span> <span class="err">(</span><span class="nc">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="n">collect</span><span class="o">:</span><span class="p">(</span><span class="n">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="n">anInvocation</span> <span class="p">{</span>
+    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nf">array</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">__unsafe_unretained</span> <span class="n">id</span> <span class="n">resultObject</span><span class="p">;</span>
+        <span class="p">[</span><span class="n">anInvocation</span> <span class="nf">invokeWithTarget</span><span class="p">:</span><span class="n">obj</span><span class="p">];</span>
+        <span class="p">[</span><span class="n">anInvocation</span> <span class="nf">getReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">resultObject</span><span class="p">];</span>
+        <span class="p">[</span><span class="n">resultArray</span> <span class="nf">addObject</span><span class="p">:</span><span class="n">resultObject</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">resultArray</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">collect</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">TFFTrampoline</span> <span class="nf">trampolineWithTarget</span><span class="p">:</span><span class="n">self</span> <span class="nf">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nf">collect</span><span class="p">:)];</span>
+<span class="p">}</span>
+
+<span class="k">@end</span>
+</code></pre></div>
 <p>Here, our <code>NSArray</code> category implements a public <code>collect</code> method that will return our trampoline object to bounce the method argument to the private <code>collect:</code> method 
 that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</p>
 
 <p>Last but not least, below is an example of how one would use this implementation.</p>
-
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
-<span class="lineno"> 2</span> <span class="cp">#pragma clang diagnostic push</span>
-<span class="lineno"> 3</span> <span class="cp">#pragma clang diagnostic ignored &quot;-Wincompatible-pointer-types&quot;</span>
-<span class="lineno"> 4</span>     <span class="k">@autoreleasepool</span> <span class="p">{</span>
-<span class="lineno"> 5</span>         <span class="c1">// Modify</span>
-<span class="lineno"> 6</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;small&quot;</span><span class="p">,</span> <span class="s">@&quot;cased&quot;</span><span class="p">,</span> <span class="s">@&quot;words&quot;</span> <span class="l">]</span><span class="p">;</span>
-<span class="lineno"> 7</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="n">collect</span><span class="p">]</span> <span class="n">uppercaseString</span><span class="p">];</span>
-<span class="lineno"> 8</span>         <span class="c1">// ( @&quot;SMALL&quot;, @&quot;CASED&quot;, @&quot;WORDS&quot; )</span>
-<span class="lineno"> 9</span>         
-<span class="lineno">10</span>         <span class="c1">// Convert</span>
-<span class="lineno">11</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="l">@[</span> <span class="l">@(</span><span class="mf">3.14</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">2.71</span><span class="l">)</span><span class="p">,</span> <span class="l">@(</span><span class="mf">0.577</span><span class="l">)</span> <span class="l">]</span><span class="p">;</span>
-<span class="lineno">12</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="n">collect</span><span class="p">]</span> <span class="n">stringValue</span><span class="p">];</span>
-<span class="lineno">13</span>         <span class="c1">// ( @&quot;3.14&quot;, @&quot;2.71&quot;, @&quot;0.577&quot; )</span>
-<span class="lineno">14</span>         
-<span class="lineno">15</span>         <span class="c1">// An exercise for the reader could be to implement a select method to filter results</span>
-<span class="lineno">16</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="l">@[</span> <span class="s">@&quot;Scooby&quot;</span><span class="p">,</span> <span class="s">@&quot;Clifford&quot;</span><span class="p">,</span> <span class="s">@&quot;Snoopy&quot;</span> <span class="l">]</span><span class="p">;</span>
-<span class="lineno">17</span>         <span class="bp">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="n">select</span><span class="p">]</span> <span class="nl">isNamed</span><span class="p">:</span><span class="s">@&quot;Clifford&quot;</span><span class="p">];</span>
-<span class="lineno">18</span>         <span class="c1">// ( @&quot;Clifford&quot; )</span>
-<span class="lineno">19</span>     <span class="p">}</span>
-<span class="lineno">20</span> <span class="cp">#pragma clang diagnostic pop</span>
-<span class="lineno">21</span> <span class="p">}</span></code></pre></div>
-
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+<span class="cp">#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+</span>    <span class="err">@autoreleasepool</span> <span class="p">{</span>
+        <span class="c1">// Modify
+</span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@"small"</span><span class="p">,</span> <span class="s">@"cased"</span><span class="p">,</span> <span class="s">@"words"</span> <span class="p">];</span>
+        <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="nf">collect</span><span class="p">]</span> <span class="nf">uppercaseString</span><span class="p">];</span>
+        <span class="c1">// ( @"SMALL", @"CASED", @"WORDS" )
+</span>
+        <span class="c1">// Convert
+</span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="p">@[</span> <span class="err">@</span><span class="p">(</span><span class="mi">3</span><span class="p">.</span><span class="mi">14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mi">2</span><span class="p">.</span><span class="mi">71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">577</span><span class="p">)</span> <span class="p">];</span>
+        <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="nf">collect</span><span class="p">]</span> <span class="nf">stringValue</span><span class="p">];</span>
+        <span class="c1">// ( @"3.14", @"2.71", @"0.577" )
+</span>
+        <span class="c1">// An exercise for the reader could be to implement a select method to filter results
+</span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@"Scooby"</span><span class="p">,</span> <span class="s">@"Clifford"</span><span class="p">,</span> <span class="s">@"Snoopy"</span> <span class="p">];</span>
+        <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="nf">select</span><span class="p">]</span> <span class="nf">isNamed</span><span class="p">:</span><span class="s">@"Clifford"</span><span class="p">];</span>
+        <span class="c1">// ( @"Clifford" )
+</span>    <span class="p">}</span>
+<span class="cp">#pragma clang diagnostic pop
+</span><span class="p">}</span>
+</code></pre></div>
 <p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
 good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
 internalized in this manner.</p>
@@ -188,101 +271,64 @@ internalized in this manner.</p>
 case could be a protocol checker to act as a proxy for an object and only pass messages through that are part of a given protocol, but the possibilities are, 
 of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
 
-<h3>References</h3>
+<h3 id="references">References</h3>
 
 <ul>
 <li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
 <li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
 <li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
 </ul>
-
-          <div class="meta">
-            <p class="date-publish">
-              Published:
-              <date class="date-pub" title="2013-06-24T00:00:00-05:00" datetime="2013-06-24T00:00:00-05:00" pubdate>
-              <span class="month"><abbr>June</abbr></span>
-              <span class="day">24</span>
-              <span class="year">2013</span>
-              </date>
-            </p>
-          </div><!-- meta -->
-          
-          <div class="comments">
-            
-            <div id="disqus_thread"></div>
-            <script type="text/javascript">
-                /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                var disqus_shortname = 'marksandsgithub'; // required: replace example with your forum shortname
-
-                /* * * DON'T EDIT BELOW THIS LINE * * */
-                (function() {
-                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-            <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-            
-          </div><!-- comments -->
-        </div><!-- entry-content -->
-      </div><!-- bd -->
-      <footer class="unit-foot">
-        <div class="unit-inner unit-foot-inner">
-          <nav class="pagination">
-            <ul>
-              
-              <li class="prev"><a class="internal" rel="prev"  href="/2013/05/31/builder-pattern.html" title="View Builder Pattern">&laquo; Builder Pattern</a></li>
-              
-              
-              <li class="pipe"> | </li>
-              
-              
-              <li class="next"><a class="internal" rel="next"  href="/2013/07/11/fixing-uicolor.html" title="View Fixing UIColor">Fixing UIColor &raquo;</a></li>
-              
-            </ul>
-          </nav>
-      </footer>
-
-    </div><!-- content -->
-  </div><!-- unit-inner -->
+</section>
 </article>
 
-              </div>
-            </div><!-- unit-inner -->
-          </div><!-- unit-body -->
-        </div><!-- body -->
+<!-- Post navigation -->
 
-      </div><!-- page -->
+<div id="post-nav">
+    
+    <a id="prev-post" href="/2013/05/31/builder-pattern.html">
+      <span class="page-title">Builder Pattern</span>
+      <span class="nav-label">
+        <i class="fa fa-chevron-left"></i> Prev
+      </span>
+    </a>
+    
+    
+    <a id="next-post" href="/2013/07/11/fixing-uicolor.html">
+       <span class="page-title">Fixing UIColor</span>
+       <span class="nav-label">
+        Next <i class="fa fa-chevron-right"></i>
+       </span>
+     </a>
+    
+</div>
 
-		<script>
-			/*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
-			(function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
-		</script>
-      
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-41405801-1', 'marksands.github.io');
-			ga('send', 'pageview');
-		</script>
+<!-- Disqus -->
 
-		<script type="text/javascript">var _kmq = _kmq || [];
-			var _kmk = _kmk || '61c42d0613ba9e478d7963a3e2e30d87c185d1bf';
-			function _kms(u){
-			  setTimeout(function(){
-			    var d = document, f = d.getElementsByTagName('script')[0],
-			    s = d.createElement('script');
-			    s.type = 'text/javascript'; s.async = true; s.src = u;
-			    f.parentNode.insertBefore(s, f);
-			  }, 1);
-			}
-			_kms('//i.kissmetrics.com/i.js');
-			_kms('//doug1izaerwt3.cloudfront.net/' + _kmk + '.1.js');
-		</script>
+<div class="comments">
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+	var disqus_shortname = 'marksandsgithub';
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
-    </body>
+</div>
+
+
+    </div>
+    
+
+
+<footer class="site-footer">
+	<p class="text">Powered by <a href="http://jekyllrb.com">Jekyll</a>
+</p>
+</footer>
+
+
+  </body>
 </html>

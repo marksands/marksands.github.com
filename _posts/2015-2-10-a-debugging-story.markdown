@@ -12,6 +12,8 @@ showads: true
 
 The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I'll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you'll have learned something along the way.
 
+<!-- more -->
+
 ### Unrecognized Selector Sent To Instance
 
 It began with initializing Parse. A simple call to `[Parse setApplicationid:@"jumbledString" clientId:@"anotherString"];` in the first line of `applicationDidFinishLaunching:withOptions:`. This is very standard procedure, and the Parse documentation even says to do this. Unfortunately, the app would consistently crash on this line with `[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance`.
@@ -20,7 +22,7 @@ To make a long story short, I'll leave out the obvious debugging tidbits and dri
 
 Using a different, older version of Parse.framework didn't help either, so it was time to look at the stack trace more carefully to see where exactly the crash was happening. Here's the relevant parts of the stack trace:
 
-```
+```bash
  #0: `-[NSFileManager _URLForReplacingItemAtURL:error:]
  #1: `_NSCreateTemporaryFile_Protected + 404
  #2: `_NSWriteDataToFileWithExtendedAttributes + 276

@@ -18,12 +18,14 @@ needs to be tied to the lifespan of suitable objects in order to gain automatic
 allocation and reclamation. Resources are acquired during initialization, and 
 guaranteed to be released with the destruction of the same objects.
 
+<!-- more -->
+
 For local objects allocated on the stack, the languages scoping rules ensure that 
 the destructor is called when its scope ends. Thus, by putting the resource release 
 logic in the destructor, C++'s scoping provides direct support for 
 RAII[¹](http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization):
 
-{% highlight c++ linenos %}
+```c++
 #include <iostream>
 #include <chrono>
 
@@ -47,8 +49,7 @@ int main() {
     Timer t;
     // some long expensive calculation
 }
-
-{% endhighlight %}
+```
 
 In this snippet, the Timer class demonstrates using RAII to calculate and display
 the time it takes for a portion of code to execute. A Timer object, `t`, is 
@@ -72,15 +73,14 @@ helper function that moves its resources into a different object. The main diffe
 between `unique_ptr` and `shared_ptr` is that unique_ptr does not have shared-ownership,
 meaning there is only one reference available at a time[²](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf):
 
-{% highlight c++ linenos %}
+```c++
 int main() {
     std::unique_ptr<int> p(new int(42));
     std::unique_ptr<int> p2 = std::move(p);
     assert(p == nullptr);
     std::cout << *p2;
 }
-
-{% endhighlight %}
+```
 
 One useful example of this is the `pimpl` idiom, where you have a pointer
 to some class that implements all of its methods. This is useful for breaking 
@@ -92,14 +92,13 @@ have shared ownership, meaining the last remaining owner of the pointer is respo
 for destroying the object, or otherwise releasing the resources associated with 
 the stored pointer[³](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf).
 
-{% highlight c++ linenos %}
+```c++
 int main() {
   std::shared_ptr<int> sp(new int(42));
   std::shard_ptr<int> sp2(sp);
   std::cout << *sp << " " << *sp2;
 }
-
-{% endhighlight %}
+```
 
 ### References
 

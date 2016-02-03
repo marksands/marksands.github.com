@@ -12,6 +12,8 @@ showads: true
 
 This post is an overview of an alternative approach to attaching [Reveal](http://revealapp.com/) or [Spark](http://www.sparkinspector.com/) to third party apps on a jailbroken device. Peter Steinberger posted a [blog post](http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/) demonstrating how this works using MobileSubstrate. Unfortunately, this approach didn't work for me and a few others that shared my woes via Twitter.
 
+<!-- more -->
+
 As Peter said in his blog post, the iOS7 jailbreak will allow us to attach the debugger to 3rd party apps in order to study the view heirarchy of complex apps. This will provide developers with insight to how others have approached similar problems.[¹](http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/)
 
 ### Jailbreak + Setup

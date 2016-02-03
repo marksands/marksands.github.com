@@ -1,12 +1,63 @@
-name: Mark Sands
-description: Programming Tidbits
-url: http://marksands.github.io
+# SITE CONFIGURATION
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://marksands.github.io" # the base hostname & protocol for your site
 
-highlighter: pygments
+# THEME-SPECIFIC CONFIGURATION
+theme:
+    title: "Mark Sands"
+    avatar: avatar.png
+    gravatar: "7a6e4cc366f8f533b056936cf9bcb85d"
+    description: Programming Tidbits
+    #header_text:
+    # Header and footer text
+    # header_text: >
+    # <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    # header_text_feature_image:
+    footer_text: >
+        Powered by <a href="http://jekyllrb.com">Jekyll</a>
+
+    # Icons
+    rss: true
+    email_address: marksands07@gmail.com
+    github: "marksands"
+    twitter: "marksands"
+
+    # Scripts
+    google_analytics: "UA-41405801-1"
+    disqus_shortname: "marksandsgithub"
+    # katex: true # Enable if using math markup
+
+    # Localization strings
+    str_follow_on: "Follow on"
+    str_rss_follow: "Follow RSS feed"
+    str_email: "Email"
+    str_next: "Next"
+    str_prev: "Prev"
+    str_continue_reading: "Continue reading"
+
+    # Colours, typography and padding
+    # Open the "_sass > base" folder, and open "_variables.scss"
+    google_fonts: "Source+Sans+Pro:400,700,700italic,400italic"
+
+    #Post navigation
+    post_navigation: true
+
+gems: [jekyll-paginate]
+
+# PAGINATION
+paginate: 5
+paginate_path: "/blog/:num/"
+
+excerpt_separator: "<!-- more -->"
+
+# BUILD SETTINGS
 markdown: redcarpet
 
-author:
-  name: Mark Sands
-  email: marksands07@gmail.com
-  github: marksands
-  twitter: marksands
+redcarpet:
+    input: GFM
+    syntax_highlighter: rouge
+    extensions: ["tables", "autolink", "strikethrough", "space_after_headers", "with_toc_data", "fenced_code_blocks"]
+
+    sass:
+        sass_dir: _sass
+        style: :compressed

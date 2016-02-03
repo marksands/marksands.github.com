@@ -1,214 +1,261 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>How Apple Cheats</title>
-        <meta name="viewport" content="width=device-width">
+<html class="no-js">
+  <head>
+	<meta charset="utf-8">
+	<title>How Apple Cheats | Mark Sands</title>
+	<meta name="description" content="As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprisi...">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-Frame-Options" content="sameorigin">
 
-        <!-- syntax highlighting CSS -->
-        <link rel="stylesheet" href="/css/syntax.css">
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/main.css">
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
-    </head>
-    <body>
+	<!-- Canonical -->
+	<link rel="canonical" href="http://marksands.github.io/2014/05/27/how-apple-cheats.html">
 
-      <div id="page" class="hentry">
-        
-        <header class="the-header">
-          <div class="unit-head">
-            <div class="unit-inner unit-head-inner">
-              <p class="logo"><a href=""></a></p>
-              <nav class="nav-global">
-                <ul>
-                  <li class="github"><a href="http://github.com/marksands">github</a></li>
-                  <li class="twitter"><a href="http://twitter.com/marksands">twitter</a></li>
-                </ul>
-              </nav>
-            </div><!-- unit-inner -->
-          </div><!-- unit-head -->
-        </header>
-        
-        <div class="body" role="main">
-          
-          <!-- begin ads -->
-          <article class="unit-article layout-page">
-            <div class="unit-inner unit-article-inner">
-              <div class="content">
-                <div class="bd">
-                  <div class="entry-content">
-					<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-					<!-- github responsive -->
-					<ins class="adsbygoogle"
-					     style="display:block"
-					     data-ad-client="ca-pub-5267577598224051"
-					     data-ad-slot="6247920616"
-					     data-ad-format="auto"></ins>
-					<script>
-					(adsbygoogle = window.adsbygoogle || []).push({});
-					</script>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-          <!-- end ads -->
-          
-          <div class="unit-body">
-            <div class="unit-inner unit-body-inner">
-              <div class="entry-content">
-                <article class="unit-article layout-post">
-  <div class="unit-inner unit-article-inner">
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<!-- Google Fonts -->
+	
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+
+	<!-- KaTeX -->
+	
+
+	<!-- Google Analytics -->
+	
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-41405801-1', 'auto');
+	ga('send', 'pageview');
+	</script>
+	
+</head>
+
+  <body>
+    <header class="site-header">
+	<div class="branding">
+		
+		<a href="/">
+			<img class="avatar" src="https://secure.gravatar.com/avatar/7a6e4cc366f8f533b056936cf9bcb85d?s=100" alt=""/>
+		</a>
+		
+		<h1 class="site-title">
+			<a href="/">Mark Sands</a>
+		</h1>
+	</div>
+	<nav class="site-nav">
+		<ul>
+			
+			
+			
+			
+			<li>
+				<a class="page-link" href="/about/">
+					About
+				</a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="mailto:marksands07@gmail.com" title="Email">
+		<i class="fa fa-fw fa-envelope"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/marksands" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://twitter.com/marksands" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+
+		</ul>
+	</nav>
+</header>
+
     <div class="content">
-      <header>
-        <div class="unit-head">
-          <div class="unit-inner unit-head-inner">
-            <!-- <h1 class="h2 entry-title">How Apple Cheats</h1> -->
-            
-            
-          </div><!-- unit-inner -->
-        </div><!-- unit-head -->
-      </header>
+      <article >
+  <header style="background-image: url('/')">
+    <h1 class="title">How Apple Cheats</h1>
+    <p class="meta">
+    May 27, 2014
+    
+    </p>
+  </header>
+  <section class="post-content"><p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
 
-      <div class="bd">
-        <div class="entry-content">
-          <h1>How Apple Cheats</h1>
-          <p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
+<!-- more -->
 
-<h3>UIPopoverController on the iPhone</h3>
+<h3 id="uipopovercontroller-on-the-iphone">UIPopoverController on the iPhone</h3>
 
 <p>One UIKit component iBooks uses is UIPopoverController. This is frustrating because UIPopoverController is reservered for iPad development only. So how does iBooks implement an iPod/iPhone compatible UIPopoverController? I <a href="http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html">inspected</a> iBooks on a jailbroken iPod touch to verify that the popover was in fact the UIPopoverController class and not a cheap replacement. To be sure I wasn&#39;t crazy, I created a new iOS project targeted for iPhone and spun up a quick <code>UIPopoverController</code> Hello World app. Sure enough, it crashed <code>-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.</code> If this is true, then how on earth is Apple getting around this?</p>
 
-<h3>The Secret Sauce</h3>
+<h3 id="the-secret-sauce">The Secret Sauce</h3>
 
 <p>In order to find out Apple&#39;s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here&#39;s sort of what Apple&#39;s code <s>may look like</s> looks like under the covers when creating a UIPopoverController.</p>
-
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno"> 1</span> <span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithContentViewController:</span><span class="p">(</span><span class="bp">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
-<span class="lineno"> 2</span>  <span class="k">if</span> <span class="p">(([[</span><span class="bp">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
-<span class="lineno"> 3</span>      <span class="k">if</span> <span class="p">([[</span><span class="bp">UIDevice</span> <span class="n">currentDevice</span><span class="p">]</span> <span class="n">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
-<span class="lineno"> 4</span>          <span class="k">if</span> <span class="p">([</span><span class="bp">UIPopoverController</span> <span class="n">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
-<span class="lineno"> 5</span>              <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="n">NSInvalidArgumentException</span> <span class="nl">format</span><span class="p">:</span><span class="s">@&quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&quot;</span><span class="p">];</span>
-<span class="lineno"> 6</span>          <span class="p">}</span>
-<span class="lineno"> 7</span>      <span class="p">}</span>
-<span class="lineno"> 8</span>  <span class="p">}</span>    
-<span class="lineno"> 9</span>  <span class="p">...</span>
-<span class="lineno">10</span> <span class="p">}</span></code></pre></div>
-
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">initWithContentViewController</span><span class="p">:(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">([</span><span class="n">UIPopoverController</span> <span class="nf">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
+                <span class="p">[</span><span class="n">NSException</span> <span class="nf">raise</span><span class="p">:</span><span class="n">NSInvalidArgumentException</span> <span class="nf">format</span><span class="p">:</span><span class="s">@"-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad."</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>   
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what&#39;s this private class method <code>_popoversDisabled</code>? Let&#39;s open that up to find out.</p>
-
-<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="lineno">1</span> <span class="p">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">_popoversDisabled</span> <span class="p">{</span>
-<span class="lineno">2</span>     <span class="bp">NSString</span> <span class="o">*</span><span class="n">bundleIdentifier</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">bundleIdentifier</span><span class="p">];</span>
-<span class="lineno">3</span>     <span class="k">if</span> <span class="p">([</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.iBooks&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.mobilesafari&quot;</span><span class="p">]</span> <span class="o">||</span> 
-<span class="lineno">4</span>       <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.itunesu&quot;</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;com.apple.Maps&quot;</span><span class="p">])</span> <span class="p">{</span>
-<span class="lineno">5</span>       <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
-<span class="lineno">6</span>   <span class="p">}</span>
-<span class="lineno">7</span>   <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
-<span class="lineno">8</span> <span class="p">}</span></code></pre></div>
-
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">+</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="n">_popoversDisabled</span> <span class="p">{</span>
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">bundleIdentifier</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSBundle</span> <span class="nf">mainBundle</span><span class="p">]</span> <span class="nf">bundleIdentifier</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.iBooks"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.mobilesafari"</span><span class="p">]</span> <span class="o">||</span> 
+        <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.itunesu"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.Maps"</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>Say what?! Did Apple seriously grant access to four of their native apps by hardcoding their bundle identifiers? Yep, they sure did².</p>
 
 <p>In fact, you don&#39;t have to do anything special to verify this. If you change your <code>UIPopoverController</code> Hello World project&#39;s Info.plist bundle identifier to <code>com.apple.iBooks</code> or <code>com.apple.itunesu</code>, then voilà, It works!</p>
 
-<h3>What now?</h3>
+<h3 id="what-now">What now?</h3>
 
 <p>It&#39;s interesting to see how Apple bends the rules for their benefit, but I think there is something more telling here. The fact of the matter is, <code>UIPopoverController</code> works on the iPhone and iPod touch out of the box. Apple simply has it locked down for now. Will iOS 8 finally bring <code>UIPopoverController</code> support to the iPhone and iPod touch? One can hope! At least we only have to wait until next week to find out.</p>
 
-<h3>References</h3>
+<h3 id="references">References</h3>
 
 <ul>
 <li><a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">[1] iBooks and Private APIs</a></li>
 <li>[2] +[UIPoverController _popoversDisabled] My rudimentary debugging skills must note that it&#39;s possible I overlooked something and more apps have their hands untied than just these four</li>
 </ul>
-
-          <div class="meta">
-            <p class="date-publish">
-              Published:
-              <date class="date-pub" title="2014-05-27T00:00:00-05:00" datetime="2014-05-27T00:00:00-05:00" pubdate>
-              <span class="month"><abbr>May</abbr></span>
-              <span class="day">27</span>
-              <span class="year">2014</span>
-              </date>
-            </p>
-          </div><!-- meta -->
-          
-          <div class="comments">
-            
-            <div id="disqus_thread"></div>
-            <script type="text/javascript">
-                /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                var disqus_shortname = 'marksandsgithub'; // required: replace example with your forum shortname
-
-                /* * * DON'T EDIT BELOW THIS LINE * * */
-                (function() {
-                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                })();
-            </script>
-            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-            <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-            
-          </div><!-- comments -->
-        </div><!-- entry-content -->
-      </div><!-- bd -->
-      <footer class="unit-foot">
-        <div class="unit-inner unit-foot-inner">
-          <nav class="pagination">
-            <ul>
-              
-              <li class="prev"><a class="internal" rel="prev"  href="/2014/05/20/effective-programming.html" title="View Effective Programming">&laquo; Effective Programming</a></li>
-              
-              
-              <li class="pipe"> | </li>
-              
-              
-              <li class="next"><a class="internal" rel="next"  href="/2014/05/30/effective-pair-programming.html" title="View Effective Pair Programming">Effective Pair Programming &raquo;</a></li>
-              
-            </ul>
-          </nav>
-      </footer>
-
-    </div><!-- content -->
-  </div><!-- unit-inner -->
+</section>
 </article>
 
-              </div>
-            </div><!-- unit-inner -->
-          </div><!-- unit-body -->
-        </div><!-- body -->
+<!-- Post navigation -->
 
-      </div><!-- page -->
+<div id="post-nav">
+    
+    <a id="prev-post" href="/2014/05/20/effective-programming.html">
+      <span class="page-title">Effective Programming</span>
+      <span class="nav-label">
+        <i class="fa fa-chevron-left"></i> Prev
+      </span>
+    </a>
+    
+    
+    <a id="next-post" href="/2014/05/30/effective-pair-programming.html">
+       <span class="page-title">Effective Pair Programming</span>
+       <span class="nav-label">
+        Next <i class="fa fa-chevron-right"></i>
+       </span>
+     </a>
+    
+</div>
 
-		<script>
-			/*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
-			(function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
-		</script>
-      
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-41405801-1', 'marksands.github.io');
-			ga('send', 'pageview');
-		</script>
+<!-- Disqus -->
 
-		<script type="text/javascript">var _kmq = _kmq || [];
-			var _kmk = _kmk || '61c42d0613ba9e478d7963a3e2e30d87c185d1bf';
-			function _kms(u){
-			  setTimeout(function(){
-			    var d = document, f = d.getElementsByTagName('script')[0],
-			    s = d.createElement('script');
-			    s.type = 'text/javascript'; s.async = true; s.src = u;
-			    f.parentNode.insertBefore(s, f);
-			  }, 1);
-			}
-			_kms('//i.kissmetrics.com/i.js');
-			_kms('//doug1izaerwt3.cloudfront.net/' + _kmk + '.1.js');
-		</script>
+<div class="comments">
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+	var disqus_shortname = 'marksandsgithub';
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
-    </body>
+</div>
+
+
+    </div>
+    
+
+
+<footer class="site-footer">
+	<p class="text">Powered by <a href="http://jekyllrb.com">Jekyll</a>
+</p>
+</footer>
+
+
+  </body>
 </html>

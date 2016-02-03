@@ -13,6 +13,8 @@ showads: true
 `UIColor` is a commonly used class that represents color and sometimes opacity. As it turns out, `UIColor` is a class cluster made up of a couple of private concrete subclasses. 
 Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.[¹](http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34)
 
+<!-- more -->
+
 ### Red, Green, Blue
 
 As of iOS 6, subclasses of the `UIColor` class cluster include [`UIDeviceWhiteColor`](https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h) 
@@ -37,7 +39,7 @@ checks the number of the color components using `getRed:green:blue:alpha` for `U
 components from `UIDeviceWhiteColor` objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
 moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.
 
-{% highlight objective-c linenos %}
+```objc
 #import <objc/runtime.h>
 
 @implementation UIColor (ColorComponents)
@@ -72,9 +74,7 @@ moved the redundant color space checking behind the scenes and provided ourselve
 }
 
 @end
-
-{% endhighlight %}
-
+```
 
 ### References
 

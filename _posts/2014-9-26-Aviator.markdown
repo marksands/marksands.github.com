@@ -12,6 +12,8 @@ showads: true
 
 Recently, I became interested in the process of building Xcode plugins, digging into the private headers, using hopper to dissect the framework, and experimenting with the existing plugins already available on the web. I switch back and forth quite a bit between AppCode and Xcode, mainly  using AppCode for its superior refactoring tools. Besides refactoring tools, AppCode has a lot of great shortcuts that I wish Xcode has. ⌥↩ adds missing imports and ⇧⌘T toggles between unit tests and source files. [Peckham](https://github.com/markohlebar/Peckham) is a plugin that already exists and does a decent job at adding missing imports, though I wish it was as simple as ⌥↩. That left me with ⇧⌘T as a good intro to Xcode plugin creation. If you're interested in how to get started creating Xcode plugins, Artsy has a [great blog post](http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/)[¹](http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/).
 
+<!-- more -->
+
 I spent an evening experiementing, and, within a few hours, [Aviator](https://github.com/marksands/Aviator/) was born. Aviator currently only supports the ⇧⌘T shortcut to toggle between a unit test and its source file counterpart. I'd like to extend Aviator to add more missing Xcode shortcuts, so expect more from this in the future. I'm looking for ideas on what to add next, so let me know and I'll see what I can do[²](https://github.com/marksands/Aviator/)!
 
 ### References

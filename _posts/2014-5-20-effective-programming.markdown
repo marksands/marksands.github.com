@@ -10,6 +10,8 @@ showads: true
 
 Some friends and I have started up a new podcast at Effective Programming. We're a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development[¹](http://podcast.effectiveprogramming.com).
 
+<!-- more -->
+
 #### Episode 1 - TDD in the Balance
 
 Episode 1 was a healthy discussion of the pros and cons of [TDD](http://podcast.effectiveprogramming.com/2014/05/15/tdd-in-the-balance.html).

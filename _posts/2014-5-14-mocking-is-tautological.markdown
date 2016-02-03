@@ -12,6 +12,8 @@ showads: true
 
 When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.
 
+<!-- more -->
+
 On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹
 
 ### Dependencies and Decisions

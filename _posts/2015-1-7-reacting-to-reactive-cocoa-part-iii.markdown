@@ -12,13 +12,15 @@ showads: true
 
 One of my first endevours into the realm of expanding my `RACObserve`-fu was to asynchronously load a `UIImage` from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using `AFNetworking`'s built-in mechanism or a third party caching library such as `SDWebImage` would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I've so graciously poured.
 
+<!-- more -->
+
 This one was hard. I gave it several attempts before finally coming to a working solution, but I never did find the answer I wanted.
 
 ### Attempt 1
 
 I never got my first attempt at this to work, but I'll show the broken code nonetheless. I began my endevour by shamelessly stealing a code snippet from a project on GitHub called [Functional Reactive Pixels](https://github.com/ashfurrow/FunctionalReactivePixels/blob/aef9b670ec5f14d496049c9e214f99513ca579df/FRP/FRPPhotoImporter.m#L46-L58). The code snippet is slightly different from what I ended up with, but the overal theme is the same: I create an `NSURLRequest`, use the `rac_sendAsynchronousRequest` category method, call `reduceEach` to deflate the `RACTuple` into the appropriate parameters, return the `NSData` from the response, deliver the signal on the main thread, map the `NSData` again to return the `UIImage` form of the bytes, and eventually finish with a call to `publish` and `autoconnect` (whew!).
 
-```objective-c
+```objc
     RAC(self.posterImageView, image) = [RACObserve(self, movie.posterURL) map:^id(id value) {
         NSURLRequest *request = [NSURLRequest requestWithURL:value];
         return [[[[[[NSURLConnection rac_sendAsynchronousRequest:request] reduceEach:^id(NSURLResponse *response, NSData *data){
@@ -42,7 +44,7 @@ Ultimately, this code never worked. Each time it ran, it would crash and throw t
 
 My second try was to slim down my first approach, using only what I thought was absolutely necessary to make it work. I removed the final 3 lines of the block and returned the `UIImage` instead of the `NSData` object to be mapped over again and then returned as an image. This looked promising, but unfortunately gave me the identical stack trace as the first attempt.
 
-```objective-c
+```objc
     RAC(self.posterImageView, image) = [RACObserve(self, movie.posterURL) map:^id(id value) {
         NSURLRequest *request = [NSURLRequest requestWithURL:value];
         return [[[NSURLConnection rac_sendAsynchronousRequest:request]
@@ -58,7 +60,7 @@ Something still isn't right, but it's very hard to deduce what is wrong. I did s
 
 This time I decided to take a step back. I didn't _need_ the images to be asynchronously loaded in order to display them. The simplest way that I was sure would work, was to use good ol' `+[NSData dataWithContentsOfURL:]`. 
 
-```objective-c
+```objc
 RAC(self.posterImageView, image) = [RACObserve(self, movie.posterURL) map:^id(id value) {
     return [UIImage imageWithData:[NSData dataWithContentsOfURL:value]];
 }];
@@ -70,7 +72,7 @@ Success! It was, of course, slow, but it worked.
 
 Since I had a synchronous solution, my next attempt was to see if I could turn it into an asynchronous solution. From what I've gathered, `deliverOn:[RACScheduler scheduler]` will create a signal that delivers subsequent events on a background thread, and `deliverOn:[RACScheduler mainThreadScheduler]` will deliver events on the main thread. In the spirit of Reactive Cocoa, I combined the two and came up with this:
 
-```objective-c
+```objc
 RAC(self.posterImageView, image) = [[[[RACObserve(self, movie.posterURL) deliverOn:[RACScheduler scheduler]] map:^id(id value) {
     return [NSData dataWithContentsOfURL:value];
 }] deliverOn:[RACScheduler mainThreadScheduler]] map:^id(NSData *data){
@@ -84,7 +86,7 @@ I finally landed a way to asynchronously load images to populate tableview cells
 
 In my efforts to find the Holy Grail of how to go about asycnrhonously loading images using Reactive Cocoa, I stumbled across a very interesting [GitHub issue](https://github.com/ReactiveCocoa/ReactiveViewModel/issues/16).² The gentleman in this thread appears to have a working solution using `+[NSURLConnection rac_sendAsynchronousRequest:]`, but is struggling with a higher level problem. Ash Furrow chimed in on the thread referencing an [issue](https://github.com/ashfurrow/FunctionalReactivePixels/issues/27) from his project to see a different solution.³ The code in their dicsussion started out like this:
 
-```objective-c
+```objc
 RAC(self.imageView, image) = [[[RACObserve(self, photoModel.thumbnailData) ignore:nil] map:^id(id value) {
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         [[RACScheduler schedulerWithPriority:RACSchedulerPriorityHigh] schedule:^{
@@ -102,7 +104,7 @@ What's interesting is that they are creating and returning a signal within their
 
 When discussing cancelling the background operation, [Dave Lee](https://github.com/kastiglione) chimed in, "You could use `-subscribeOn:` which also takes care of handling cancelation. Even if you don't, since `-schedule:` returns a disposable, which can be returned as the result of `+createSignal:`."
 
-```objective-c
+```objc
     RAC(self.imageView, image) = [[[RACObserve(self, photoModel.thumbnailData) ignore:nil] map:^id(id value) {
         return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
             [value af_decompressedImageFromJPEGDataWithCallback:^(UIImage *decompressedImage) {

@@ -12,6 +12,8 @@ showads: true
 
 In the vain of Brent Simmons' [Vesper Sync Diary](http://inessential.com/2013/10/01/vesper_sync_diary_1)¹, my plan is to express my thoughts about learning Reactive Cocoa as I build an app from scratch using the framework. The app will be an iPhone targeted app that will serve as a feed to show current movie theater showtimes of a local movie theater from my home town. I'm using this as an opportunity to get my feet wet with reactive cocoa and to see what all the fuss is about.
 
+<!-- more -->
+
 I really hope to make this more of an engaging opportunity to get support from the community as I will undoubtedly make many mistakes along the way. If you're coming here to learn about reactive cocoa, you may be at the wrong place, but who knows, maybe we'll both learn something together.
 
 ### MVVM Introduction

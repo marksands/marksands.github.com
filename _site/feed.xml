@@ -1,50 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-	<channel>
-		<title>Mark Sands</title>
-		<description>Programming Tidbits</description>
-		<link>http://marksands.github.io</link>
-		<atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml" />
-		
-			<item>
-				<title>A Debugging Story</title>
-				<description>&lt;h3&gt;Forward&lt;/h3&gt;
+  <channel>
+    <title>Mark Sands</title>
+    <atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <link>http://marksands.github.io/</link>
+    <description>Programming Tidbits</description>
+    <pubDate>Tue, 02 Feb 2016 21:06:46 -0600</pubDate>
+    
+      <item>
+        <title>Paper Doll App Development</title>
+        <link>http://marksands.github.io/2016/1/14/paper-doll-app-development.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2016/1/14/paper-doll-app-development.html</guid>
+        <description>&lt;p&gt;&lt;em&gt;This post is in response to the iOhYes podcast &lt;a href=&quot;http://5by5.tv/iohyes/98&quot;&gt;#98 We Heard You Like Rants&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;apple-39-s-best-practices&quot;&gt;Apple&amp;#39;s Best Practices&lt;/h3&gt;
+
+&lt;p&gt;When Apple publishes sample code, they have to cater to their audience. They can&amp;#39;t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple&amp;#39;s sample code won&amp;#39;t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;With this in mind, it&amp;#39;s fair to say that there is no formal standard for creating iOS apps. While there may be numerous sources for how to best architect an application, you are allowed to create your own set of &lt;em&gt;best practices&lt;/em&gt; and decide as a team how you choose to write your code. Some developers will choose to use storyboards and nibs while others will leverage many existing design patterns and alternatives to model-view-controller. Still, there will be those that use a form of dependency injection to suit both storyboard and nib development and programmatic view creation.&lt;/p&gt;
+
+&lt;p&gt;I won&amp;#39;t get into the meat and potatoes of dependency injection, but just remember that it&amp;#39;s a &amp;quot;25-dollar term for a 5-cent concept&amp;quot;. Simple dependency injection for iOS can be done in at least 2 ways: constructor injection and setter injection. If a class cannot function without a dependency, then it is semantically correct to inject the dependency into the constructor. Naming your initializer &amp;quot;initWithResponsibility&amp;quot; gives credence that the Responsibility object that is passed in is necessary from birth and the class won&amp;#39;t function without it. If instead you choose to set the Responsibility object after construction, then you have broken semantics and have fallen into two-step construction.&lt;/p&gt;
+
+&lt;p&gt;The late Jim Weirich often spoke of a software quality metric known as connascence, which you should absolutely take with a grain of salt. Nevertheless, I do use it at times for a second opinion. When you have two-step construction, you end up with connascence of execution, meaning the order of execution of your components is important. The two-step construction must always be shoved together in code in fear of a third party caller using your class, only to have it break down since your Responsibility object isn&amp;#39;t set on the class yet. This doesn&amp;#39;t mean you shouldn&amp;#39;t have two-step construction--after all, there is no other way if you&amp;#39;re using storyboards. It just means your architecture now has more entropy in its design.&lt;/p&gt;
+
+&lt;p&gt;The downside of constructor injection, of course, is when it doesn&amp;#39;t work in iOS development. If you use storyboards and rely heavily on segues for navigation, then you are forced into two-step construction. Some developers have chosen to abandon storyboards and nibs altogether and some have embraced them so wholeheartedly that the Crusades may very well be indistinguishable from this Holy War. At the end of the day, it&amp;#39;s probably best to adhere to a convention that your whole team agrees upon and hold each other accountable for the chosen discipline.&lt;/p&gt;
+
+&lt;h3 id=&quot;egregious-unit-tests&quot;&gt;Egregious Unit Tests&lt;/h3&gt;
+
+&lt;p&gt;It&amp;#39;s unfortunate that the myth of 100% code coverage is discussed in the software development community. Some project managers think that if you don&amp;#39;t have 100% code coverage, then your application isn&amp;#39;t properly tested. While in reality, 100% code coverage only means that every line of code was executed, it does not mean that every conditional statement was met. Furthermore, it&amp;#39;s arguably worse when a developer doesn&amp;#39;t think their application isn&amp;#39;t properly tested unless it has 100% code coverage.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#39;s a shame when TDD and unit testing is misrepresented due to a poor test suite and a lack of talent behind its implementation. But this isn&amp;#39;t an unfamiliar concept outside of software development. You&amp;#39;ll be hard pressed to find a community that doesn&amp;#39;t have misrepresentation scattered in its midst: the Westboro Baptist Church and Donald Trump do not represent the message of Christianity and ISIL and Boko Haram don&amp;#39;t represent the message of Islam. I mention this because the dogma of TDD and writing unit tests often feels like a pseudo religious debate that often takes a TDD apologist or a Great Awakening to convince developers of its worth. And once you&amp;#39;re a TDD convert, it doesn&amp;#39;t stop there. It requires a lot of discipline to maintain that mindset and to hold yourself and your peers accountable of writing a clean test suite and continuously improving your skills in that area.&lt;/p&gt;
+
+&lt;p&gt;If you encounter a test suite that is overly complex or is going through great lengths to establish a near 100% code coverage, don&amp;#39;t let that deter you from maintaining that suite. Conjure up the courage to delete tests that aren&amp;#39;t providing you value or worth and refactor the ones that are giving you value to improve reuse and readability. And remember that tests help show you pain, so if writing a test is painful then do something about it.&lt;/p&gt;
+
+&lt;h3 id=&quot;paper-doll-app-development&quot;&gt;Paper Doll App Development&lt;/h3&gt;
+
+&lt;p&gt;One thing I was happy to hear the hosts of iOhYes speak to was the movement of the glue coder. I don&amp;#39;t know what&amp;#39;s at fault for this phenomenon, but I do believe there is large portion of iOS developers that practice Paper Doll App Development. Essentially what&amp;#39;s happening is developers are picking and choosing piecemeal open source components to glue together in order to build a fully integrated application, much like adding clothes to a paper doll. It wouldn&amp;#39;t shock me to find successful apps in the App Store that have been built by individuals who don&amp;#39;t know how to code but instead are skilled at discovering the free libraries available and piecing them together in order to build an app. And unfortunately, building apps this way for too long can be harmful to your career when it comes necessary to find a job or change jobs. Don&amp;#39;t expect to do well in a technical interview.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#39;s true that Cocoapods and GitHub have together created an extremely large catalog of open source libraries and project templates to get you up and running, but I do agree with the hosts of iOhYes that they are not to be held accountable. Perhaps it&amp;#39;s a lack of discipline in the iOS community and the rise of rapid prototyping is taking over. Given iOS is still in its infancy, it&amp;#39;s hard to tell whether or not the mode of development at this pace will continue in the future. As present day iOS developers, we have the good fortune of having a pretty high bar for legacy code, but in a decade or so, maintaining an app that was built with such incompetence will be a very different story. Do your future self a favor and don&amp;#39;t practice paper doll app development.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 14 Jan 2016 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>A Debugging Story</title>
+        <link>http://marksands.github.io/2015/2/10/a-debugging-story.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2015/2/10/a-debugging-story.html</guid>
+        <description>&lt;h3 id=&quot;forward&quot;&gt;Forward&lt;/h3&gt;
 
 &lt;p&gt;The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I&amp;#39;ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you&amp;#39;ll have learned something along the way.&lt;/p&gt;
 
-&lt;h3&gt;Unrecognized Selector Sent To Instance&lt;/h3&gt;
+&lt;!-- more --&gt;
+
+&lt;h3 id=&quot;unrecognized-selector-sent-to-instance&quot;&gt;Unrecognized Selector Sent To Instance&lt;/h3&gt;
 
 &lt;p&gt;It began with initializing Parse. A simple call to &lt;code&gt;[Parse setApplicationid:@&amp;quot;jumbledString&amp;quot; clientId:@&amp;quot;anotherString&amp;quot;];&lt;/code&gt; in the first line of &lt;code&gt;applicationDidFinishLaunching:withOptions:&lt;/code&gt;. This is very standard procedure, and the Parse documentation even says to do this. Unfortunately, the app would consistently crash on this line with &lt;code&gt;[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;To make a long story short, I&amp;#39;ll leave out the obvious debugging tidbits and drive closer to the point.&lt;/p&gt;
 
 &lt;p&gt;Using a different, older version of Parse.framework didn&amp;#39;t help either, so it was time to look at the stack trace more carefully to see where exactly the crash was happening. Here&amp;#39;s the relevant parts of the stack trace:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt; #0: `-[NSFileManager _URLForReplacingItemAtURL:error:]
- #1: `_NSCreateTemporaryFile_Protected + 404
- #2: `_NSWriteDataToFileWithExtendedAttributes + 276
- #3: `_NSWriteBytesToFileWithExtendedAttributes + 76
- #4: `writeStringToURLOrPath + 240
- #5: `-[NSString writeToFile:atomically:encoding:error:] +
- #6: `+[PFInternalUtils checkCacheApplicationId] + 700 at PFInternalUtils.m:239
- #7: `+[Parse setApplicationId:clientKey:] + 134 at Parse.m:54
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt; &lt;span class=&quot;c&quot;&gt;#0: `-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#1: `_NSCreateTemporaryFile_Protected + 404&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#2: `_NSWriteDataToFileWithExtendedAttributes + 276&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#3: `_NSWriteBytesToFileWithExtendedAttributes + 76&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#4: `writeStringToURLOrPath + 240&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#5: `-[NSString writeToFile:atomically:encoding:error:] +&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#6: `+[PFInternalUtils checkCacheApplicationId] + 700 at PFInternalUtils.m:239&lt;/span&gt;
+ &lt;span class=&quot;c&quot;&gt;#7: `+[Parse setApplicationId:clientKey:] + 134 at Parse.m:54&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Register Read&lt;/h3&gt;
+&lt;h3 id=&quot;register-read&quot;&gt;Register Read&lt;/h3&gt;
 
 &lt;p&gt;I put a symbolic breakpoint on &lt;code&gt;-[NSString writeToFile:atomically:encoding:error:]&lt;/code&gt; to see if anything looked suspicious. When the breakpoint hit, I opened lldb and did a &lt;code&gt;register read&lt;/code&gt; to dump the assembly registers to see if anything stood out. Take a look:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;(lldb) register read
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;(lldb) register read
 General Purpose Registers:
-        r0 = 0x0015f7b8  @&amp;quot;jumbledString&amp;quot;
-        r1 = 0x29115a7b  &amp;quot;writeToFile:atomically:encoding:error:&amp;quot;
+        r0 = 0x0015f7b8  @&quot;jumbledString&quot;
+        r1 = 0x29115a7b  &quot;writeToFile:atomically:encoding:error:&quot;
         r2 = 0x14641a30
         r3 = 0x00000001
         r4 = 0x14641a30
-        r5 = 0x0015f7b8  @&amp;quot;anotherString&amp;quot;
+        r5 = 0x0015f7b8  @&quot;anotherString&quot;
         r6 = 0x00000000
         r7 = 0x0031d5ec
-        r8 = 0x0014e996  &amp;quot;dataFilePath:&amp;quot;
+        r8 = 0x0014e996  &quot;dataFilePath:&quot;
         r9 = 0x00000000
        r10 = 0x14641000
-       r11 = 0x290ea935  &amp;quot;fileExistsAtPath:&amp;quot;
+       r11 = 0x290ea935  &quot;fileExistsAtPath:&quot;
        r12 = 0x2618d131  Foundation`-[NSString writeToFile:atomically:encoding:error:] + 1
         sp = 0x0031d5b8
         lr = 0x0012679d  Aerie`+[PFInternalUtils checkCacheApplicationId] + 701 at PFInternalUtils.m:239
@@ -52,31 +94,31 @@ General Purpose Registers:
       cpsr = 0x60000030
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Clearly it was writing something to file at a particular path, and that&amp;#39;s where things went awry. I figured if I could get the exact path it was writing to, and the contents, maybe I could bypass this check and Parse would magically work. Fortunately, register 10 had what we needed:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;(lldb) po 0x14641000
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;(lldb) po 0x14641000
 /var/mobile/Containers/Data/Application/17F2392D-56EF-4259-84AD-1CD9EEA58E89/Library/Private Documents/Parse/applicationId
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;I assumed applicationId was a file that held the applicationId string, for whatever reason. The existence of &lt;code&gt;fileExistsAtPath:&lt;/code&gt; in the registers led me to believe that if I created this file at this exact path, all would be well. So I got rid of the call to Parse, and temporarily replaced it with a series of commands to write the applicationId to a file at that location.&lt;/p&gt;
 
 &lt;p&gt;Shockingly, I got the same crash &lt;code&gt;[__NSCFBoolean stringByReplacingOccurrencesOfString:withString:]: unrecognized selector sent to instance&lt;/code&gt;. Now this led me down an entirely different rabbit whole that I&amp;#39;ll spare you from (it involved POSIX file permissions, and chmodding a bunch of directories).&lt;/p&gt;
 
-&lt;h3&gt;_URLForReplacingItemAtURL:error:&lt;/h3&gt;
+&lt;h3 id=&quot;_urlforreplacingitematurl-error&quot;&gt;_URLForReplacingItemAtURL:error:&lt;/h3&gt;
 
 &lt;p&gt;I decided to open Hopper.app and look at the internals of &lt;code&gt;-[NSFileManager _URLForReplacingItemAtURL:error:]&lt;/code&gt;. Sure enough, I spotted a call to &lt;code&gt;stringByReplacingOccurrancesOfString:withString:&lt;/code&gt; halfway down the disassembled code:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CFBundleGetValueForInfoDictionaryKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CFBundleGetMainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&amp;quot;CFBundleName&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;var_16&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;stringByReplacingOccurrencesOfString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;withString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;:&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CFBundleGetValueForInfoDictionaryKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CFBundleGetMainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&quot;CFBundleName&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;var_16&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rax&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;stringByReplacingOccurrencesOfString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;/&quot;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;withString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This was the eureka moment I&amp;#39;d been waiting for. The rax register should be an &lt;code&gt;NSString&lt;/code&gt;, but it&amp;#39;s somehow getting converted to a boolean object. To make sure I wasn&amp;#39;t crazy, I copied &lt;code&gt;CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), @&amp;quot;CFBundleName&amp;quot;);&lt;/code&gt; into my AppDelegate to see what value was returned from the function. Calling print object on the &lt;code&gt;CFTypeRef&lt;/code&gt; gave me a plain old 0. I was curious what I would see when I looked at what was set on the BundleName of the Info.plist.&lt;/p&gt;
 
-&lt;h3&gt;Corrupt Info.plist&lt;/h3&gt;
+&lt;h3 id=&quot;corrupt-info-plist&quot;&gt;Corrupt Info.plist&lt;/h3&gt;
 
 &lt;p&gt;Not surprisingly, the type column of the bundle name said Boolean and the value was NO. A quick revert to the plist and everything worked out great. I was pretty sure this was a mistake, so I checked the commit history to see if this whether always the case: &lt;code&gt;git log -p --follow Project/Info.plist&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-diff&quot; data-lang=&quot;diff&quot;&gt;&lt;span class=&quot;gu&quot;&gt;@@ -11,7 +11,7 @@&lt;/span&gt;
-        &amp;lt;key&amp;gt;CFBundleInfoDictionaryVersion&amp;lt;/key&amp;gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-diff&quot; data-lang=&quot;diff&quot;&gt;&lt;span class=&quot;gu&quot;&gt;@@ -11,7 +11,7 @@
+&lt;/span&gt;        &amp;lt;key&amp;gt;CFBundleInfoDictionaryVersion&amp;lt;/key&amp;gt;
         &amp;lt;string&amp;gt;6.0&amp;lt;/string&amp;gt;
         &amp;lt;key&amp;gt;CFBundleName&amp;lt;/key&amp;gt;
-&lt;span class=&quot;gd&quot;&gt;-       &amp;lt;string&amp;gt;$(PRODUCT_NAME)&amp;lt;/string&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;gi&quot;&gt;+       &amp;lt;false/&amp;gt;&lt;/span&gt;
-        &amp;lt;key&amp;gt;CFBundlePackageType&amp;lt;/key&amp;gt;
+&lt;span class=&quot;gd&quot;&gt;-       &amp;lt;string&amp;gt;$(PRODUCT_NAME)&amp;lt;/string&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+       &amp;lt;false/&amp;gt;
+&lt;/span&gt;        &amp;lt;key&amp;gt;CFBundlePackageType&amp;lt;/key&amp;gt;
         &amp;lt;string&amp;gt;APPL&amp;lt;/string&amp;gt;
         &amp;lt;key&amp;gt;CFBundleShortVersionString&amp;lt;/key&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -84,120 +126,124 @@ General Purpose Registers:
 
 &lt;p&gt;To recap: we started with a crash, a stack trace, inspecting registers, a poor attempt at monkey patching, disassembling Foundation using Hopper.app, and finally circling back to the corrupt Info.plist file. Careful eyes probably could have spotted this mistake by searching through the commit history, but that&amp;#39;s not always the case. At any rate, I had a lot of fun doing some code spelunking!&lt;/p&gt;
 </description>
-				<pubDate>Tue, 10 Feb 2015 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2015/2/10/a-debugging-story.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2015/2/10/a-debugging-story.html</guid>
-			</item>
-		
-			<item>
-				<title>Reacting to Reactive Cocoa Part IV</title>
-				<description>&lt;h3&gt;Switching Gears&lt;/h3&gt;
+        <pubDate>Tue, 10 Feb 2015 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Reacting to Reactive Cocoa Part IV</title>
+        <link>http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</guid>
+        <description>&lt;h3 id=&quot;switching-gears&quot;&gt;Switching Gears&lt;/h3&gt;
 
 &lt;p&gt;You may not be surprised when I say that I&amp;#39;m taking a break from learning Reactive Cocoa. Several of my coworkers are diving into swift, and with the imminent release of Reactive Cocoa 3.0, I decided to switch gears.&lt;/p&gt;
+
+&lt;!-- more --&gt;
 
 &lt;p&gt;I&amp;#39;m going to recreate this app entirely in swift from the ground up. My hope is that after the project releases, then I can transition back to Reactive Cocoa using the newer version in swift.&lt;/p&gt;
 
 &lt;p&gt;I think it&amp;#39;s a wiser decision overall, given how I&amp;#39;ll need to learn swift eventually. Reactive cocoa is transitioning over, so it just makes sense for me to transition over as well. Once I feel efficient enough, then I can pick up Reactive Cocoa once more.&lt;/p&gt;
 </description>
-				<pubDate>Sat, 07 Feb 2015 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</guid>
-			</item>
-		
-			<item>
-				<title>Reacting to Reactive Cocoa Part III</title>
-				<description>&lt;h3&gt;Asynchronously Loading Images&lt;/h3&gt;
+        <pubDate>Sat, 07 Feb 2015 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Reacting to Reactive Cocoa Part III</title>
+        <link>http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</guid>
+        <description>&lt;h3 id=&quot;asynchronously-loading-images&quot;&gt;Asynchronously Loading Images&lt;/h3&gt;
 
 &lt;p&gt;One of my first endevours into the realm of expanding my &lt;code&gt;RACObserve&lt;/code&gt;-fu was to asynchronously load a &lt;code&gt;UIImage&lt;/code&gt; from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using &lt;code&gt;AFNetworking&lt;/code&gt;&amp;#39;s built-in mechanism or a third party caching library such as &lt;code&gt;SDWebImage&lt;/code&gt; would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I&amp;#39;ve so graciously poured.&lt;/p&gt;
 
+&lt;!-- more --&gt;
+
 &lt;p&gt;This one was hard. I gave it several attempts before finally coming to a working solution, but I never did find the answer I wanted.&lt;/p&gt;
 
-&lt;h3&gt;Attempt 1&lt;/h3&gt;
+&lt;h3 id=&quot;attempt-1&quot;&gt;Attempt 1&lt;/h3&gt;
 
 &lt;p&gt;I never got my first attempt at this to work, but I&amp;#39;ll show the broken code nonetheless. I began my endevour by shamelessly stealing a code snippet from a project on GitHub called &lt;a href=&quot;https://github.com/ashfurrow/FunctionalReactivePixels/blob/aef9b670ec5f14d496049c9e214f99513ca579df/FRP/FRPPhotoImporter.m#L46-L58&quot;&gt;Functional Reactive Pixels&lt;/a&gt;. The code snippet is slightly different from what I ended up with, but the overal theme is the same: I create an &lt;code&gt;NSURLRequest&lt;/code&gt;, use the &lt;code&gt;rac_sendAsynchronousRequest&lt;/code&gt; category method, call &lt;code&gt;reduceEach&lt;/code&gt; to deflate the &lt;code&gt;RACTuple&lt;/code&gt; into the appropriate parameters, return the &lt;code&gt;NSData&lt;/code&gt; from the response, deliver the signal on the main thread, map the &lt;code&gt;NSData&lt;/code&gt; again to return the &lt;code&gt;UIImage&lt;/code&gt; form of the bytes, and eventually finish with a call to &lt;code&gt;publish&lt;/code&gt; and &lt;code&gt;autoconnect&lt;/code&gt; (whew!).&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;requestWithURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[[[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLConnection&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;rac_sendAsynchronousRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;reduceEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLResponse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
-                &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-                &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;publish&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;autoconnect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;requestWithURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLConnection&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;rac_sendAsynchronousRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;reduceEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLResponse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+                &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;publish&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;autoconnect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;All of this made intuitive sense to me, except the final two methods &lt;code&gt;publish&lt;/code&gt; and &lt;code&gt;autoconnect&lt;/code&gt;. An inspection of &lt;code&gt;publish&lt;/code&gt; shows that it wraps a signal into a &lt;code&gt;RACMulticastConnection&lt;/code&gt; object, while the &lt;code&gt;autoconnect&lt;/code&gt; returns the multicast connection object as a signal. The recurring mystery object that kept creeping up was this &lt;code&gt;RACDisposable&lt;/code&gt; object that I hadn&amp;#39;t bothered, at least at this point, to investigate.&lt;/p&gt;
 
 &lt;p&gt;Ultimately, this code never worked. Each time it ran, it would crash and throw this exception burried in the giant stack trace (have I mentioned how large the stack traces become when using Reactive Cocoa?):&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;2015-01-07 20:23:12.809 BestMovieDeal[5998:117268] *** Terminating app due to uncaught exception &amp;#39;NSInvalidArgumentException&amp;#39;, reason: &amp;#39;-[RACDynamicSignal size]: unrecognized selector sent to instance 0x7f8ad1c6a180&amp;#39;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;2015-01-07 20:23:12.809 BestMovieDeal[5998:117268] *** Terminating app due to uncaught exception &#39;NSInvalidArgumentException&#39;, reason: &#39;-[RACDynamicSignal size]: unrecognized selector sent to instance 0x7f8ad1c6a180&#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Attempt 2&lt;/h3&gt;
+&lt;h3 id=&quot;attempt-2&quot;&gt;Attempt 2&lt;/h3&gt;
 
 &lt;p&gt;My second try was to slim down my first approach, using only what I thought was absolutely necessary to make it work. I removed the final 3 lines of the block and returned the &lt;code&gt;UIImage&lt;/code&gt; instead of the &lt;code&gt;NSData&lt;/code&gt; object to be mapped over again and then returned as an image. This looked promising, but unfortunately gave me the identical stack trace as the first attempt.&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;requestWithURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLConnection&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;rac_sendAsynchronousRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-                    &lt;span class=&quot;nl&quot;&gt;reduceEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSURLResponse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-                        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-                    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLRequest&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;requestWithURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLConnection&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;rac_sendAsynchronousRequest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                    &lt;span class=&quot;nf&quot;&gt;reduceEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSURLResponse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Something still isn&amp;#39;t right, but it&amp;#39;s very hard to deduce what is wrong. I did see &lt;code&gt;-[UIImageView setImage:] + 316&lt;/code&gt; in the stack trace, so I feel like I am on the right track; it just looks like either it&amp;#39;s not an image being set on it or something else is awry. And unfortunately, setting a breakpoint on the line with the statement &lt;code&gt;[UIImage imageWithData:data]&lt;/code&gt; never gets called. I gave an amateur shot at some lldb spelunking, but it went much slower than what I was used to and I never got anywhere. The next step is to take some time to learn about the missing pieces and find a working solution.&lt;/p&gt;
 
-&lt;h3&gt;Attempt 27&lt;/h3&gt;
+&lt;h3 id=&quot;attempt-27&quot;&gt;Attempt 27&lt;/h3&gt;
 
 &lt;p&gt;This time I decided to take a step back. I didn&amp;#39;t &lt;em&gt;need&lt;/em&gt; the images to be asynchronously loaded in order to display them. The simplest way that I was sure would work, was to use good ol&amp;#39; &lt;code&gt;+[NSData dataWithContentsOfURL:]&lt;/code&gt;. &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dataWithContentsOfURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dataWithContentsOfURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Success! It was, of course, slow, but it worked.&lt;/p&gt;
 
-&lt;h3&gt;Attempt 342&lt;/h3&gt;
+&lt;h3 id=&quot;attempt-342&quot;&gt;Attempt 342&lt;/h3&gt;
 
 &lt;p&gt;Since I had a synchronous solution, my next attempt was to see if I could turn it into an asynchronous solution. From what I&amp;#39;ve gathered, &lt;code&gt;deliverOn:[RACScheduler scheduler]&lt;/code&gt; will create a signal that delivers subsequent events on a background thread, and &lt;code&gt;deliverOn:[RACScheduler mainThreadScheduler]&lt;/code&gt; will deliver events on the main thread. In the spirit of Reactive Cocoa, I combined the two and came up with this:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;dataWithContentsOfURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterImageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;movie&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posterURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;scheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dataWithContentsOfURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deliverOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainThreadScheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;imageWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;I finally landed a way to asynchronously load images to populate tableview cells, but I&amp;#39;m not settling on this solution because &lt;code&gt;+[UIImage imageWithData]&lt;/code&gt; can be slow.&lt;/p&gt;
 
-&lt;h3&gt;Attempt N&lt;/h3&gt;
+&lt;h3 id=&quot;attempt-n&quot;&gt;Attempt N&lt;/h3&gt;
 
 &lt;p&gt;In my efforts to find the Holy Grail of how to go about asycnrhonously loading images using Reactive Cocoa, I stumbled across a very interesting &lt;a href=&quot;https://github.com/ReactiveCocoa/ReactiveViewModel/issues/16&quot;&gt;GitHub issue&lt;/a&gt;.² The gentleman in this thread appears to have a working solution using &lt;code&gt;+[NSURLConnection rac_sendAsynchronousRequest:]&lt;/code&gt;, but is struggling with a higher level problem. Ash Furrow chimed in on the thread referencing an &lt;a href=&quot;https://github.com/ashfurrow/FunctionalReactivePixels/issues/27&quot;&gt;issue&lt;/a&gt; from his project to see a different solution.³ The code in their dicsussion started out like this:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;photoModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thumbnailData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;schedulerWithPriority&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSchedulerPriorityHigh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;schedule&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;af_decompressedImageFromJPEGDataWithCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-             &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;switchToLatest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;photoModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thumbnailData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;schedulerWithPriority&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSchedulerPriorityHigh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;schedule&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;af_decompressedImageFromJPEGDataWithCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+             &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;switchToLatest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;What&amp;#39;s interesting is that they are creating and returning a signal within their &lt;code&gt;map:&lt;/code&gt; block, as opposed to decompressing on the main thread and returning a value object. It makes me wonder why the examples I&amp;#39;ve seen didn&amp;#39;t have to do that, and simply chaining it with &lt;code&gt;reduceEach:&lt;/code&gt; was good enough.&lt;/p&gt;
 
 &lt;p&gt;When discussing cancelling the background operation, &lt;a href=&quot;https://github.com/kastiglione&quot;&gt;Dave Lee&lt;/a&gt; chimed in, &amp;quot;You could use &lt;code&gt;-subscribeOn:&lt;/code&gt; which also takes care of handling cancelation. Even if you don&amp;#39;t, since &lt;code&gt;-schedule:&lt;/code&gt; returns a disposable, which can be returned as the result of &lt;code&gt;+createSignal:&lt;/code&gt;.&amp;quot;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;photoModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thumbnailData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;af_decompressedImageFromJPEGDataWithCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-             &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;subscribeOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;switchToLatest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;    &lt;span class=&quot;n&quot;&gt;RAC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imageView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACObserve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;photoModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;thumbnailData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;af_decompressedImageFromJPEGDataWithCallback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIImage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decompressedImage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+                 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+             &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;subscribeOn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACScheduler&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;scheduler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;switchToLatest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;&lt;code&gt;switchToLatest&lt;/code&gt; is new to me, and a quick look at the docs says that it &amp;quot;Returns a signal which passes through &lt;code&gt;next&lt;/code&gt;s and &lt;code&gt;error&lt;/code&gt;s from the latest signal sent by the receiver, and sends &lt;code&gt;completed&lt;/code&gt; when both the receiver and the last sent signal complete.&amp;quot; My best guess is since the subscriber of the image is now subscribing to a signal-returning-a-signal, the &lt;code&gt;switchToLatest&lt;/code&gt; will ensure that the original subscriber will be sent the &lt;code&gt;next&lt;/code&gt; event which will contain a value object: the decompressed &lt;code&gt;UIImage&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;I never did return to this problem, and left the slower implementation in the code. There are bigger things ahead, and I don&amp;#39;t want this one to slow me down any more. If anyone reading this can steer me in the right direction, I&amp;#39;d appreciate it!&lt;/p&gt;
 
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/ashfurrow/FunctionalReactivePixels/blob/aef9b670ec5f14d496049c9e214f99513ca579df/FRP/FRPPhotoImporter.m#L46-L58&quot;&gt;[1] Functional Reactive Pixels - FRPPhotoImporter.m:L46-58&lt;/a&gt;&lt;/li&gt;
@@ -205,33 +251,35 @@ General Purpose Registers:
 &lt;li&gt;&lt;a href=&quot;https://github.com/ashfurrow/FunctionalReactivePixels/issues/27&quot;&gt;[3] Bad scrolling performance&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Wed, 07 Jan 2015 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</guid>
-			</item>
-		
-			<item>
-				<title>Reacting to Reactive Cocoa Part II</title>
-				<description>&lt;h3&gt;Baby&amp;#39;s First Monad&lt;/h3&gt;
+        <pubDate>Wed, 07 Jan 2015 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Reacting to Reactive Cocoa Part II</title>
+        <link>http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</guid>
+        <description>&lt;h3 id=&quot;baby-39-s-first-monad&quot;&gt;Baby&amp;#39;s First Monad&lt;/h3&gt;
 
 &lt;p&gt;Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&amp;#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&amp;#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&amp;#39;m supposed to be doing this the Reactive Cocoa way.&lt;/p&gt;
 
+&lt;!-- more --&gt;
+
 &lt;p&gt;Without much searching around, I decided to place my best foot forward and see how far I could get without tripping. From what I&amp;#39;ve seen in the past, the macro &lt;code&gt;RAC&lt;/code&gt; will magically populate an object with data by assigning it to something called a &lt;code&gt;RACSignal&lt;/code&gt;. So that&amp;#39;s where I began: &lt;code&gt;RAC(self, movies) = [self fetchMoviesSignal];&lt;/code&gt; Now I just needed to see what this &lt;code&gt;fetchMoviesSignal&lt;/code&gt; entailed.&lt;/p&gt;
 
-&lt;h3&gt;RACSignal&lt;/h3&gt;
+&lt;h3 id=&quot;racsignal&quot;&gt;RACSignal&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;RACSignal&lt;/code&gt; appears to be the workhorse of reactive cocoa. When inspecting the headers, we&amp;#39;re told that &lt;code&gt;RACSignal&lt;/code&gt; inherits from &lt;code&gt;RACStream&lt;/code&gt;, which is &lt;em&gt;a class that represents a monad, upon which many stream-based operations can be built&lt;/em&gt; (it looks complicated, so I closed the header to regain my attention).&lt;/p&gt;
 
 &lt;p&gt;Since I already had AFNetworking imported, I decided to expirment with wrapping it in a new signal object. As it turns out, it was fairly straightforward. This is what I ended up with:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;fetchMoviesSignal&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperationManager&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;manager&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;GET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;movieapi.com/showtimes&amp;quot;&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;operation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;responseObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;responseObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;operation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;sendError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetchMoviesSignal&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSignal&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;createSignal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACDisposable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RACSubscriber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperationManager&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;manager&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;GET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;movieapi.com/showtimes&quot;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;operation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;responseObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendNext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;responseObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendCompleted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AFHTTPRequestOperation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;operation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subscriber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sendError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -239,94 +287,100 @@ General Purpose Registers:
 
 &lt;p&gt;Even though I didn&amp;#39;t accomplish much, I took quite some time before arriving at this. I did a lot of reading the header files and other blog posts I came across to make sure I wasn&amp;#39;t way off track. I think next time I will try to bite off a little more and see what all I can accomplish in the UI. I&amp;#39;ll need to populate my table with the showtimes and movie posters, so it sounds like I have my work cut out for me yet!&lt;/p&gt;
 
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;[1] Reacting to Reactive Cocoa Part I&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h&quot;&gt;[2] RACSubscriber.h&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Fri, 02 Jan 2015 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</guid>
-			</item>
-		
-			<item>
-				<title>Reacting to Reactive Cocoa Part I</title>
-				<description>&lt;h3&gt;RAC Diary&lt;/h3&gt;
+        <pubDate>Fri, 02 Jan 2015 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Reacting to Reactive Cocoa Part I</title>
+        <link>http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</guid>
+        <description>&lt;h3 id=&quot;rac-diary&quot;&gt;RAC Diary&lt;/h3&gt;
 
 &lt;p&gt;In the vain of Brent Simmons&amp;#39; &lt;a href=&quot;http://inessential.com/2013/10/01/vesper_sync_diary_1&quot;&gt;Vesper Sync Diary&lt;/a&gt;¹, my plan is to express my thoughts about learning Reactive Cocoa as I build an app from scratch using the framework. The app will be an iPhone targeted app that will serve as a feed to show current movie theater showtimes of a local movie theater from my home town. I&amp;#39;m using this as an opportunity to get my feet wet with reactive cocoa and to see what all the fuss is about.&lt;/p&gt;
 
+&lt;!-- more --&gt;
+
 &lt;p&gt;I really hope to make this more of an engaging opportunity to get support from the community as I will undoubtedly make many mistakes along the way. If you&amp;#39;re coming here to learn about reactive cocoa, you may be at the wrong place, but who knows, maybe we&amp;#39;ll both learn something together.&lt;/p&gt;
 
-&lt;h3&gt;MVVM Introduction&lt;/h3&gt;
+&lt;h3 id=&quot;mvvm-introduction&quot;&gt;MVVM Introduction&lt;/h3&gt;
 
 &lt;p&gt;For starters, Bob Spryn&amp;#39;s recent blog post &lt;em&gt;ReactiveCocoa and MVVM, an Introduction&lt;/em&gt;&lt;a href=&quot;http://www.sprynthesis.com/2014/12/06/reactivecocoa-mvvm-introduction/&quot;&gt;²&lt;/a&gt; is enough to keep me busy for a few days. I will spend my time soaking this up and speak more to it later. Only good things can come from this!&lt;/p&gt;
 
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://inessential.com/2013/10/01/vesper_sync_diary_1&quot;&gt;[1] Vesper Sync Diary #1&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;http://www.sprynthesis.com/2014/12/06/reactivecocoa-mvvm-introduction/&quot;&gt;[2] ReactiveCocoa and MVVM, an Introduction&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Tue, 30 Dec 2014 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</guid>
-			</item>
-		
-			<item>
-				<title>2015 Goals</title>
-				<description>&lt;h3&gt;2015 Goals&lt;/h3&gt;
+        <pubDate>Tue, 30 Dec 2014 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>2015 Goals</title>
+        <link>http://marksands.github.io/2014/12/29/2015-goals.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/12/29/2015-goals.html</guid>
+        <description>&lt;h3 id=&quot;2015-goals&quot;&gt;2015 Goals&lt;/h3&gt;
 
 &lt;p&gt;As the new year approaches, I&amp;#39;ve began to think of some goals of mine. Rather than make goals, I&amp;#39;ve always tried to improve on an as-needed basis; why wait till the beginning of the new year? It&amp;#39;s close enough to the new year this time that I am willing to make an exception and wait a few days. Here are 3 goals of mine that I wish to accomplish over the following 12 months.&lt;/p&gt;
 
-&lt;h4&gt;1. Take Piano Lessons&lt;/h4&gt;
+&lt;!-- more --&gt;
+
+&lt;h4 id=&quot;1-take-piano-lessons&quot;&gt;1. Take Piano Lessons&lt;/h4&gt;
 
 &lt;p&gt;My first goal is to re-enroll in piano lessons. I took piano growing up until I graduated high school and moved away from my hometown piano teacher. I&amp;#39;ve missed playing the piano and often wish I was back up to speed to be able to entertain my wife and kids. I&amp;#39;ve already started searching for a teach in or near my neighborhood. Here&amp;#39;s hoping it works out soon!&lt;/p&gt;
 
-&lt;h4&gt;2. Learn to Knit&lt;/h4&gt;
+&lt;h4 id=&quot;2-learn-to-knit&quot;&gt;2. Learn to Knit&lt;/h4&gt;
 
 &lt;p&gt;The second goal of mine is to learn how to knit. I&amp;#39;ve been recently amazed at the crafts that my friends and relatives have made, especially over the Christmas season. Being able to make your own clothes and accessories is such a valuable skill to posess. It seems so obvious that everyone should learn how to at least sew or knit, especially when the creative juices start flowing as you open your closet door. This one will definitely be the most challenging goal of mine, so any tips for good resources to learn is appreciated.&lt;/p&gt;
 
-&lt;h4&gt;3. Play Chess&lt;/h4&gt;
+&lt;h4 id=&quot;3-play-chess&quot;&gt;3. Play Chess&lt;/h4&gt;
 
 &lt;p&gt;My final goal is to play chess. I&amp;#39;m not aiming to be a great chess player, as the goal of the game is to win, so hopefully I do that the majority of the time. I know the rules of the game and I&amp;#39;ve played at times, but I am a terrible chess player. When I play chess, I find myself rushing the moves and not thinking or pacing myself enough to be aware of my surroundings. I relate this very closely to software craftsmanship, garnering patience and awareness of the system architecture. What I want out of playing chess is really to learn to be more patient. Hopefully after a while, I will learn to be more patient on my tasks and be more focused because of it.&lt;/p&gt;
 </description>
-				<pubDate>Mon, 29 Dec 2014 00:00:00 -0600</pubDate>
-				<link>http://marksands.github.io/2014/12/29/2015-goals.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/12/29/2015-goals.html</guid>
-			</item>
-		
-			<item>
-				<title>Pragma Poison</title>
-				<description>&lt;h3&gt;stringValue&lt;/h3&gt;
+        <pubDate>Mon, 29 Dec 2014 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Pragma Poison</title>
+        <link>http://marksands.github.io/2014/10/16/pragma-poison.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/10/16/pragma-poison.html</guid>
+        <description>&lt;h3 id=&quot;stringvalue&quot;&gt;stringValue&lt;/h3&gt;
 
 &lt;p&gt;It can be tempting to convert NSNumbers to strings by calling &lt;code&gt;stringValue&lt;/code&gt;. It&amp;#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&amp;#39;s necessary. You may think calling &lt;code&gt;[@8.8 stringValue]&lt;/code&gt; returns &amp;quot;8.8&amp;quot;, but you&amp;#39;d be wrong; it actually returns &amp;quot;8.800000000000001&amp;quot;. Let&amp;#39;s take a look at what&amp;#39;s going on behind the scenes when we call stringValue to find out why this is happening.&lt;/p&gt;
 
-&lt;h3&gt;Behind the Scenes&lt;/h3&gt;
+&lt;!-- more --&gt;
+
+&lt;h3 id=&quot;behind-the-scenes&quot;&gt;Behind the Scenes&lt;/h3&gt;
 
 &lt;p&gt;According to Apple&amp;#39;s documentation regarding &lt;code&gt;stringValue&lt;/code&gt;:&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;The string is created by invoking descriptionWithLocale: where locale is nil.
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;The string is created by invoking descriptionWithLocale: where locale is nil.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;So far so good. Let&amp;#39;s see what &lt;code&gt;descriptionWithLocale:nil&lt;/code&gt; is doing. Also according to Apple&amp;#39;s documentation:&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:&quot;&gt;²&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;To obtain the string representation, this method invokes NSString’s initWithFormat:locale: method, 
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;To obtain the string representation, this method invokes NSString’s initWithFormat:locale: method, 
 supplying the format based on the type the NSNumber object was created with:
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;and goes on to list the format specifiers that the NSNumber value is casted to. From the chart, we can see that a double gets &lt;code&gt;%0.16g&lt;/code&gt; as the format specifier.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;#39;s take what we&amp;#39;ve found and turn it into a single method call. So, &lt;code&gt;[@8.8 stringValue]&lt;/code&gt; actually becomes &lt;code&gt;[[NSString alloc] initWithFormat:@&amp;quot;%.16g&amp;quot; locale:nil, 8.8]&lt;/code&gt;. Now it makes sense why we are getting 16 digits instead of 2! Floating point conversion isn&amp;#39;t perfect, so that&amp;#39;s why we see some numbers like 8.8 become &amp;quot;8.800000000000001&amp;quot; and others such as 8.9 become &amp;quot;8.9&amp;quot;.&lt;/p&gt;
 
-&lt;h3&gt;#pragma GCC poison stringValue&lt;/h3&gt;
+&lt;h3 id=&quot;pragma-gcc-poison-stringvalue&quot;&gt;#pragma GCC poison stringValue&lt;/h3&gt;
 
 &lt;p&gt;The bottom line is, in most cases, you never want 16 digits when converting simple doubles into a string. So now that we&amp;#39;ve deduced how &lt;code&gt;stringValue&lt;/code&gt; can turn a 2 digit number into a 16 digit number, how do we prevent our peers from using this API? I came across a &lt;a href=&quot;http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated&quot;&gt;stackoverflow post&lt;/a&gt; for my answer. I tried a similar approach with creating a category and assigning &lt;code&gt;UNAVAILABLE_ATTRIBUTE&lt;/code&gt;, but that wasn&amp;#39;t working for me either.&lt;a href=&quot;http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated&quot;&gt;³&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;It turns out GCC originally provided a solution to this problem to poison certain identifiers. Thankfully clang has adopted this protocol as well. The posion pragma is designed to work with C symbols, but you can leave off the colon of your selector to make it work with Objective-C. Finally, all you need to do now is add &lt;code&gt;#pragma GCC poison stringValue&lt;/code&gt; in your precompiled header and start replacing those calls with &lt;code&gt;NSNumberFormatter&lt;/code&gt;!&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;#pragma GCC poison stringValue
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#pragma GCC poison stringValue
 
 ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue&quot;&gt;[1] stringValue&lt;/a&gt;&lt;/li&gt;
@@ -334,95 +388,296 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
 &lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated&quot;&gt;[3] stackoverflow&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Thu, 16 Oct 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/10/16/pragma-poison.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/10/16/pragma-poison.html</guid>
-			</item>
-		
-			<item>
-				<title>Aviator</title>
-				<description>&lt;h4&gt;Aviator&lt;/h4&gt;
+        <pubDate>Thu, 16 Oct 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>Aviator</title>
+        <link>http://marksands.github.io/2014/09/26/aviator.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/09/26/aviator.html</guid>
+        <description>&lt;h4 id=&quot;aviator&quot;&gt;Aviator&lt;/h4&gt;
 
 &lt;p&gt;Recently, I became interested in the process of building Xcode plugins, digging into the private headers, using hopper to dissect the framework, and experimenting with the existing plugins already available on the web. I switch back and forth quite a bit between AppCode and Xcode, mainly  using AppCode for its superior refactoring tools. Besides refactoring tools, AppCode has a lot of great shortcuts that I wish Xcode has. ⌥↩ adds missing imports and ⇧⌘T toggles between unit tests and source files. &lt;a href=&quot;https://github.com/markohlebar/Peckham&quot;&gt;Peckham&lt;/a&gt; is a plugin that already exists and does a decent job at adding missing imports, though I wish it was as simple as ⌥↩. That left me with ⇧⌘T as a good intro to Xcode plugin creation. If you&amp;#39;re interested in how to get started creating Xcode plugins, Artsy has a &lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;great blog post&lt;/a&gt;&lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
+&lt;!-- more --&gt;
+
 &lt;p&gt;I spent an evening experiementing, and, within a few hours, &lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;Aviator&lt;/a&gt; was born. Aviator currently only supports the ⇧⌘T shortcut to toggle between a unit test and its source file counterpart. I&amp;#39;d like to extend Aviator to add more missing Xcode shortcuts, so expect more from this in the future. I&amp;#39;m looking for ideas on what to add next, so let me know and I&amp;#39;ll see what I can do&lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;²&lt;/a&gt;!&lt;/p&gt;
 
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;[1] Building the Xcode Plugin Snapshots&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/marksands/Aviator/&quot;&gt;[2] Aviator&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Fri, 26 Sep 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/09/26/aviator.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/09/26/aviator.html</guid>
-			</item>
-		
-			<item>
-				<title>Effective Pair Programming</title>
-				<description>&lt;h4&gt;Episode 3 - Effective Pair Programming&lt;/h4&gt;
+        <pubDate>Fri, 26 Sep 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>Effective Pair Programming</title>
+        <link>http://marksands.github.io/2014/05/30/effective-pair-programming.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/05/30/effective-pair-programming.html</guid>
+        <description>&lt;h4 id=&quot;episode-3-effective-pair-programming&quot;&gt;Episode 3 - Effective Pair Programming&lt;/h4&gt;
 
 &lt;p&gt;The ongoing effort by &lt;a href=&quot;http://www.effectiveprogramming.com/&quot;&gt;Effective Programming&lt;/a&gt; continues the saga with another episode, this time with a discussion around the pros and cons of pair programming. We talk about buying houses, Top Gun, and playing Warcraft III. Check it out! &lt;a href=&quot;https://itunes.apple.com/us/podcast/effective-programming-podcast/id878947397?mt=2&quot;&gt;Effective Pair Programming&lt;/a&gt;.&lt;/p&gt;
-</description>
-				<pubDate>Fri, 30 May 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/05/30/effective-pair-programming.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/05/30/effective-pair-programming.html</guid>
-			</item>
-		
-			<item>
-				<title>How Apple Cheats</title>
-				<description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h3&gt;UIPopoverController on the iPhone&lt;/h3&gt;
+&lt;!-- more --&gt;
+</description>
+        <pubDate>Fri, 30 May 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>How Apple Cheats</title>
+        <link>http://marksands.github.io/2014/05/27/how-apple-cheats.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/05/27/how-apple-cheats.html</guid>
+        <description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h3 id=&quot;uipopovercontroller-on-the-iphone&quot;&gt;UIPopoverController on the iPhone&lt;/h3&gt;
 
 &lt;p&gt;One UIKit component iBooks uses is UIPopoverController. This is frustrating because UIPopoverController is reservered for iPad development only. So how does iBooks implement an iPod/iPhone compatible UIPopoverController? I &lt;a href=&quot;http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html&quot;&gt;inspected&lt;/a&gt; iBooks on a jailbroken iPod touch to verify that the popover was in fact the UIPopoverController class and not a cheap replacement. To be sure I wasn&amp;#39;t crazy, I created a new iOS project targeted for iPhone and spun up a quick &lt;code&gt;UIPopoverController&lt;/code&gt; Hello World app. Sure enough, it crashed &lt;code&gt;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&lt;/code&gt; If this is true, then how on earth is Apple getting around this?&lt;/p&gt;
 
-&lt;h3&gt;The Secret Sauce&lt;/h3&gt;
+&lt;h3 id=&quot;the-secret-sauce&quot;&gt;The Secret Sauce&lt;/h3&gt;
 
 &lt;p&gt;In order to find out Apple&amp;#39;s secret sauce, I opened &lt;a href=&quot;http://www.hopperapp.com/&quot;&gt;Hopper&lt;/a&gt; to dig a little deeper. Here&amp;#39;s sort of what Apple&amp;#39;s code &lt;s&gt;may look like&lt;/s&gt; looks like under the covers when creating a UIPopoverController.&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initWithContentViewController:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIViewController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;viewController&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(([[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UIUserInterfaceIdiomPad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIPopoverController&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_popoversDisabled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSException&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;raise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSInvalidArgumentException&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;          &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;    
-&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initWithContentViewController&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIViewController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;viewController&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(([[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;respondsToSelector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIDevice&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;currentDevice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;userInterfaceIdiom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UIUserInterfaceIdiomPad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIPopoverController&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_popoversDisabled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSException&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;raise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSInvalidArgumentException&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;   
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what&amp;#39;s this private class method &lt;code&gt;_popoversDisabled&lt;/code&gt;? Let&amp;#39;s open that up to find out.&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;_popoversDisabled&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;     &lt;span class=&quot;bp&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSBundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.iBooks&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.mobilesafari&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.itunesu&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&amp;quot;com.apple.Maps&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_popoversDisabled&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSBundle&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;mainBundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bundleIdentifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;com.apple.iBooks&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;com.apple.mobilesafari&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; 
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;com.apple.itunesu&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bundleIdentifier&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isEqualToString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;com.apple.Maps&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Say what?! Did Apple seriously grant access to four of their native apps by hardcoding their bundle identifiers? Yep, they sure did².&lt;/p&gt;
 
 &lt;p&gt;In fact, you don&amp;#39;t have to do anything special to verify this. If you change your &lt;code&gt;UIPopoverController&lt;/code&gt; Hello World project&amp;#39;s Info.plist bundle identifier to &lt;code&gt;com.apple.iBooks&lt;/code&gt; or &lt;code&gt;com.apple.itunesu&lt;/code&gt;, then voilà, It works!&lt;/p&gt;
 
-&lt;h3&gt;What now?&lt;/h3&gt;
+&lt;h3 id=&quot;what-now&quot;&gt;What now?&lt;/h3&gt;
 
 &lt;p&gt;It&amp;#39;s interesting to see how Apple bends the rules for their benefit, but I think there is something more telling here. The fact of the matter is, &lt;code&gt;UIPopoverController&lt;/code&gt; works on the iPhone and iPod touch out of the box. Apple simply has it locked down for now. Will iOS 8 finally bring &lt;code&gt;UIPopoverController&lt;/code&gt; support to the iPhone and iPod touch? One can hope! At least we only have to wait until next week to find out.&lt;/p&gt;
 
-&lt;h3&gt;References&lt;/h3&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;[1] iBooks and Private APIs&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;[2] +[UIPoverController _popoversDisabled] My rudimentary debugging skills must note that it&amp;#39;s possible I overlooked something and more apps have their hands untied than just these four&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Tue, 27 May 2014 00:00:00 -0500</pubDate>
-				<link>http://marksands.github.io/2014/05/27/how-apple-cheats.html</link>
-				<guid isPermaLink="true">http://marksands.github.io/2014/05/27/how-apple-cheats.html</guid>
-			</item>
-		
-	</channel>
+        <pubDate>Tue, 27 May 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>Effective Programming</title>
+        <link>http://marksands.github.io/2014/05/20/effective-programming.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/05/20/effective-programming.html</guid>
+        <description>&lt;p&gt;Some friends and I have started up a new podcast at Effective Programming. We&amp;#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development&lt;a href=&quot;http://podcast.effectiveprogramming.com&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h4 id=&quot;episode-1-tdd-in-the-balance&quot;&gt;Episode 1 - TDD in the Balance&lt;/h4&gt;
+
+&lt;p&gt;Episode 1 was a healthy discussion of the pros and cons of &lt;a href=&quot;http://podcast.effectiveprogramming.com/2014/05/15/tdd-in-the-balance.html&quot;&gt;TDD&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;episode-2-ios-eventing-frameworks&quot;&gt;Episode 2 - iOS Eventing Frameworks&lt;/h4&gt;
+
+&lt;p&gt;Episode 2 was about &lt;a href=&quot;http://podcast.effectiveprogramming.com/2014/05/19/ios-eventing-frameworks.html&quot;&gt;iOS communication patterns&lt;/a&gt; where we discussed 6 techniques of eventing in iOS while following along with a &lt;a href=&quot;https://github.com/marksands/CommunicationPatterns&quot;&gt;project&lt;/a&gt; that I wrote to heed the discussion.&lt;/p&gt;
+
+&lt;p&gt;We would love it if you would check us out, &lt;a href=&quot;https://itunes.apple.com/us/podcast/effective-programming-podcast&quot;&gt;subscribe on iTunes&lt;/a&gt;, and give us a rating! Let us know what you think on twitter at &lt;a href=&quot;http://www.twitter.com/effprog&quot;&gt;@effprog&lt;/a&gt;!&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.effectiveprogramming.com/&quot;&gt;[1] Effective Programming&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 20 May 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>Mocking is Tautological</title>
+        <link>http://marksands.github.io/2014/05/14/mocking-is-tautological.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/05/14/mocking-is-tautological.html</guid>
+        <description>&lt;h3 id=&quot;black-and-white&quot;&gt;Black and White&lt;/h3&gt;
+
+&lt;p&gt;When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹&lt;/p&gt;
+
+&lt;h3 id=&quot;dependencies-and-decisions&quot;&gt;Dependencies and Decisions&lt;/h3&gt;
+
+&lt;p&gt;When many dependencies, or units, are involved in a path or decision then you should write an integration test instead of mocking out dependencies for an &amp;quot;isolated&amp;quot; unit test. The only time this becomes painful is when multiple decisions in a path directly rely on multiple dependencies; this tends to reek of a code smell. One solution is to split dependencies and decisions into separate layers. Gary&amp;#39;s talk above calls this the functional core and the imperative shell. In the imperative shell, many dependencies work together to formulate a single path with zero conditionals and decisions, while the decisions are deferred to each individual unit formulating the functional core. This makes the majority of testing pains go away.&lt;/p&gt;
+
+&lt;p&gt;The functional core can be fully unit tested with every decision having a test. And instead of unit testing the imperative shell, a single integration test will suffice for each component. The rules I follow are: when you find yourself testing a component with many dependencies, don&amp;#39;t use mocks; instead, write an integration test. Refactor until most, if not all, decisions are deferred to each dependency and drive out the implementation using TDD.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-rant&quot;&gt;A Rant&lt;/h3&gt;
+
+&lt;p&gt;This approach confirms most of my suspicions about using mocks in testing. Mocking (done wrong, and it is often done wrong) is tautological. I&amp;#39;ve both written code and I&amp;#39;ve seen code that mocks a dependency, stubs a method to return a result, and verifies that the method was called and the result was the expected output. I&amp;#39;ve never appreciated this style and it usually feels as though I&amp;#39;m ticking a box off of the test code coverage list. I remain unconvinced that this provides any benefits in opposition to an integration test.&lt;/p&gt;
+
+&lt;p&gt;With a test suite that reflects the style of mocks mocking mocks mocking mocks, refactoring can be a major testing pain. If you modify, add, or remove a dependency, chances are a lot of the mocks and method stubs in your tests will no longer be valid. I wouldn&amp;#39;t be surprised if such a simple change broke an entire test class littered with mocks.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-resolution&quot;&gt;A Resolution&lt;/h3&gt;
+
+&lt;p&gt;1 Corinthians 1:13 says, &amp;quot;When I was a child, I spoke as a child, I understood as a child, I thought as a child: but when I became a man, I put away childish things.&amp;quot; Fortunately, I have put aside my days of mocking. I have felt the pains and drawn my losses, choosing to revisit testing and figure out how to fix the problem. I have been experimenting with a side project attempting to separate the functional core from the imperative shell. It is not easy to remove every conditional from the shell, but it has definitely been a relief for testing. And now that my unit tests only use real objects and assertions, I no longer have to choose between which testing and mocking framework to include in my project. I would encourage you to try this approach and see for yourself if it changes the way you test your code.&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.destroyallsoftware.com/talks/boundaries&quot;&gt;[1] Boundaries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Wed, 14 May 2014 00:00:00 -0500</pubDate>
+      </item>
+    
+      <item>
+        <title>Inspecting Third Party Apps</title>
+        <link>http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html</guid>
+        <description>&lt;h3 id=&quot;an-alternative-approach&quot;&gt;An Alternative Approach&lt;/h3&gt;
+
+&lt;p&gt;This post is an overview of an alternative approach to attaching &lt;a href=&quot;http://revealapp.com/&quot;&gt;Reveal&lt;/a&gt; or &lt;a href=&quot;http://www.sparkinspector.com/&quot;&gt;Spark&lt;/a&gt; to third party apps on a jailbroken device. Peter Steinberger posted a &lt;a href=&quot;http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/&quot;&gt;blog post&lt;/a&gt; demonstrating how this works using MobileSubstrate. Unfortunately, this approach didn&amp;#39;t work for me and a few others that shared my woes via Twitter.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;As Peter said in his blog post, the iOS7 jailbreak will allow us to attach the debugger to 3rd party apps in order to study the view heirarchy of complex apps. This will provide developers with insight to how others have approached similar problems.&lt;a href=&quot;http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;jailbreak-setup&quot;&gt;Jailbreak + Setup&lt;/h3&gt;
+
+&lt;p&gt;Although Peter&amp;#39;s post can get you 90% of the way, I&amp;#39;ll reiterate his steps here to save you an extra tab in your browser.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;I jailbroke my iPad 3 using the 1.0.1 version of &lt;a href=&quot;http://evasi0n.com/&quot;&gt;evasi0n&amp;#39;s app&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Be sure to install OpenSSH. Once installed, make sure you can ssh into your device via &lt;code&gt;ssh root@192.168.1.102&lt;/code&gt; using the default password &lt;code&gt;alpine&lt;/code&gt;. Obviously you should replace this example IP address with your device&amp;#39;s wifi address.&lt;/li&gt;
+&lt;li&gt;Next, we&amp;#39;ll copy our libReveal.dlylib and our libSpark.dlyib files onto our device. It doesn&amp;#39;t really matter where the files are copied to on the device, but since I started down the path of using MobileSubstrate, I ended up copying both files to its DynamicLibraries directory: &lt;code&gt;scp /Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries&lt;/code&gt; and &lt;code&gt;scp &amp;quot;/Applications/Spark Inspector.app/Contents/Resources/Frameworks/SparkInspector.dylib&amp;quot; root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Beyond this, if Mobile Substrate works for you, then there is no need to go any further. But for the rest of us, we&amp;#39;ll have to resort to other options.&lt;/p&gt;
+
+&lt;h3 id=&quot;dyld-ftw&quot;&gt;DYLD FTW&lt;/h3&gt;
+
+&lt;p&gt;Thankfully, it is possible to perform code injection using the &lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html&quot;&gt;dynamic linker&lt;/a&gt;. Using the environment variable &lt;code&gt;DYLD_INSERT_LIBRARIES&lt;/code&gt;, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html&quot;&gt;²&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;DYLD_INSERT_LIBRARIES
+    This  is  a colon separated list of dynamic libraries to load before the ones specified in the
+    program.  This lets you test new modules of existing dynamic shared libraries that are used in
+    flat-namespace images by loading a temporary dynamic shared library with just the new modules.
+    Note that this has no effect on images built a two-level  namespace  images  using  a  dynamic
+    shared library unless DYLD_FORCE_FLAT_NAMESPACE is also used.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
+launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
+launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Once you have this set, that&amp;#39;s really all you need to do. Launch an app to get started. If you want to inspect Springboard you&amp;#39;ll have to restart the device first. I use &lt;code&gt;sbreload&lt;/code&gt; from the UIKitTools Cydia package, but &lt;code&gt;killall SpringBoard&lt;/code&gt; should work too.&lt;/p&gt;
+
+&lt;p&gt;The good thing about this approach is that it doesn&amp;#39;t require MobileSubstrate and it works on ARM and ARM64, as &lt;a href=&quot;https://twitter.com/hjaltij/status/419154290453008384&quot;&gt;verified&lt;/a&gt; via Twitter.&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/&quot;&gt;[1] How to Inspect the View Hierarchy of 3rd-party Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html&quot;&gt;[2] DYLD(1)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Fri, 03 Jan 2014 00:00:00 -0600</pubDate>
+      </item>
+    
+      <item>
+        <title>Fixing UIColor</title>
+        <link>http://marksands.github.io/2013/07/11/fixing-uicolor.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2013/07/11/fixing-uicolor.html</guid>
+        <description>&lt;h3 id=&quot;uicolor&quot;&gt;UIColor&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;UIColor&lt;/code&gt; is a commonly used class that represents color and sometimes opacity. As it turns out, &lt;code&gt;UIColor&lt;/code&gt; is a class cluster made up of a couple of private concrete subclasses. 
+Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.&lt;a href=&quot;http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h3 id=&quot;red-green-blue&quot;&gt;Red, Green, Blue&lt;/h3&gt;
+
+&lt;p&gt;As of iOS 6, subclasses of the &lt;code&gt;UIColor&lt;/code&gt; class cluster include &lt;a href=&quot;https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h&quot;&gt;&lt;code&gt;UIDeviceWhiteColor&lt;/code&gt;&lt;/a&gt; 
+and &lt;a href=&quot;https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h&quot;&gt;&lt;code&gt;UIDeviceRGBColor&lt;/code&gt;&lt;/a&gt;. 
+Unfortunately for the programmer, only &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; knows what red, green, and blue are, making it challenging to get the color components from a generic &lt;code&gt;UIColor&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;p&gt;According to Apple, &lt;code&gt;UIColor&lt;/code&gt;&amp;#39;s method &lt;code&gt;getRed:green:blue:alpha:&lt;/code&gt; will return the red, green, and blue color components if the color is within the RGB color space. 
+If the color is in a compatible color space, the color is converted into RGB format and its components are returned to your application. 
+If the color is not in a compatible color space, the parameters are unchanged.&lt;a href=&quot;http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:&quot;&gt;²&lt;/a&gt; 
+And therein lies the problem.&lt;/p&gt;
+
+&lt;p&gt;Say we have an API that accepts a &lt;code&gt;UIColor&lt;/code&gt; object and uses its color components for some arbitrary computation. One might think, &amp;quot;&lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; to the rescue!&amp;quot; 
+Sadly, this bruteforce approach will only work if the &lt;code&gt;UIColor&lt;/code&gt; object is of the RGB color space, or the &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; class. The only approach is to inspect and retreive 
+the color components using the Core Graphics functions &lt;code&gt;CGColorGetNumberOfComponents(color.CGColor)&lt;/code&gt; and &lt;code&gt;CGColorGetComponents(color.CGColor)&lt;/code&gt;. This approach quickly doesn&amp;#39;t scale if you 
+are constantly retreiving the color components for various reasons, so it would be ideal if &lt;code&gt;UIColor&lt;/code&gt; handled this for us under the hood. For the curious, I have 
+&lt;a href=&quot;http://openradar.appspot.com/radar?id=3114410&quot;&gt;created a radar&lt;/a&gt; in hopes to address this issue.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-universal-selector&quot;&gt;A Universal Selector&lt;/h3&gt;
+
+&lt;p&gt;Luckily for us, we have &lt;em&gt;objc/funtime.h&lt;/em&gt; that will provide exactly what we want. Using method swizzling, we can create an alternative to &lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; that 
+checks the number of the color components using &lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; for &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; objects and &lt;code&gt;getWhite:alpha&lt;/code&gt; for &lt;code&gt;UIDeviceWhiteColor&lt;/code&gt; objects. The color 
+components from &lt;code&gt;UIDeviceWhiteColor&lt;/code&gt; objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
+moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;cp&quot;&gt;#import &amp;lt;objc/runtime.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;ColorComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initialize&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;oldMethod&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_getInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newMethod&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_getInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;method_exchangeImplementations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;oldMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColorGetNumberOfComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColorGetNumberOfComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getWhite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34&quot;&gt;[1] Cocoa Fundamentals Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:&quot;&gt;[2] getRed:green:blue:alpha:&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Thu, 11 Jul 2013 00:00:00 -0500</pubDate>
+      </item>
+    
+  </channel>
 </rss>
