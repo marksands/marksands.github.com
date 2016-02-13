@@ -5,7 +5,146 @@
     <atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://marksands.github.io/</link>
     <description>Programming Tidbits</description>
-    <pubDate>Tue, 02 Feb 2016 21:06:46 -0600</pubDate>
+    <pubDate>Fri, 12 Feb 2016 22:34:20 -0600</pubDate>
+    
+      <item>
+        <title>Model View Binding</title>
+        <link>http://marksands.github.io/2016/2/12/model-view-binding.html</link>
+        <guid isPermaLink="true">http://marksands.github.io/2016/2/12/model-view-binding.html</guid>
+        <description>&lt;p&gt;The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of &lt;del&gt;old&lt;/del&gt; Objective-C, I gave &lt;a href=&quot;http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;Reactive Cocoa a shot&lt;/a&gt;, but I ultimately gave up.&lt;a href=&quot;http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Since then, I&amp;#39;ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I&amp;#39;m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.&lt;/p&gt;
+
+&lt;p&gt;In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here&amp;#39;s a link to the post &lt;a href=&quot;http://blog.asynchrony.com/2016/02/model-view-binding-swift/&quot;&gt;http://blog.asynchrony.com/2016/02/model-view-binding-swift/&lt;/a&gt; or continue reading for the full article.&lt;a href=&quot;http://blog.asynchrony.com/2016/02/model-view-binding-swift/&quot;&gt;²&lt;/a&gt;&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h1 id=&quot;model-view-binding&quot;&gt;Model - View - Binding&lt;/h1&gt;
+
+&lt;p&gt;At Asynchrony Labs some of us have been building iOS apps both large and small for the last few years with a pattern we are now calling Model-View-Binding (MVB).&lt;/p&gt;
+
+&lt;h2 id=&quot;already-popular&quot;&gt;Already Popular&lt;/h2&gt;
+
+&lt;p&gt;There are a number of popular architectural patterns in use on iOS: MVVM, VIPER, and of course Apple&amp;#39;s recommended MVC. Each of these can provide developers with a good starting point for organizing their code.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-another-pattern&quot;&gt;Why Another Pattern?&lt;/h2&gt;
+
+&lt;p&gt;MVC often results in &amp;quot;Massive View Controller&amp;quot; rather than a useful separation of concerns. &lt;a href=&quot;http://khanlou.com/2015/12/mvvm-is-not-very-good/&quot;&gt;￼“MVVM” is Not Very Good&lt;/a&gt;” details some problems with the MVVM pattern on iOS. &lt;a href=&quot;https://www.objc.io/issues/13-architecture/viper/&quot;&gt;VIPER&lt;/a&gt; has many parts and a fairly rigid structure. We have found MVB to be a simpler way to enforce separation of concerns while being flexible enough to work well in a small or a large project.&lt;/p&gt;
+
+&lt;h2 id=&quot;searchy-mvb-by-example&quot;&gt;Searchy - MVB By Example&lt;/h2&gt;
+
+&lt;p&gt;Searchy is a small app that uses the MVB pattern with RxSwift to search the iTunes API and display songs and cover art. The example code in this post is taken directly from that code. The full source is available at &lt;a href=&quot;https://gitlab.asynchrony.com/mark.sands/Searchy&quot;&gt;https://gitlab.asynchrony.com/mark.sands/Searchy&lt;/a&gt;.&lt;a href=&quot;https://gitlab.asynchrony.com/mark.sands/Searchy&quot;&gt;³&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;defining-terms&quot;&gt;Defining Terms&lt;/h2&gt;
+
+&lt;p&gt;Many of the common terms used in these patterns do not have a consistent definition, so here is a definition of each term within the context of this article:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;View:&lt;/strong&gt; Typically a UIView subclass that provides an interface of data inputs and user event outputs. Think of it as an object that translates information into user actions.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Model:&lt;/strong&gt; This is the portion of your app that manages logic, data, and rules within the app.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Data Object:&lt;/strong&gt; Immutable data used to populate the view, typically a struct or enum.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Binding:&lt;/strong&gt; The binding connects the model and view layers as well as other collaborators when required.&lt;/p&gt;
+
+&lt;h2 id=&quot;observer-pattern&quot;&gt;Observer Pattern&lt;/h2&gt;
+
+&lt;p&gt;Model-View-Binding relies heavily on the [Observer Pattern]. When using Objective-C, we use a small eventing library that our own James Rantanen wrote called [ESCObservable]. NSNotificationCenter is also an option, but it suffers from issues such as &lt;em&gt;stringly&lt;/em&gt; typed event names and strongly typed parameters. Reactive programming (RxSwift, ReactiveCocoa, etc.) is the observer pattern on steroids and satisfies all prerequisites and compile time safety, which makes it great for implementing MVB in Swift.&lt;/p&gt;
+
+&lt;h2 id=&quot;binding&quot;&gt;Binding&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;static func bindView(view:SearchyView, model:SearchyModel, selectionHandler:(SearchResult)-&amp;gt;()) {
+    view.rxs.disposeBag
+        ++ view.searchResults &amp;lt;~ model.searchResults
+        ++ model.searchTerm &amp;lt;~ view.searchTerm
+        ++ selectionHandler &amp;lt;~ view.selectionEvents
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The code above is a simple binding using RxSugar and RxSwift, making it easy to see the flow of data through the binding with the &lt;code&gt;&amp;lt;~&lt;/code&gt; operator. It is possible to build this without the custom operators, as well:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;model.searchResults.bindTo(view.searchResults).addDisposableTo(view.rx_disposeBag)
+view.searchTerm.bindTo(model.searchTerm).addDisposableTo(view.rx_disposeBag)
+view.selectionEvents.subscribeNext(selectionHandler).addDisposableTo(view.rx_disposeBag)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;As stated previously, the &lt;code&gt;&amp;lt;~&lt;/code&gt; operator exists for readability as a custom operator with several overloads that does the binding for us.&lt;/p&gt;
+
+&lt;h2 id=&quot;view-controller&quot;&gt;View Controller&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;override func loadView() {
+    let searchyView = SearchyView(imageProvider: context.imageProvider)
+    SearchyBinding.bindView(searchyView, model: model, selectionHandler: self.selectionHandler)
+    view = searchyView
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;UIKit basically forces UIViewControllers to be involved in navigation and view lifecycle logic. That is more than enough for one unit to handle, if following the &lt;em&gt;Single Responsibility Principle&lt;/em&gt;. Think of View Controllers as a way to plug into iOS&amp;#39;s navigation systems rather than as a home for an application&amp;#39;s logic or traditional &amp;quot;Controller&amp;quot; code. When using Storyboards or XIBs, the binding would be called in the &lt;code&gt;viewDidLoad()&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;h2 id=&quot;view&quot;&gt;View&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;private let disposeBag = DisposeBag()
+private let tableHandler:TableHandler
+private let textField = UITextField()
+
+private let _searchResults = PublishSubject&amp;lt;SearchResults&amp;gt;([])
+
+let searchResults:AnyObserver&amp;lt;SearchResults&amp;gt;
+let selectionEvents:Observable&amp;lt;SearchResult&amp;gt;
+
+init(imageProvider: ImageProvider) {
+    tableHandler = TableHandler(imageProvider: imageProvider)
+    selectionEvents = tableHandler.selectionEvents
+    searchTerm = textField.rxs.text.debounce(0.33, scheduler: MainScheduler.instance)
+    searchResults = _searchResults.asObserver()
+
+    super.init(frame: CGRectZero)
+
+    disposeBag ++ tableHandler.data &amp;lt;~ _searchResults
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The searchResults is exposed as a public Observer for reading the output and a private Subject for passing the data to the tableHandler. Since the search result selection, which is simply an event that corresponds to tapping a collection view cell, is something internal to the view, it is exposed as an Observable. In Searchy, the Binding feeds the selection events to the selection handler closure.&lt;/p&gt;
+
+&lt;h2 id=&quot;model&quot;&gt;Model&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;class SearchyModel {
+   let searchTerm = Variable&amp;lt;String&amp;gt;(&quot;&quot;)
+   let searchResults:Observable&amp;lt;SearchResults&amp;gt;
+
+   init(searchService:SearchService) {
+       searchResults = searchTerm.asObservable()
+           .map(SearchyModel.stripWhitespace)
+           .flatMapLatest(SearchyModel.searchTerm(searchService))
+           .catchErrorJustReturn([])
+           .share()
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The searchTerm is exposed as a Variable since it is used as both input and output. This could also be achieved by exposing both an Observable&lt;String&gt; and an Observer&lt;String&gt;. SearchResults is exposed as an Observable since readonly data will flow out from this stream.&lt;/p&gt;
+
+&lt;h2 id=&quot;guidelines&quot;&gt;Guidelines&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Views take in immutable data&lt;/li&gt;
+&lt;li&gt;Views publish user events in terms of user intent. For instance, prefer &lt;code&gt;closeRequested&lt;/code&gt; to &lt;code&gt;closeButtonTapped&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Models manage the state of the data&lt;/li&gt;
+&lt;li&gt;Models and Views do not have a reference to the Binding&lt;/li&gt;
+&lt;li&gt;Bindings in Swift can be a single function that sets up communication between a Model and a View (and other components)&lt;/li&gt;
+&lt;li&gt;View Controller code is limited to navigation and view construction/binding&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;rx-guidelines&quot;&gt;Rx Guidelines&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Views should expose realtime events&lt;/li&gt;
+&lt;li&gt;Models should generally fire the current value upon subscription followed by realtime events for observable state&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;rxsugar&quot;&gt;RxSugar&lt;/h2&gt;
+
+&lt;p&gt;The custom operators and UIKit bindings in Searchy come from RxSugar, a library that we are building to better support Model-View-Binding with RxSwift: &lt;a href=&quot;https://github.com/RxSugar/RxSugar&quot;&gt;https://github.com/RxSugar/RxSugar&lt;/a&gt;.&lt;a href=&quot;https://github.com/RxSugar/RxSugar&quot;&gt;⁴&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;[1] Reacting to Reactive Cocoa Part I&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.asynchrony.com/2016/02/model-view-binding-swift/&quot;&gt;[2] Model View Binding&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://gitlab.asynchrony.com/mark.sands/Searchy&quot;&gt;[3] Searchy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/RxSugar/RxSugar&quot;&gt;[4] RxSugar&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Fri, 12 Feb 2016 00:00:00 -0600</pubDate>
+      </item>
     
       <item>
         <title>Paper Doll App Development</title>
@@ -598,85 +737,6 @@ launchctl setenv DYLD_FORCE_FLAT_NAMESPACE &#39;&#39;
 &lt;/ul&gt;
 </description>
         <pubDate>Fri, 03 Jan 2014 00:00:00 -0600</pubDate>
-      </item>
-    
-      <item>
-        <title>Fixing UIColor</title>
-        <link>http://marksands.github.io/2013/07/11/fixing-uicolor.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2013/07/11/fixing-uicolor.html</guid>
-        <description>&lt;h3 id=&quot;uicolor&quot;&gt;UIColor&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;UIColor&lt;/code&gt; is a commonly used class that represents color and sometimes opacity. As it turns out, &lt;code&gt;UIColor&lt;/code&gt; is a class cluster made up of a couple of private concrete subclasses. 
-Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.&lt;a href=&quot;http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;h3 id=&quot;red-green-blue&quot;&gt;Red, Green, Blue&lt;/h3&gt;
-
-&lt;p&gt;As of iOS 6, subclasses of the &lt;code&gt;UIColor&lt;/code&gt; class cluster include &lt;a href=&quot;https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h&quot;&gt;&lt;code&gt;UIDeviceWhiteColor&lt;/code&gt;&lt;/a&gt; 
-and &lt;a href=&quot;https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h&quot;&gt;&lt;code&gt;UIDeviceRGBColor&lt;/code&gt;&lt;/a&gt;. 
-Unfortunately for the programmer, only &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; knows what red, green, and blue are, making it challenging to get the color components from a generic &lt;code&gt;UIColor&lt;/code&gt; object.&lt;/p&gt;
-
-&lt;p&gt;According to Apple, &lt;code&gt;UIColor&lt;/code&gt;&amp;#39;s method &lt;code&gt;getRed:green:blue:alpha:&lt;/code&gt; will return the red, green, and blue color components if the color is within the RGB color space. 
-If the color is in a compatible color space, the color is converted into RGB format and its components are returned to your application. 
-If the color is not in a compatible color space, the parameters are unchanged.&lt;a href=&quot;http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:&quot;&gt;²&lt;/a&gt; 
-And therein lies the problem.&lt;/p&gt;
-
-&lt;p&gt;Say we have an API that accepts a &lt;code&gt;UIColor&lt;/code&gt; object and uses its color components for some arbitrary computation. One might think, &amp;quot;&lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; to the rescue!&amp;quot; 
-Sadly, this bruteforce approach will only work if the &lt;code&gt;UIColor&lt;/code&gt; object is of the RGB color space, or the &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; class. The only approach is to inspect and retreive 
-the color components using the Core Graphics functions &lt;code&gt;CGColorGetNumberOfComponents(color.CGColor)&lt;/code&gt; and &lt;code&gt;CGColorGetComponents(color.CGColor)&lt;/code&gt;. This approach quickly doesn&amp;#39;t scale if you 
-are constantly retreiving the color components for various reasons, so it would be ideal if &lt;code&gt;UIColor&lt;/code&gt; handled this for us under the hood. For the curious, I have 
-&lt;a href=&quot;http://openradar.appspot.com/radar?id=3114410&quot;&gt;created a radar&lt;/a&gt; in hopes to address this issue.&lt;/p&gt;
-
-&lt;h3 id=&quot;a-universal-selector&quot;&gt;A Universal Selector&lt;/h3&gt;
-
-&lt;p&gt;Luckily for us, we have &lt;em&gt;objc/funtime.h&lt;/em&gt; that will provide exactly what we want. Using method swizzling, we can create an alternative to &lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; that 
-checks the number of the color components using &lt;code&gt;getRed:green:blue:alpha&lt;/code&gt; for &lt;code&gt;UIDeviceRGBColor&lt;/code&gt; objects and &lt;code&gt;getWhite:alpha&lt;/code&gt; for &lt;code&gt;UIDeviceWhiteColor&lt;/code&gt; objects. The color 
-components from &lt;code&gt;UIDeviceWhiteColor&lt;/code&gt; objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
-moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objc&quot; data-lang=&quot;objc&quot;&gt;&lt;span class=&quot;cp&quot;&gt;#import &amp;lt;objc/runtime.h&amp;gt;
-&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;ColorComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;err&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initialize&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;oldMethod&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_getInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;Method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newMethod&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;class_getInstanceMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;method_exchangeImplementations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;oldMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newMethod&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColorGetNumberOfComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;eds_getRed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;green&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;blue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColorGetNumberOfComponents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getWhite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m_alpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;YES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34&quot;&gt;[1] Cocoa Fundamentals Guide&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:&quot;&gt;[2] getRed:green:blue:alpha:&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Thu, 11 Jul 2013 00:00:00 -0500</pubDate>
       </item>
     
   </channel>

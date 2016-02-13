@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+	<meta charset="utf-8">
+	<title>Model View Binding | Mark Sands</title>
+	<meta name="description" content="The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1...">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-Frame-Options" content="sameorigin">
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!--Favicon-->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+	<!-- Canonical -->
+	<link rel="canonical" href="http://marksands.github.io/2016/2/12/model-view-binding.html">
+
+	<!-- RSS -->
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+
+	<!-- Font Awesome -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<!-- Google Fonts -->
+	
+	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" rel="stylesheet" type="text/css">
+	
+
+	<!-- KaTeX -->
+	
+
+	<!-- Google Analytics -->
+	
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-41405801-1', 'auto');
+	ga('send', 'pageview');
+	</script>
+	
+</head>
+
+  <body>
+    <header class="site-header">
+	<div class="branding">
+		
+		<a href="/">
+			<img class="avatar" src="https://secure.gravatar.com/avatar/7a6e4cc366f8f533b056936cf9bcb85d?s=100" alt=""/>
+		</a>
+		
+		<h1 class="site-title">
+			<a href="/">Mark Sands</a>
+		</h1>
+	</div>
+	<nav class="site-nav">
+		<ul>
+			
+			
+			
+			
+			<li>
+				<a class="page-link" href="/about/">
+					About
+				</a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- Social icons from Font Awesome, if enabled -->
+			
+<li>
+	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+		<i class="fa fa-fw fa-rss"></i>
+	</a>
+</li>
+
+
+
+<li>
+	<a href="mailto:marksands07@gmail.com" title="Email">
+		<i class="fa fa-fw fa-envelope"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://github.com/marksands" title="Follow on GitHub">
+		<i class="fa fa-fw fa-github"></i>
+	</a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+	<a href="https://twitter.com/marksands" title="Follow on Twitter">
+		<i class="fa fa-fw fa-twitter"></i>
+	</a>
+</li>
+
+
+
+
+
+
+		</ul>
+	</nav>
+</header>
+
+    <div class="content">
+      <article >
+  <header style="background-image: url('/')">
+    <h1 class="title">Model View Binding</h1>
+    <p class="meta">
+    February 12, 2016
+    
+    </p>
+  </header>
+  <section class="post-content"><p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
+
+<p>Since then, I&#39;ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I&#39;m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
+
+<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here&#39;s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
+
+<!-- more -->
+
+<h1 id="model-view-binding">Model - View - Binding</h1>
+
+<p>At Asynchrony Labs some of us have been building iOS apps both large and small for the last few years with a pattern we are now calling Model-View-Binding (MVB).</p>
+
+<h2 id="already-popular">Already Popular</h2>
+
+<p>There are a number of popular architectural patterns in use on iOS: MVVM, VIPER, and of course Apple&#39;s recommended MVC. Each of these can provide developers with a good starting point for organizing their code.</p>
+
+<h2 id="why-another-pattern">Why Another Pattern?</h2>
+
+<p>MVC often results in &quot;Massive View Controller&quot; rather than a useful separation of concerns. <a href="http://khanlou.com/2015/12/mvvm-is-not-very-good/">￼“MVVM” is Not Very Good</a>” details some problems with the MVVM pattern on iOS. <a href="https://www.objc.io/issues/13-architecture/viper/">VIPER</a> has many parts and a fairly rigid structure. We have found MVB to be a simpler way to enforce separation of concerns while being flexible enough to work well in a small or a large project.</p>
+
+<h2 id="searchy-mvb-by-example">Searchy - MVB By Example</h2>
+
+<p>Searchy is a small app that uses the MVB pattern with RxSwift to search the iTunes API and display songs and cover art. The example code in this post is taken directly from that code. The full source is available at <a href="https://gitlab.asynchrony.com/mark.sands/Searchy">https://gitlab.asynchrony.com/mark.sands/Searchy</a>.<a href="https://gitlab.asynchrony.com/mark.sands/Searchy">³</a></p>
+
+<h2 id="defining-terms">Defining Terms</h2>
+
+<p>Many of the common terms used in these patterns do not have a consistent definition, so here is a definition of each term within the context of this article:</p>
+
+<p><strong>View:</strong> Typically a UIView subclass that provides an interface of data inputs and user event outputs. Think of it as an object that translates information into user actions.</p>
+
+<p><strong>Model:</strong> This is the portion of your app that manages logic, data, and rules within the app.</p>
+
+<p><strong>Data Object:</strong> Immutable data used to populate the view, typically a struct or enum.</p>
+
+<p><strong>Binding:</strong> The binding connects the model and view layers as well as other collaborators when required.</p>
+
+<h2 id="observer-pattern">Observer Pattern</h2>
+
+<p>Model-View-Binding relies heavily on the [Observer Pattern]. When using Objective-C, we use a small eventing library that our own James Rantanen wrote called [ESCObservable]. NSNotificationCenter is also an option, but it suffers from issues such as <em>stringly</em> typed event names and strongly typed parameters. Reactive programming (RxSwift, ReactiveCocoa, etc.) is the observer pattern on steroids and satisfies all prerequisites and compile time safety, which makes it great for implementing MVB in Swift.</p>
+
+<h2 id="binding">Binding</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">static func bindView(view:SearchyView, model:SearchyModel, selectionHandler:(SearchResult)-&gt;()) {
+    view.rxs.disposeBag
+        ++ view.searchResults &lt;~ model.searchResults
+        ++ model.searchTerm &lt;~ view.searchTerm
+        ++ selectionHandler &lt;~ view.selectionEvents
+}
+</code></pre></div>
+<p>The code above is a simple binding using RxSugar and RxSwift, making it easy to see the flow of data through the binding with the <code>&lt;~</code> operator. It is possible to build this without the custom operators, as well:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">model.searchResults.bindTo(view.searchResults).addDisposableTo(view.rx_disposeBag)
+view.searchTerm.bindTo(model.searchTerm).addDisposableTo(view.rx_disposeBag)
+view.selectionEvents.subscribeNext(selectionHandler).addDisposableTo(view.rx_disposeBag)
+</code></pre></div>
+<p>As stated previously, the <code>&lt;~</code> operator exists for readability as a custom operator with several overloads that does the binding for us.</p>
+
+<h2 id="view-controller">View Controller</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">override func loadView() {
+    let searchyView = SearchyView(imageProvider: context.imageProvider)
+    SearchyBinding.bindView(searchyView, model: model, selectionHandler: self.selectionHandler)
+    view = searchyView
+}
+</code></pre></div>
+<p>UIKit basically forces UIViewControllers to be involved in navigation and view lifecycle logic. That is more than enough for one unit to handle, if following the <em>Single Responsibility Principle</em>. Think of View Controllers as a way to plug into iOS&#39;s navigation systems rather than as a home for an application&#39;s logic or traditional &quot;Controller&quot; code. When using Storyboards or XIBs, the binding would be called in the <code>viewDidLoad()</code> method.</p>
+
+<h2 id="view">View</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">private let disposeBag = DisposeBag()
+private let tableHandler:TableHandler
+private let textField = UITextField()
+
+private let _searchResults = PublishSubject&lt;SearchResults&gt;([])
+
+let searchResults:AnyObserver&lt;SearchResults&gt;
+let selectionEvents:Observable&lt;SearchResult&gt;
+
+init(imageProvider: ImageProvider) {
+    tableHandler = TableHandler(imageProvider: imageProvider)
+    selectionEvents = tableHandler.selectionEvents
+    searchTerm = textField.rxs.text.debounce(0.33, scheduler: MainScheduler.instance)
+    searchResults = _searchResults.asObserver()
+
+    super.init(frame: CGRectZero)
+
+    disposeBag ++ tableHandler.data &lt;~ _searchResults
+</code></pre></div>
+<p>The searchResults is exposed as a public Observer for reading the output and a private Subject for passing the data to the tableHandler. Since the search result selection, which is simply an event that corresponds to tapping a collection view cell, is something internal to the view, it is exposed as an Observable. In Searchy, the Binding feeds the selection events to the selection handler closure.</p>
+
+<h2 id="model">Model</h2>
+<div class="highlight"><pre><code class="language-" data-lang="">class SearchyModel {
+   let searchTerm = Variable&lt;String&gt;("")
+   let searchResults:Observable&lt;SearchResults&gt;
+
+   init(searchService:SearchService) {
+       searchResults = searchTerm.asObservable()
+           .map(SearchyModel.stripWhitespace)
+           .flatMapLatest(SearchyModel.searchTerm(searchService))
+           .catchErrorJustReturn([])
+           .share()
+   }
+</code></pre></div>
+<p>The searchTerm is exposed as a Variable since it is used as both input and output. This could also be achieved by exposing both an Observable<String> and an Observer<String>. SearchResults is exposed as an Observable since readonly data will flow out from this stream.</p>
+
+<h2 id="guidelines">Guidelines</h2>
+
+<ul>
+<li>Views take in immutable data</li>
+<li>Views publish user events in terms of user intent. For instance, prefer <code>closeRequested</code> to <code>closeButtonTapped</code>.</li>
+<li>Models manage the state of the data</li>
+<li>Models and Views do not have a reference to the Binding</li>
+<li>Bindings in Swift can be a single function that sets up communication between a Model and a View (and other components)</li>
+<li>View Controller code is limited to navigation and view construction/binding</li>
+</ul>
+
+<h2 id="rx-guidelines">Rx Guidelines</h2>
+
+<ul>
+<li>Views should expose realtime events</li>
+<li>Models should generally fire the current value upon subscription followed by realtime events for observable state</li>
+</ul>
+
+<h2 id="rxsugar">RxSugar</h2>
+
+<p>The custom operators and UIKit bindings in Searchy come from RxSugar, a library that we are building to better support Model-View-Binding with RxSwift: <a href="https://github.com/RxSugar/RxSugar">https://github.com/RxSugar/RxSugar</a>.<a href="https://github.com/RxSugar/RxSugar">⁴</a></p>
+
+<h3 id="references">References</h3>
+
+<ul>
+<li><a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">[1] Reacting to Reactive Cocoa Part I</a></li>
+<li><a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">[2] Model View Binding</a></li>
+<li><a href="https://gitlab.asynchrony.com/mark.sands/Searchy">[3] Searchy</a></li>
+<li><a href="https://github.com/RxSugar/RxSugar">[4] RxSugar</a></li>
+</ul>
+</section>
+</article>
+
+<!-- Post navigation -->
+
+<div id="post-nav">
+    
+    <a id="prev-post" href="/2016/1/14/paper-doll-app-development.html">
+      <span class="page-title">Paper Doll App Development</span>
+      <span class="nav-label">
+        <i class="fa fa-chevron-left"></i> Prev
+      </span>
+    </a>
+    
+    
+</div>
+
+
+<!-- Disqus -->
+
+<div class="comments">
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+	var disqus_shortname = 'marksandsgithub';
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+    </div>
+    
+
+
+<footer class="site-footer">
+	<p class="text">Powered by <a href="http://jekyllrb.com">Jekyll</a>
+</p>
+</footer>
+
+
+  </body>
+</html>

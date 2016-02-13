@@ -159,6 +159,30 @@
     <div class="post-teaser">
       <header>
         <h1>
+          <a class="post-link" href="/2016/2/12/model-view-binding.html">
+            Model View Binding
+          </a>
+        </h1>
+        <p class="meta">
+          February 12, 2016
+        </p>
+      </header>
+      <div class="excerpt">
+        <p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
+
+<p>Since then, I&#39;ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I&#39;m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
+
+<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here&#39;s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
+
+        <a class="button" href="/2016/2/12/model-view-binding.html">
+          Continue reading
+        </a>
+      </div>
+    </div>
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
           <a class="post-link" href="/2016/1/14/paper-doll-app-development.html">
             Paper Doll App Development
           </a>
@@ -241,28 +265,6 @@
 <p>One of my first endevours into the realm of expanding my <code>RACObserve</code>-fu was to asynchronously load a <code>UIImage</code> from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using <code>AFNetworking</code>&#39;s built-in mechanism or a third party caching library such as <code>SDWebImage</code> would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I&#39;ve so graciously poured.</p>
 
         <a class="button" href="/2015/1/7/reacting-to-reactive-cocoa-part-iii.html">
-          Continue reading
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2015/1/2/reacting-to-reactive-cocoa-part-ii.html">
-            Reacting to Reactive Cocoa Part II
-          </a>
-        </h1>
-        <p class="meta">
-          January 2, 2015
-        </p>
-      </header>
-      <div class="excerpt">
-        <h3 id="baby-39-s-first-monad">Baby&#39;s First Monad</h3>
-
-<p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&#39;m supposed to be doing this the Reactive Cocoa way.</p>
-
-        <a class="button" href="/2015/1/2/reacting-to-reactive-cocoa-part-ii.html">
           Continue reading
         </a>
       </div>
