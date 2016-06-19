@@ -5,7 +5,7 @@
     <atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://marksands.github.io/</link>
     <description>Programming Tidbits</description>
-    <pubDate>Sun, 19 Jun 2016 15:41:24 -0500</pubDate>
+    <pubDate>Sun, 19 Jun 2016 15:52:27 -0500</pubDate>
     
       <item>
         <title>WWDC 2016 What You Might Have Missed</title>
@@ -37,7 +37,7 @@
 
 &lt;h3 id=&quot;apfs&quot;&gt;APFS&lt;/h3&gt;
 
-&lt;p&gt;&lt;em&gt;Ding!&lt;/em&gt; This also isn’t news, but it’s worth mentioning in case you were living under a rock last week. Apple announced their new file system coming in 2017, and it sounds very promising. It’s available as a developer preview in macOS Seirra if you feel daring.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Ding!&lt;/em&gt; This also isn’t news, but it’s worth mentioning in case you were living under a rock last week. Apple announced their new file system coming in 2017, and it sounds very promising. It’s available as a developer preview in macOS Sierra if you feel daring.&lt;/p&gt;
 
 &lt;h3 id=&quot;developer-certificates-available-per-machine&quot;&gt;Developer Certificates available per-machine&lt;/h3&gt;
 

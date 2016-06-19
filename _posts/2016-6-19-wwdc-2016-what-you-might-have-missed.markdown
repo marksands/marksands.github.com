@@ -34,7 +34,7 @@ As an aside, if you currently support a source editor Xcode plugin through Alcat
 
 ### APFS
 
-_Ding!_ This also isn’t news, but it’s worth mentioning in case you were living under a rock last week. Apple announced their new file system coming in 2017, and it sounds very promising. It’s available as a developer preview in macOS Seirra if you feel daring.
+_Ding!_ This also isn’t news, but it’s worth mentioning in case you were living under a rock last week. Apple announced their new file system coming in 2017, and it sounds very promising. It’s available as a developer preview in macOS Sierra if you feel daring.
 
 ### Developer Certificates available per-machine
 
