@@ -223,7 +223,7 @@ meaning there is only one reference available at a time<a href="http://www.open-
 <div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
     <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">nullptr</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">nullptr</span><span class="p">);</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p2</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>

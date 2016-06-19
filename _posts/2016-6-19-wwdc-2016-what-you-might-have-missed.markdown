@@ -1,7 +1,7 @@
 ---
 layout: post
 permalink: /2016/6/19/wwdc-2016-what-you-might-have-missed.html
-title: WWDC 2016: What you might have missed
+title: WWDC 2016 What You Might Have Missed
 category : Programming
 tags: [iOS, WWDC]
 comments: true

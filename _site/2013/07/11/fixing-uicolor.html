@@ -193,7 +193,7 @@ moved the redundant color space checking behind the scenes and provided ourselve
 </span>
 <span class="k">@implementation</span> <span class="nc">UIColor</span> <span class="p">(</span><span class="nl">ColorComponents</span><span class="p">)</span>
 
-<span class="err">+</span> <span class="err">(</span><span class="nc">void</span><span class="p">)</span><span class="n">initialize</span>
+<span class="k">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">initialize</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">self</span> <span class="o">==</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nf">class</span><span class="p">])</span>
     <span class="p">{</span>
@@ -206,7 +206,7 @@ moved the redundant color space checking behind the scenes and provided ourselve
 <span class="o">-</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="n">eds_getRed</span><span class="o">:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="n">red</span> <span class="n">green</span><span class="o">:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="n">green</span> <span class="n">blue</span><span class="o">:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="n">blue</span> <span class="n">alpha</span><span class="o">:</span><span class="p">(</span><span class="n">CGFloat</span> <span class="o">*</span><span class="p">)</span><span class="n">alpha</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="nf">eds_getRed</span><span class="p">:</span><span class="n">red</span> <span class="nf">green</span><span class="p">:</span><span class="n">green</span> <span class="nf">blue</span><span class="p">:</span><span class="n">blue</span> <span class="nf">alpha</span><span class="p">:</span><span class="n">alpha</span><span class="p">];</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="nf">eds_getRed</span><span class="p">:</span><span class="n">red</span> <span class="nf">green</span><span class="p">:</span><span class="n">green</span> <span class="n">blue</span><span class="o">:</span><span class="n">blue</span> <span class="n">alpha</span><span class="o">:</span><span class="n">alpha</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">CGColorGetNumberOfComponents</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">CGColor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">CGFloat</span> <span class="n">white</span><span class="p">;</span>
