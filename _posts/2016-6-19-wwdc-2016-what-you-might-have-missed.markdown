@@ -58,4 +58,8 @@ GameplayKit and Accelerate introduced a plethora of goodies for AI aficionados. 
 
 Accelerate also introduced Neural Network APIs. If I had to guess, this is what’s used behind the scenes for facial and object recognition in photos. The only downside of using these APIs for now, is that you’ll have to give it pre trained data.
 
+### SpriteKit and SceneKit on Watch
+
+Thanks to my coworker, [James](https://twitter.com/JARInteractive), for pointing out how amazing adding SpriteKit and SceneKit are to apple watch developers. Prior to watchOS 3, UI elements were wholly dependent upon storyboard creation. This is no longer the case. Now you can create a programmatic UI on the watch using SpriteKit if you desire. This has **huge** potential for applications to innovate on this platform and I am super excited to see what great minds do with this new capability. I'm calling it, this may be the best news in all of WWDC.
+
 If you have any feedback or corrections to share with me, please reach out to me on twitter [@marksands](https://twitter.com/marksands). And if you haven’t already started watching the recorded sessions from last week, I encourage you to watch them!
