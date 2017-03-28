@@ -75,14 +75,6 @@
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
@@ -169,24 +161,25 @@ into the trampoline object and then immediately jumps out.<a href="http://gcc.gn
 
 <!-- more -->
 
-<p>A trampoline object in Objective-C is a subclass of <code>NSProxy</code> that is returned by a method and acts like a delegate by forwarding messages to another object. 
+<p>A trampoline object in Objective-C is a subclass of <code class="highlighter-rouge">NSProxy</code> that is returned by a method and acts like a delegate by forwarding messages to another object. 
 This brings us to higher order messaging.</p>
 
 <h3 id="higher-order-messaging">Higher Order Messaging</h3>
 
 <p>Higher order messaging allows messages that have messages as arguments. This is analogous to languages that treat functions as a first-class data type, 
-like Lisp, Haskell, and PHP do. Even C and its descendants can use function pointers, although it&#39;s not as pretty. Objective-C is a perfect candidate for 
-higher order messaging, or HOM, since the language is known for its message passing traits.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">²</a></p>
+like Lisp, Haskell, and PHP do. Even C and its descendants can use function pointers, although it’s not as pretty. Objective-C is a perfect candidate for 
+higher order messaging, or HOM, since the language is known for its message passing traits.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
 
-<p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code>NSArray</code> and assumes ARC is enabled. The <code>#pragma</code> cruff 
+<p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code class="highlighter-rouge">NSArray</code> and assumes ARC is enabled. The <code class="highlighter-rouge">#pragma</code> cruff 
 is necessary to silence warnings.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@interface</span> <span class="nc">TFFTrampoline</span> <span class="p">:</span> <span class="nc">NSProxy</span> <span class="p">{</span>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">@interface</span> <span class="nc">TFFTrampoline</span> <span class="p">:</span> <span class="nc">NSProxy</span> <span class="p">{</span>
     <span class="n">id</span> <span class="n">tff_target</span><span class="p">;</span>
     <span class="n">SEL</span> <span class="n">tff_selector</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="o">+</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">newSelector</span><span class="p">;</span>
 <span class="k">@end</span>
-
+ 
 <span class="k">@implementation</span> <span class="nc">TFFTrampoline</span>
 
 <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation</span><span class="p">:(</span><span class="n">NSInvocation</span><span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
@@ -196,34 +189,37 @@ is necessary to silence warnings.</p>
     <span class="p">[</span><span class="n">anInvocation</span> <span class="nf">setReturnValue</span><span class="p">:</span><span class="o">&amp;</span><span class="n">result</span><span class="p">];</span>
 <span class="cp">#pragma clang diagnostic pop
 </span><span class="p">}</span>
-
+ 
 <span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">methodSignatureForSelector</span><span class="p">:(</span><span class="n">SEL</span><span class="p">)</span><span class="nv">aSelector</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">[[</span><span class="n">tff_target</span> <span class="nf">objectAtIndex</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="nf">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="p">}</span>
-
+ 
 <span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
     <span class="n">tff_target</span> <span class="o">=</span> <span class="n">aTarget</span><span class="p">;</span>
     <span class="n">tff_selector</span> <span class="o">=</span> <span class="n">aSelector</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
 <span class="p">}</span>
-
+ 
 <span class="o">+</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">trampolineWithTarget</span><span class="o">:</span><span class="n">aTarget</span> <span class="n">selector</span><span class="o">:</span><span class="p">(</span><span class="n">SEL</span><span class="p">)</span><span class="n">aSelector</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">[[</span><span class="n">self</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">tff_initWithTarget</span><span class="p">:</span><span class="n">aTarget</span> <span class="nf">selector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
 <span class="p">}</span>
 
 <span class="k">@end</span>
-</code></pre></div>
-<p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code>NSArray</code> to add a <code>collect</code> method. You might see some 
-programmers use <code>do</code> as their method name of choice, but since <code>do</code> is a keyword, I will avoid that route.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@interface</span> <span class="nc">NSArray</span> <span class="p">(</span><span class="nl">Collect</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>This is the basic implementation for a trampoline object. For our intents and purposes, we will be using it to create a category on <code class="highlighter-rouge">NSArray</code> to add a <code class="highlighter-rouge">collect</code> method. You might see some 
+programmers use <code class="highlighter-rouge">do</code> as their method name of choice, but since <code class="highlighter-rouge">do</code> is a keyword, I will avoid that route.</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">@interface</span> <span class="nc">NSArray</span> <span class="p">(</span><span class="nl">Collect</span><span class="p">)</span>
 <span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">collect</span><span class="p">;</span>
 <span class="k">@end</span>
-
+  
 <span class="k">@implementation</span> <span class="nc">NSArray</span> <span class="p">(</span><span class="nl">Collect</span><span class="p">)</span>
 
 <span class="k">-</span> <span class="p">(</span><span class="n">NSArray</span> <span class="o">*</span><span class="p">)</span><span class="nf">collect</span><span class="p">:(</span><span class="n">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">anInvocation</span> <span class="p">{</span>
     <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">resultArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nf">array</span><span class="p">];</span>
-
+    
     <span class="k">for</span> <span class="p">(</span><span class="n">id</span> <span class="n">obj</span> <span class="k">in</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">__unsafe_unretained</span> <span class="n">id</span> <span class="n">resultObject</span><span class="p">;</span>
         <span class="p">[</span><span class="n">anInvocation</span> <span class="nf">invokeWithTarget</span><span class="p">:</span><span class="n">obj</span><span class="p">];</span>
@@ -238,12 +234,15 @@ programmers use <code>do</code> as their method name of choice, but since <code>
 <span class="p">}</span>
 
 <span class="k">@end</span>
-</code></pre></div>
-<p>Here, our <code>NSArray</code> category implements a public <code>collect</code> method that will return our trampoline object to bounce the method argument to the private <code>collect:</code> method 
-that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</p>
+</code></pre>
+</div>
+
+<p>Here, our <code class="highlighter-rouge">NSArray</code> category implements a public <code class="highlighter-rouge">collect</code> method that will return our trampoline object to bounce the method argument to the private <code class="highlighter-rouge">collect:</code> method 
+that uses the forwarded <code class="highlighter-rouge">NSInvocation</code> to assist with the bouncing.</p>
 
 <p>Last but not least, below is an example of how one would use this implementation.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 <span class="cp">#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types"
 </span>    <span class="err">@autoreleasepool</span> <span class="p">{</span>
@@ -251,12 +250,12 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 </span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">smallCasedString</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@"small"</span><span class="p">,</span> <span class="s">@"cased"</span><span class="p">,</span> <span class="s">@"words"</span> <span class="p">];</span>
         <span class="n">NSArray</span> <span class="o">*</span><span class="n">uppercasedStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">smallCasedString</span> <span class="nf">collect</span><span class="p">]</span> <span class="nf">uppercaseString</span><span class="p">];</span>
         <span class="c1">// ( @"SMALL", @"CASED", @"WORDS" )
-</span>
+</span>        
         <span class="c1">// Convert
 </span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">floats</span> <span class="o">=</span> <span class="p">@[</span> <span class="err">@</span><span class="p">(</span><span class="mi">3</span><span class="p">.</span><span class="mi">14</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mi">2</span><span class="p">.</span><span class="mi">71</span><span class="p">),</span> <span class="err">@</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">577</span><span class="p">)</span> <span class="p">];</span>
         <span class="n">NSArray</span> <span class="o">*</span><span class="n">floatStrings</span> <span class="o">=</span> <span class="p">[[</span><span class="n">floats</span> <span class="nf">collect</span><span class="p">]</span> <span class="nf">stringValue</span><span class="p">];</span>
         <span class="c1">// ( @"3.14", @"2.71", @"0.577" )
-</span>
+</span>        
         <span class="c1">// An exercise for the reader could be to implement a select method to filter results
 </span>        <span class="n">NSArray</span> <span class="o">*</span><span class="n">dogs</span> <span class="o">=</span> <span class="p">@[</span> <span class="s">@"Scooby"</span><span class="p">,</span> <span class="s">@"Clifford"</span><span class="p">,</span> <span class="s">@"Snoopy"</span> <span class="p">];</span>
         <span class="n">NSArray</span> <span class="o">*</span><span class="n">redDogs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dogs</span> <span class="nf">select</span><span class="p">]</span> <span class="nf">isNamed</span><span class="p">:</span><span class="s">@"Clifford"</span><span class="p">];</span>
@@ -264,21 +263,23 @@ that uses the forwarded <code>NSInvocation</code> to assist with the bouncing.</
 </span>    <span class="p">}</span>
 <span class="cp">#pragma clang diagnostic pop
 </span><span class="p">}</span>
-</code></pre></div>
-<p>And that&#39;s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
+</code></pre>
+</div>
+
+<p>And that’s all there is to it. This might look more complicated than necessary to accomplish iteration, but benefits do exist. Having a one-off solution is 
 good for writing this once and only once, which can also provide assurance of getting rid of one-off errors, and loops are optimized more easily when they are
 internalized in this manner.</p>
 
-<p>There are many more uses for HOM than iteration, but methods such as <code>collect</code> seem to be the most commonly used higher-order methods. Another use 
+<p>There are many more uses for HOM than iteration, but methods such as <code class="highlighter-rouge">collect</code> seem to be the most commonly used higher-order methods. Another use 
 case could be a protocol checker to act as a proxy for an object and only pass messages through that are part of a given protocol, but the possibilities are, 
-of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">²</a></p>
+of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
 
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
-<li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
-<li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
+  <li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
+  <li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
+  <li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
 </ul>
 </section>
 </article>

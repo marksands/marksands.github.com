@@ -3,7 +3,7 @@
   <head>
 	<meta charset="utf-8">
 	<title>Reacting to Reactive Cocoa Part II | Mark Sands</title>
-	<meta name="description" content="Baby&#39;s First MonadSince this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&#39;d need a network request in or...">
+	<meta name="description" content="Baby’s First MonadSince this is an app designed to pull down recent showtime listings from the Internet¹, I realized I’d need a network request in order to f...">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-Frame-Options" content="sameorigin">
 
@@ -67,14 +67,6 @@
 					About
 				</a>
 			</li>
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -161,20 +153,21 @@
     
     </p>
   </header>
-  <section class="post-content"><h3 id="babys-first-monad">Baby&#39;s First Monad</h3>
+  <section class="post-content"><h3 id="babys-first-monad">Baby’s First Monad</h3>
 
-<p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&#39;m supposed to be doing this the Reactive Cocoa way.</p>
+<p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I’d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn’t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I’m supposed to be doing this the Reactive Cocoa way.</p>
 
 <!-- more -->
 
-<p>Without much searching around, I decided to place my best foot forward and see how far I could get without tripping. From what I&#39;ve seen in the past, the macro <code>RAC</code> will magically populate an object with data by assigning it to something called a <code>RACSignal</code>. So that&#39;s where I began: <code>RAC(self, movies) = [self fetchMoviesSignal];</code> Now I just needed to see what this <code>fetchMoviesSignal</code> entailed.</p>
+<p>Without much searching around, I decided to place my best foot forward and see how far I could get without tripping. From what I’ve seen in the past, the macro <code class="highlighter-rouge">RAC</code> will magically populate an object with data by assigning it to something called a <code class="highlighter-rouge">RACSignal</code>. So that’s where I began: <code class="highlighter-rouge">RAC(self, movies) = [self fetchMoviesSignal];</code> Now I just needed to see what this <code class="highlighter-rouge">fetchMoviesSignal</code> entailed.</p>
 
 <h3 id="racsignal">RACSignal</h3>
 
-<p><code>RACSignal</code> appears to be the workhorse of reactive cocoa. When inspecting the headers, we&#39;re told that <code>RACSignal</code> inherits from <code>RACStream</code>, which is <em>a class that represents a monad, upon which many stream-based operations can be built</em> (it looks complicated, so I closed the header to regain my attention).</p>
+<p><code class="highlighter-rouge">RACSignal</code> appears to be the workhorse of reactive cocoa. When inspecting the headers, we’re told that <code class="highlighter-rouge">RACSignal</code> inherits from <code class="highlighter-rouge">RACStream</code>, which is <em>a class that represents a monad, upon which many stream-based operations can be built</em> (it looks complicated, so I closed the header to regain my attention).</p>
 
 <p>Since I already had AFNetworking imported, I decided to expirment with wrapping it in a new signal object. As it turns out, it was fairly straightforward. This is what I ended up with:</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">-</span> <span class="p">(</span><span class="n">RACSignal</span> <span class="o">*</span><span class="p">)</span><span class="n">fetchMoviesSignal</span> <span class="p">{</span>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="n">RACSignal</span> <span class="o">*</span><span class="p">)</span><span class="n">fetchMoviesSignal</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">RACSignal</span> <span class="nf">createSignal</span><span class="p">:</span><span class="o">^</span><span class="n">RACDisposable</span> <span class="o">*</span><span class="p">(</span><span class="n">id</span><span class="o">&lt;</span><span class="n">RACSubscriber</span><span class="o">&gt;</span> <span class="n">subscriber</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">[[</span><span class="n">AFHTTPRequestOperationManager</span> <span class="nf">manager</span><span class="p">]</span> <span class="nf">GET</span><span class="p">:</span><span class="s">@"movieapi.com/showtimes"</span> <span class="nf">parameters</span><span class="p">:</span><span class="nb">nil</span> <span class="n">success</span><span class="o">:^</span><span class="p">(</span><span class="n">AFHTTPRequestOperation</span> <span class="o">*</span><span class="n">operation</span><span class="p">,</span> <span class="n">id</span> <span class="n">responseObject</span><span class="p">)</span> <span class="p">{</span>
             <span class="p">[</span><span class="n">subscriber</span> <span class="nf">sendNext</span><span class="p">:</span><span class="n">responseObject</span><span class="p">];</span>
@@ -185,16 +178,18 @@
         <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
     <span class="p">}];</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>Before I got here, I had to ask myself what a subscriber was. The documentation for the subscriber states that it <em>represents any object which can directly receive values from a RACSignal</em>. The header file for the <code>RACSubscriber</code> protocol was actually very informative.<a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">²</a> <code>sendNext:</code>, <code>sendCompleted</code>, and <code>sendError:</code> all made perfect sense to me at the time. When I built and ran, and saw that my movies array was populated with the JSON response from the GET request, I felt all warm and fuzzy.</p>
+</code></pre>
+</div>
 
-<p>Even though I didn&#39;t accomplish much, I took quite some time before arriving at this. I did a lot of reading the header files and other blog posts I came across to make sure I wasn&#39;t way off track. I think next time I will try to bite off a little more and see what all I can accomplish in the UI. I&#39;ll need to populate my table with the showtimes and movie posters, so it sounds like I have my work cut out for me yet!</p>
+<p>Before I got here, I had to ask myself what a subscriber was. The documentation for the subscriber states that it <em>represents any object which can directly receive values from a RACSignal</em>. The header file for the <code class="highlighter-rouge">RACSubscriber</code> protocol was actually very informative.<a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">²</a> <code class="highlighter-rouge">sendNext:</code>, <code class="highlighter-rouge">sendCompleted</code>, and <code class="highlighter-rouge">sendError:</code> all made perfect sense to me at the time. When I built and ran, and saw that my movies array was populated with the JSON response from the GET request, I felt all warm and fuzzy.</p>
+
+<p>Even though I didn’t accomplish much, I took quite some time before arriving at this. I did a lot of reading the header files and other blog posts I came across to make sure I wasn’t way off track. I think next time I will try to bite off a little more and see what all I can accomplish in the UI. I’ll need to populate my table with the showtimes and movie posters, so it sounds like I have my work cut out for me yet!</p>
 
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">[1] Reacting to Reactive Cocoa Part I</a></li>
-<li><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">[2] RACSubscriber.h</a></li>
+  <li><a href="marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">[1] Reacting to Reactive Cocoa Part I</a></li>
+  <li><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/a6bc3a918de10c0310f10185fd5eca72d285742c/ReactiveCocoa/RACSubscriber.h">[2] RACSubscriber.h</a></li>
 </ul>
 </section>
 </article>

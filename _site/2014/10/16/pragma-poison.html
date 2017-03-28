@@ -3,7 +3,7 @@
   <head>
 	<meta charset="utf-8">
 	<title>Pragma Poison | Mark Sands</title>
-	<meta name="description" content="stringValueIt can be tempting to convert NSNumbers to strings by calling stringValue. It&#39;s definitely less verbose than creating an NSNumberFormatter, sp...">
+	<meta name="description" content="stringValueIt can be tempting to convert NSNumbers to strings by calling stringValue. It’s definitely less verbose than creating an NSNumberFormatter, specif...">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-Frame-Options" content="sameorigin">
 
@@ -67,14 +67,6 @@
 					About
 				</a>
 			</li>
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -163,38 +155,47 @@
   </header>
   <section class="post-content"><h3 id="stringvalue">stringValue</h3>
 
-<p>It can be tempting to convert NSNumbers to strings by calling <code>stringValue</code>. It&#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&#39;s necessary. You may think calling <code>[@8.8 stringValue]</code> returns &quot;8.8&quot;, but you&#39;d be wrong; it actually returns &quot;8.800000000000001&quot;. Let&#39;s take a look at what&#39;s going on behind the scenes when we call stringValue to find out why this is happening.</p>
+<p>It can be tempting to convert NSNumbers to strings by calling <code class="highlighter-rouge">stringValue</code>. It’s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that’s necessary. You may think calling <code class="highlighter-rouge">[@8.8 stringValue]</code> returns “8.8”, but you’d be wrong; it actually returns “8.800000000000001”. Let’s take a look at what’s going on behind the scenes when we call stringValue to find out why this is happening.</p>
 
 <!-- more -->
 
 <h3 id="behind-the-scenes">Behind the Scenes</h3>
 
-<p>According to Apple&#39;s documentation regarding <code>stringValue</code>:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">¹</a></p>
-<div class="highlight"><pre><code class="language-" data-lang="">The string is created by invoking descriptionWithLocale: where locale is nil.
-</code></pre></div>
-<p>So far so good. Let&#39;s see what <code>descriptionWithLocale:nil</code> is doing. Also according to Apple&#39;s documentation:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">²</a></p>
-<div class="highlight"><pre><code class="language-" data-lang="">To obtain the string representation, this method invokes NSString’s initWithFormat:locale: method, 
-supplying the format based on the type the NSNumber object was created with:
-</code></pre></div>
-<p>and goes on to list the format specifiers that the NSNumber value is casted to. From the chart, we can see that a double gets <code>%0.16g</code> as the format specifier.</p>
+<p>According to Apple’s documentation regarding <code class="highlighter-rouge">stringValue</code>:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">¹</a></p>
 
-<p>Let&#39;s take what we&#39;ve found and turn it into a single method call. So, <code>[@8.8 stringValue]</code> actually becomes <code>[[NSString alloc] initWithFormat:@&quot;%.16g&quot; locale:nil, 8.8]</code>. Now it makes sense why we are getting 16 digits instead of 2! Floating point conversion isn&#39;t perfect, so that&#39;s why we see some numbers like 8.8 become &quot;8.800000000000001&quot; and others such as 8.9 become &quot;8.9&quot;.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>The string is created by invoking descriptionWithLocale: where locale is nil.
+</code></pre>
+</div>
+
+<p>So far so good. Let’s see what <code class="highlighter-rouge">descriptionWithLocale:nil</code> is doing. Also according to Apple’s documentation:<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">²</a></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>To obtain the string representation, this method invokes NSString’s initWithFormat:locale: method, 
+supplying the format based on the type the NSNumber object was created with:
+</code></pre>
+</div>
+
+<p>and goes on to list the format specifiers that the NSNumber value is casted to. From the chart, we can see that a double gets <code class="highlighter-rouge">%0.16g</code> as the format specifier.</p>
+
+<p>Let’s take what we’ve found and turn it into a single method call. So, <code class="highlighter-rouge">[@8.8 stringValue]</code> actually becomes <code class="highlighter-rouge">[[NSString alloc] initWithFormat:@"%.16g" locale:nil, 8.8]</code>. Now it makes sense why we are getting 16 digits instead of 2! Floating point conversion isn’t perfect, so that’s why we see some numbers like 8.8 become “8.800000000000001” and others such as 8.9 become “8.9”.</p>
 
 <h3 id="pragma-gcc-poison-stringvalue">#pragma GCC poison stringValue</h3>
 
-<p>The bottom line is, in most cases, you never want 16 digits when converting simple doubles into a string. So now that we&#39;ve deduced how <code>stringValue</code> can turn a 2 digit number into a 16 digit number, how do we prevent our peers from using this API? I came across a <a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">stackoverflow post</a> for my answer. I tried a similar approach with creating a category and assigning <code>UNAVAILABLE_ATTRIBUTE</code>, but that wasn&#39;t working for me either.<a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">³</a></p>
+<p>The bottom line is, in most cases, you never want 16 digits when converting simple doubles into a string. So now that we’ve deduced how <code class="highlighter-rouge">stringValue</code> can turn a 2 digit number into a 16 digit number, how do we prevent our peers from using this API? I came across a <a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">stackoverflow post</a> for my answer. I tried a similar approach with creating a category and assigning <code class="highlighter-rouge">UNAVAILABLE_ATTRIBUTE</code>, but that wasn’t working for me either.<a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">³</a></p>
 
-<p>It turns out GCC originally provided a solution to this problem to poison certain identifiers. Thankfully clang has adopted this protocol as well. The posion pragma is designed to work with C symbols, but you can leave off the colon of your selector to make it work with Objective-C. Finally, all you need to do now is add <code>#pragma GCC poison stringValue</code> in your precompiled header and start replacing those calls with <code>NSNumberFormatter</code>!</p>
-<div class="highlight"><pre><code class="language-" data-lang="">#pragma GCC poison stringValue
+<p>It turns out GCC originally provided a solution to this problem to poison certain identifiers. Thankfully clang has adopted this protocol as well. The posion pragma is designed to work with C symbols, but you can leave off the colon of your selector to make it work with Objective-C. Finally, all you need to do now is add <code class="highlighter-rouge">#pragma GCC poison stringValue</code> in your precompiled header and start replacing those calls with <code class="highlighter-rouge">NSNumberFormatter</code>!</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>#pragma GCC poison stringValue
 
 ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
-</code></pre></div>
+</code></pre>
+</div>
+
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">[1] stringValue</a></li>
-<li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">[2] descriptionWithLocale:</a></li>
-<li><a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">[3] stackoverflow</a></li>
+  <li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/stringValue">[1] stringValue</a></li>
+  <li><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSNumber_Class/Reference/Reference.html#//apple_ref/occ/instm/NSNumber/descriptionWithLocale:">[2] descriptionWithLocale:</a></li>
+  <li><a href="http://stackoverflow.com/questions/17031349/how-do-i-mark-a-uikit-class-or-method-as-deprecated">[3] stackoverflow</a></li>
 </ul>
 </section>
 </article>

@@ -75,14 +75,6 @@
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
@@ -163,35 +155,36 @@
   </header>
   <section class="post-content"><h3 id="uicolor">UIColor</h3>
 
-<p><code>UIColor</code> is a commonly used class that represents color and sometimes opacity. As it turns out, <code>UIColor</code> is a class cluster made up of a couple of private concrete subclasses. 
+<p><code class="highlighter-rouge">UIColor</code> is a commonly used class that represents color and sometimes opacity. As it turns out, <code class="highlighter-rouge">UIColor</code> is a class cluster made up of a couple of private concrete subclasses. 
 Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.<a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">¹</a></p>
 
 <!-- more -->
 
 <h3 id="red-green-blue">Red, Green, Blue</h3>
 
-<p>As of iOS 6, subclasses of the <code>UIColor</code> class cluster include <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h"><code>UIDeviceWhiteColor</code></a> 
-and <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h"><code>UIDeviceRGBColor</code></a>. 
-Unfortunately for the programmer, only <code>UIDeviceRGBColor</code> knows what red, green, and blue are, making it challenging to get the color components from a generic <code>UIColor</code> object.</p>
+<p>As of iOS 6, subclasses of the <code class="highlighter-rouge">UIColor</code> class cluster include <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceWhiteColor.h"><code class="highlighter-rouge">UIDeviceWhiteColor</code></a> 
+and <a href="https://github.com/nst/iOS-Runtime-Headers/blob/master/Frameworks/UIKit.framework/UIDeviceRGBColor.h"><code class="highlighter-rouge">UIDeviceRGBColor</code></a>. 
+Unfortunately for the programmer, only <code class="highlighter-rouge">UIDeviceRGBColor</code> knows what red, green, and blue are, making it challenging to get the color components from a generic <code class="highlighter-rouge">UIColor</code> object.</p>
 
-<p>According to Apple, <code>UIColor</code>&#39;s method <code>getRed:green:blue:alpha:</code> will return the red, green, and blue color components if the color is within the RGB color space. 
+<p>According to Apple, <code class="highlighter-rouge">UIColor</code>’s method <code class="highlighter-rouge">getRed:green:blue:alpha:</code> will return the red, green, and blue color components if the color is within the RGB color space. 
 If the color is in a compatible color space, the color is converted into RGB format and its components are returned to your application. 
 If the color is not in a compatible color space, the parameters are unchanged.<a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">²</a> 
 And therein lies the problem.</p>
 
-<p>Say we have an API that accepts a <code>UIColor</code> object and uses its color components for some arbitrary computation. One might think, &quot;<code>getRed:green:blue:alpha</code> to the rescue!&quot; 
-Sadly, this bruteforce approach will only work if the <code>UIColor</code> object is of the RGB color space, or the <code>UIDeviceRGBColor</code> class. The only approach is to inspect and retreive 
-the color components using the Core Graphics functions <code>CGColorGetNumberOfComponents(color.CGColor)</code> and <code>CGColorGetComponents(color.CGColor)</code>. This approach quickly doesn&#39;t scale if you 
-are constantly retreiving the color components for various reasons, so it would be ideal if <code>UIColor</code> handled this for us under the hood. For the curious, I have 
+<p>Say we have an API that accepts a <code class="highlighter-rouge">UIColor</code> object and uses its color components for some arbitrary computation. One might think, “<code class="highlighter-rouge">getRed:green:blue:alpha</code> to the rescue!” 
+Sadly, this bruteforce approach will only work if the <code class="highlighter-rouge">UIColor</code> object is of the RGB color space, or the <code class="highlighter-rouge">UIDeviceRGBColor</code> class. The only approach is to inspect and retreive 
+the color components using the Core Graphics functions <code class="highlighter-rouge">CGColorGetNumberOfComponents(color.CGColor)</code> and <code class="highlighter-rouge">CGColorGetComponents(color.CGColor)</code>. This approach quickly doesn’t scale if you 
+are constantly retreiving the color components for various reasons, so it would be ideal if <code class="highlighter-rouge">UIColor</code> handled this for us under the hood. For the curious, I have 
 <a href="http://openradar.appspot.com/radar?id=3114410">created a radar</a> in hopes to address this issue.</p>
 
 <h3 id="a-universal-selector">A Universal Selector</h3>
 
-<p>Luckily for us, we have <em>objc/funtime.h</em> that will provide exactly what we want. Using method swizzling, we can create an alternative to <code>getRed:green:blue:alpha</code> that 
-checks the number of the color components using <code>getRed:green:blue:alpha</code> for <code>UIDeviceRGBColor</code> objects and <code>getWhite:alpha</code> for <code>UIDeviceWhiteColor</code> objects. The color 
-components from <code>UIDeviceWhiteColor</code> objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
+<p>Luckily for us, we have <em>objc/funtime.h</em> that will provide exactly what we want. Using method swizzling, we can create an alternative to <code class="highlighter-rouge">getRed:green:blue:alpha</code> that 
+checks the number of the color components using <code class="highlighter-rouge">getRed:green:blue:alpha</code> for <code class="highlighter-rouge">UIDeviceRGBColor</code> objects and <code class="highlighter-rouge">getWhite:alpha</code> for <code class="highlighter-rouge">UIDeviceWhiteColor</code> objects. The color 
+components from <code class="highlighter-rouge">UIDeviceWhiteColor</code> objects are calculated by using the white balance as a multiplier for each RGB component. Using this approach, we have successfully 
 moved the redundant color space checking behind the scenes and provided ourselves with much cleaner code snippets. The category implementation is below.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="cp">#import &lt;objc/runtime.h&gt;
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#import &lt;objc/runtime.h&gt;
 </span>
 <span class="k">@implementation</span> <span class="nc">UIColor</span> <span class="p">(</span><span class="nl">ColorComponents</span><span class="p">)</span>
 
@@ -225,12 +218,14 @@ moved the redundant color space checking behind the scenes and provided ourselve
 <span class="p">}</span>
 
 <span class="k">@end</span>
-</code></pre></div>
+</code></pre>
+</div>
+
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">[1] Cocoa Fundamentals Guide</a></li>
-<li><a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">[2] getRed:green:blue:alpha:</a></li>
+  <li><a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">[1] Cocoa Fundamentals Guide</a></li>
+  <li><a href="http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIColor_Class/Reference/Reference.html#//apple_ref/occ/instm/UIColor/getRed:green:blue:alpha:">[2] getRed:green:blue:alpha:</a></li>
 </ul>
 </section>
 </article>

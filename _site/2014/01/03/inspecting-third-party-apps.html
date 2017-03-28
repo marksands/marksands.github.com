@@ -75,14 +75,6 @@
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
@@ -163,51 +155,60 @@
   </header>
   <section class="post-content"><h3 id="an-alternative-approach">An Alternative Approach</h3>
 
-<p>This post is an overview of an alternative approach to attaching <a href="http://revealapp.com/">Reveal</a> or <a href="http://www.sparkinspector.com/">Spark</a> to third party apps on a jailbroken device. Peter Steinberger posted a <a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">blog post</a> demonstrating how this works using MobileSubstrate. Unfortunately, this approach didn&#39;t work for me and a few others that shared my woes via Twitter.</p>
+<p>This post is an overview of an alternative approach to attaching <a href="http://revealapp.com/">Reveal</a> or <a href="http://www.sparkinspector.com/">Spark</a> to third party apps on a jailbroken device. Peter Steinberger posted a <a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">blog post</a> demonstrating how this works using MobileSubstrate. Unfortunately, this approach didn’t work for me and a few others that shared my woes via Twitter.</p>
 
 <!-- more -->
 
 <p>As Peter said in his blog post, the iOS7 jailbreak will allow us to attach the debugger to 3rd party apps in order to study the view heirarchy of complex apps. This will provide developers with insight to how others have approached similar problems.<a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">¹</a></p>
 
-<h3 id="jailbreak-setup">Jailbreak + Setup</h3>
+<h3 id="jailbreak--setup">Jailbreak + Setup</h3>
 
-<p>Although Peter&#39;s post can get you 90% of the way, I&#39;ll reiterate his steps here to save you an extra tab in your browser.</p>
+<p>Although Peter’s post can get you 90% of the way, I’ll reiterate his steps here to save you an extra tab in your browser.</p>
 
 <ol>
-<li>I jailbroke my iPad 3 using the 1.0.1 version of <a href="http://evasi0n.com/">evasi0n&#39;s app</a>.</li>
-<li>Be sure to install OpenSSH. Once installed, make sure you can ssh into your device via <code>ssh root@192.168.1.102</code> using the default password <code>alpine</code>. Obviously you should replace this example IP address with your device&#39;s wifi address.</li>
-<li>Next, we&#39;ll copy our libReveal.dlylib and our libSpark.dlyib files onto our device. It doesn&#39;t really matter where the files are copied to on the device, but since I started down the path of using MobileSubstrate, I ended up copying both files to its DynamicLibraries directory: <code>scp /Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries</code> and <code>scp &quot;/Applications/Spark Inspector.app/Contents/Resources/Frameworks/SparkInspector.dylib&quot; root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries</code>.</li>
+  <li>I jailbroke my iPad 3 using the 1.0.1 version of <a href="http://evasi0n.com/">evasi0n’s app</a>.</li>
+  <li>Be sure to install OpenSSH. Once installed, make sure you can ssh into your device via <code class="highlighter-rouge">ssh root@192.168.1.102</code> using the default password <code class="highlighter-rouge">alpine</code>. Obviously you should replace this example IP address with your device’s wifi address.</li>
+  <li>Next, we’ll copy our libReveal.dlylib and our libSpark.dlyib files onto our device. It doesn’t really matter where the files are copied to on the device, but since I started down the path of using MobileSubstrate, I ended up copying both files to its DynamicLibraries directory: <code class="highlighter-rouge">scp /Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries</code> and <code class="highlighter-rouge">scp "/Applications/Spark Inspector.app/Contents/Resources/Frameworks/SparkInspector.dylib" root@192.168.1.102:/Library/MobileSubstrate/DynamicLibraries</code>.</li>
 </ol>
 
-<p>Beyond this, if Mobile Substrate works for you, then there is no need to go any further. But for the rest of us, we&#39;ll have to resort to other options.</p>
+<p>Beyond this, if Mobile Substrate works for you, then there is no need to go any further. But for the rest of us, we’ll have to resort to other options.</p>
 
 <h3 id="dyld-ftw">DYLD FTW</h3>
 
-<p>Thankfully, it is possible to perform code injection using the <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">dynamic linker</a>. Using the environment variable <code>DYLD_INSERT_LIBRARIES</code>, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:<a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">²</a></p>
-<div class="highlight"><pre><code class="language-" data-lang="">DYLD_INSERT_LIBRARIES
+<p>Thankfully, it is possible to perform code injection using the <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">dynamic linker</a>. Using the environment variable <code class="highlighter-rouge">DYLD_INSERT_LIBRARIES</code>, we can inject Reveal and/or Spark into 3rd party applications on the device. According to the man page, this environment variable is:<a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">²</a></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>DYLD_INSERT_LIBRARIES
     This  is  a colon separated list of dynamic libraries to load before the ones specified in the
     program.  This lets you test new modules of existing dynamic shared libraries that are used in
     flat-namespace images by loading a temporary dynamic shared library with just the new modules.
     Note that this has no effect on images built a two-level  namespace  images  using  a  dynamic
     shared library unless DYLD_FORCE_FLAT_NAMESPACE is also used.
-</code></pre></div>
-<p>Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.</p>
-<div class="highlight"><pre><code class="language-" data-lang="">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
-launchctl setenv DYLD_FORCE_FLAT_NAMESPACE ''
-</code></pre></div>
-<p>As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.</p>
-<div class="highlight"><pre><code class="language-" data-lang="">launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
-launchctl setenv DYLD_FORCE_FLAT_NAMESPACE ''
-</code></pre></div>
-<p>Once you have this set, that&#39;s really all you need to do. Launch an app to get started. If you want to inspect Springboard you&#39;ll have to restart the device first. I use <code>sbreload</code> from the UIKitTools Cydia package, but <code>killall SpringBoard</code> should work too.</p>
+</code></pre>
+</div>
 
-<p>The good thing about this approach is that it doesn&#39;t require MobileSubstrate and it works on ARM and ARM64, as <a href="https://twitter.com/hjaltij/status/419154290453008384">verified</a> via Twitter.</p>
+<p>Knowing this, all we need to do is set the environment variable to our dylib path and we will be good to go. To inject Reveal, copy this into your ssh terminal.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib
+launchctl setenv DYLD_FORCE_FLAT_NAMESPACE ''
+</code></pre>
+</div>
+
+<p>As of this post, Reveal is having trouble attaching to and inspecting Springboard. Thankfully, Spark Inspector is able to take on the load of Springboard, so if you wish to inject both libraries, you can also do that by using a colon separated list of libraries.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>launchctl setenv DYLD_INSERT_LIBRARIES /Library/MobileSubstrate/DynamicLibraries/libReveal.dylib:/Library/MobileSubstrate/DynamicLibraries/SparkInspector.dylib
+launchctl setenv DYLD_FORCE_FLAT_NAMESPACE ''
+</code></pre>
+</div>
+
+<p>Once you have this set, that’s really all you need to do. Launch an app to get started. If you want to inspect Springboard you’ll have to restart the device first. I use <code class="highlighter-rouge">sbreload</code> from the UIKitTools Cydia package, but <code class="highlighter-rouge">killall SpringBoard</code> should work too.</p>
+
+<p>The good thing about this approach is that it doesn’t require MobileSubstrate and it works on ARM and ARM64, as <a href="https://twitter.com/hjaltij/status/419154290453008384">verified</a> via Twitter.</p>
 
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">[1] How to Inspect the View Hierarchy of 3rd-party Apps</a></li>
-<li><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">[2] DYLD(1)</a></li>
+  <li><a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">[1] How to Inspect the View Hierarchy of 3rd-party Apps</a></li>
+  <li><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man1/dyld.1.html">[2] DYLD(1)</a></li>
 </ul>
 </section>
 </article>

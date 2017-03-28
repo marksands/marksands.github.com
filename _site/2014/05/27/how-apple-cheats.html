@@ -3,7 +3,7 @@
   <head>
 	<meta charset="utf-8">
 	<title>How Apple Cheats | Mark Sands</title>
-	<meta name="description" content="As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprisi...">
+	<meta name="description" content="As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It’s not too surprising, ...">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-Frame-Options" content="sameorigin">
 
@@ -67,14 +67,6 @@
 					About
 				</a>
 			</li>
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -161,51 +153,57 @@
     
     </p>
   </header>
-  <section class="post-content"><p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
+  <section class="post-content"><p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It’s not too surprising, after all, it is their domain and they are in control. However, Apple’s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
 
 <!-- more -->
 
 <h3 id="uipopovercontroller-on-the-iphone">UIPopoverController on the iPhone</h3>
 
-<p>One UIKit component iBooks uses is UIPopoverController. This is frustrating because UIPopoverController is reservered for iPad development only. So how does iBooks implement an iPod/iPhone compatible UIPopoverController? I <a href="http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html">inspected</a> iBooks on a jailbroken iPod touch to verify that the popover was in fact the UIPopoverController class and not a cheap replacement. To be sure I wasn&#39;t crazy, I created a new iOS project targeted for iPhone and spun up a quick <code>UIPopoverController</code> Hello World app. Sure enough, it crashed <code>-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.</code> If this is true, then how on earth is Apple getting around this?</p>
+<p>One UIKit component iBooks uses is UIPopoverController. This is frustrating because UIPopoverController is reservered for iPad development only. So how does iBooks implement an iPod/iPhone compatible UIPopoverController? I <a href="http://marksands.github.io/2014/01/03/inspecting-third-party-apps.html">inspected</a> iBooks on a jailbroken iPod touch to verify that the popover was in fact the UIPopoverController class and not a cheap replacement. To be sure I wasn’t crazy, I created a new iOS project targeted for iPhone and spun up a quick <code class="highlighter-rouge">UIPopoverController</code> Hello World app. Sure enough, it crashed <code class="highlighter-rouge">-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad.</code> If this is true, then how on earth is Apple getting around this?</p>
 
 <h3 id="the-secret-sauce">The Secret Sauce</h3>
 
-<p>In order to find out Apple&#39;s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here&#39;s sort of what Apple&#39;s code <s>may look like</s> looks like under the covers when creating a UIPopoverController.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">initWithContentViewController</span><span class="p">:(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">([</span><span class="n">UIPopoverController</span> <span class="nf">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
-                <span class="p">[</span><span class="n">NSException</span> <span class="nf">raise</span><span class="p">:</span><span class="n">NSInvalidArgumentException</span> <span class="nf">format</span><span class="p">:</span><span class="s">@"-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad."</span><span class="p">];</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>   
-    <span class="p">...</span>
+<p>In order to find out Apple’s secret sauce, I opened <a href="http://www.hopperapp.com/">Hopper</a> to dig a little deeper. Here’s sort of what Apple’s code <s>may look like</s> looks like under the covers when creating a UIPopoverController.</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="nf">initWithContentViewController</span><span class="p">:(</span><span class="n">UIViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="p">(([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">respondsToSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">userInterfaceIdiom</span><span class="p">)])</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">([[</span><span class="n">UIDevice</span> <span class="nf">currentDevice</span><span class="p">]</span> <span class="nf">userInterfaceIdiom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">UIUserInterfaceIdiomPad</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">([</span><span class="n">UIPopoverController</span> <span class="nf">_popoversDisabled</span><span class="p">])</span> <span class="p">{</span>
+    			<span class="p">[</span><span class="n">NSException</span> <span class="nf">raise</span><span class="p">:</span><span class="n">NSInvalidArgumentException</span> <span class="nf">format</span><span class="p">:</span><span class="s">@"-[UIPopoverController initWithContentViewController:] called when not running under UIUserInterfaceIdiomPad."</span><span class="p">];</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>	
+	<span class="p">...</span>
 <span class="p">}</span>
-</code></pre></div>
-<p>As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what&#39;s this private class method <code>_popoversDisabled</code>? Let&#39;s open that up to find out.</p>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">+</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="n">_popoversDisabled</span> <span class="p">{</span>
+</code></pre>
+</div>
+
+<p>As you can see, they are definitely checking to make sure the current device is an iPad, otherwise it will raise an exception. But wait, what’s this private class method <code class="highlighter-rouge">_popoversDisabled</code>? Let’s open that up to find out.</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">+</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="n">_popoversDisabled</span> <span class="p">{</span>
     <span class="n">NSString</span> <span class="o">*</span><span class="n">bundleIdentifier</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSBundle</span> <span class="nf">mainBundle</span><span class="p">]</span> <span class="nf">bundleIdentifier</span><span class="p">];</span>
     <span class="k">if</span> <span class="p">([</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.iBooks"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.mobilesafari"</span><span class="p">]</span> <span class="o">||</span> 
-        <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.itunesu"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.Maps"</span><span class="p">])</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+		<span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.itunesu"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[</span><span class="n">bundleIdentifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"com.apple.Maps"</span><span class="p">])</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre></div>
+</code></pre>
+</div>
+
 <p>Say what?! Did Apple seriously grant access to four of their native apps by hardcoding their bundle identifiers? Yep, they sure did².</p>
 
-<p>In fact, you don&#39;t have to do anything special to verify this. If you change your <code>UIPopoverController</code> Hello World project&#39;s Info.plist bundle identifier to <code>com.apple.iBooks</code> or <code>com.apple.itunesu</code>, then voilà, It works!</p>
+<p>In fact, you don’t have to do anything special to verify this. If you change your <code class="highlighter-rouge">UIPopoverController</code> Hello World project’s Info.plist bundle identifier to <code class="highlighter-rouge">com.apple.iBooks</code> or <code class="highlighter-rouge">com.apple.itunesu</code>, then voilà, It works!</p>
 
 <h3 id="what-now">What now?</h3>
 
-<p>It&#39;s interesting to see how Apple bends the rules for their benefit, but I think there is something more telling here. The fact of the matter is, <code>UIPopoverController</code> works on the iPhone and iPod touch out of the box. Apple simply has it locked down for now. Will iOS 8 finally bring <code>UIPopoverController</code> support to the iPhone and iPod touch? One can hope! At least we only have to wait until next week to find out.</p>
+<p>It’s interesting to see how Apple bends the rules for their benefit, but I think there is something more telling here. The fact of the matter is, <code class="highlighter-rouge">UIPopoverController</code> works on the iPhone and iPod touch out of the box. Apple simply has it locked down for now. Will iOS 8 finally bring <code class="highlighter-rouge">UIPopoverController</code> support to the iPhone and iPod touch? One can hope! At least we only have to wait until next week to find out.</p>
 
 <h3 id="references">References</h3>
 
 <ul>
-<li><a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">[1] iBooks and Private APIs</a></li>
-<li>[2] +[UIPoverController _popoversDisabled] My rudimentary debugging skills must note that it&#39;s possible I overlooked something and more apps have their hands untied than just these four</li>
+  <li><a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">[1] iBooks and Private APIs</a></li>
+  <li>[2] +[UIPoverController _popoversDisabled] My rudimentary debugging skills must note that it’s possible I overlooked something and more apps have their hands untied than just these four</li>
 </ul>
 </section>
 </article>
