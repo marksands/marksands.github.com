@@ -8,7 +8,8 @@ comments: true
 showads: true
 ---
 
-{% twitter https://twitter.com/marksands/status/714494394401951748 %}
+<div class='jekyll-twitter-plugin'><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My coworker <a href="https://twitter.com/JARinteractive">@JARinteractive</a> and I just successfully reverse engineered the LCR image format for tvOS. <a href="https://twitter.com/hashtag/humblebrag?src=hash">#humblebrag</a></p>&mdash; Mark Sands (@marksands) <a href="https://twitter.com/marksands/status/714494394401951748">March 28, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
 
 1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.
 
