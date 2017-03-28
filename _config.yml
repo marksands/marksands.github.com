@@ -42,7 +42,7 @@ theme:
     #Post navigation
     post_navigation: true
 
-gems: ['jekyll-paginate', 'jekyll-twitter-plugin']
+gems: [jekyll-paginate]
 
 # PAGINATION
 paginate: 5
