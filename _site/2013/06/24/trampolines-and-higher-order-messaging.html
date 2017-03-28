@@ -14,10 +14,10 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
 	<!-- Canonical -->
-	<link rel="canonical" href="http://marksands.github.io/2013/06/24/trampolines-and-higher-order-messaging.html">
+	<link rel="canonical" href="http://localhost:4000/2013/06/24/trampolines-and-higher-order-messaging.html">
 
 	<!-- RSS -->
-	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://localhost:4000/feed.xml" />
 
 	<!-- Font Awesome -->
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -81,10 +81,12 @@
 			
 			
 			
+			
+			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
-	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+	<a href="http://localhost:4000/feed.xml" title="Follow RSS feed">
 		<i class="fa fa-fw fa-rss"></i>
 	</a>
 </li>
@@ -174,7 +176,7 @@ This brings us to higher order messaging.</p>
 
 <p>Higher order messaging allows messages that have messages as arguments. This is analogous to languages that treat functions as a first-class data type, 
 like Lisp, Haskell, and PHP do. Even C and its descendants can use function pointers, although it&#39;s not as pretty. Objective-C is a perfect candidate for 
-higher order messaging, or HOM, since the language is known for its message passing traits.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
+higher order messaging, or HOM, since the language is known for its message passing traits.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">²</a></p>
 
 <p>The code for a trampoline object is quite trivial. The implementation below is specialized for an <code>NSArray</code> and assumes ARC is enabled. The <code>#pragma</code> cruff 
 is necessary to silence warnings.</p>
@@ -269,13 +271,13 @@ internalized in this manner.</p>
 
 <p>There are many more uses for HOM than iteration, but methods such as <code>collect</code> seem to be the most commonly used higher-order methods. Another use 
 case could be a protocol checker to act as a proxy for an object and only pass messages through that are part of a given protocol, but the possibilities are, 
-of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">²</a></p>
+of course, endless.<a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">²</a></p>
 
 <h3 id="references">References</h3>
 
 <ul>
 <li><a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">[1] GCC Docs 17.12 Trampolines for Nested Functions</a></li>
-<li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&amp;x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
+<li><a href="http://www.macdevcenter.com/pub/a/mac/2004/07/16/hom.html?page=last&x-order=date">[2] Higher-Order Messages in Cocoa</a></li>
 <li><a href="http://blog.metaobject.com/2009/01/simple-hom.html">[3] Simple HOM</a></li>
 </ul>
 </section>

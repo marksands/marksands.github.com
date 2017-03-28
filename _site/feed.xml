@@ -2,15 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mark Sands</title>
-    <atom:link href="http://marksands.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <link>http://marksands.github.io/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <link>http://localhost:4000/</link>
     <description>Programming Tidbits</description>
-    <pubDate>Mon, 20 Jun 2016 16:31:35 -0500</pubDate>
+    <pubDate>Tue, 28 Mar 2017 13:15:02 -0500</pubDate>
+    
+      <item>
+        <title>Announcing Re:Lax</title>
+        <link>http://localhost:4000/2017/3/28/announcing-relax.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/3/28/announcing-relax.html</guid>
+        <description>&lt;div class='jekyll-twitter-plugin'&gt;&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;My coworker &lt;a href=&quot;https://twitter.com/JARinteractive&quot;&gt;@JARinteractive&lt;/a&gt; and I just successfully reverse engineered the LCR image format for tvOS. &lt;a href=&quot;https://twitter.com/hashtag/humblebrag?src=hash&quot;&gt;#humblebrag&lt;/a&gt;&lt;/p&gt;&amp;mdash; Mark Sands (@marksands) &lt;a href=&quot;https://twitter.com/marksands/status/714494394401951748&quot;&gt;March 28, 2016&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&quot;//platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;&lt;/div&gt;
+
+&lt;p&gt;1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.&lt;/p&gt;
+
+&lt;h4 id=&quot;meet-re-lax-github-com-asynchrony-re-lax&quot;&gt;&lt;a href=&quot;https://github.com/asynchrony/Re-Lax/&quot;&gt;Meet Re:Lax - github.com/asynchrony/Re-Lax/&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;Re:Lax was born out of a spontaneous decision to see what was possible and this is what we ended up with. We are extremely happy with the results and are excited to be able to share it with everyone. I plan on going into a deeper dive into the hows of reverse engineering the effect and the file format, so stay tuned for that.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 28 Mar 2017 00:00:00 -0500</pubDate>
+      </item>
     
       <item>
         <title>WWDC 2016 What You Might Have Missed</title>
-        <link>http://marksands.github.io/2016/6/19/wwdc-2016-what-you-might-have-missed.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2016/6/19/wwdc-2016-what-you-might-have-missed.html</guid>
+        <link>http://localhost:4000/2016/6/19/wwdc-2016-what-you-might-have-missed.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/6/19/wwdc-2016-what-you-might-have-missed.html</guid>
         <description>&lt;p&gt;I was fortunate enough to attend WWDC 2016 this year having scored a lucky &lt;a href=&quot;https://www.youtube.com/watch?v=6AicW3Xp9EM&quot;&gt;golden ticket&lt;/a&gt;. The week was mostly a blur, but I still had a blast and met a lot of really freaking cool people. Since I know first hand how hard it was to keep track of all the shiny new things Apple announced, I figured it would be worthwhile to point out some new technical features that you may have already forgotten about or not heard at all.&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -72,8 +88,8 @@
     
       <item>
         <title>Model View Binding</title>
-        <link>http://marksands.github.io/2016/2/12/model-view-binding.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2016/2/12/model-view-binding.html</guid>
+        <link>http://localhost:4000/2016/2/12/model-view-binding.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/2/12/model-view-binding.html</guid>
         <description>&lt;p&gt;The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of &lt;del&gt;old&lt;/del&gt; Objective-C, I gave &lt;a href=&quot;http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;Reactive Cocoa a shot&lt;/a&gt;, but I ultimately gave up.&lt;a href=&quot;http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html&quot;&gt;¹&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Since then, I&amp;#39;ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I&amp;#39;m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.&lt;/p&gt;
@@ -211,11 +227,11 @@ init(imageProvider: ImageProvider) {
     
       <item>
         <title>Paper Doll App Development</title>
-        <link>http://marksands.github.io/2016/1/14/paper-doll-app-development.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2016/1/14/paper-doll-app-development.html</guid>
+        <link>http://localhost:4000/2016/1/14/paper-doll-app-development.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/1/14/paper-doll-app-development.html</guid>
         <description>&lt;p&gt;&lt;em&gt;This post is in response to the iOhYes podcast &lt;a href=&quot;http://5by5.tv/iohyes/98&quot;&gt;#98 We Heard You Like Rants&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&quot;apple-39-s-best-practices&quot;&gt;Apple&amp;#39;s Best Practices&lt;/h3&gt;
+&lt;h3 id=&quot;apples-best-practices&quot;&gt;Apple&amp;#39;s Best Practices&lt;/h3&gt;
 
 &lt;p&gt;When Apple publishes sample code, they have to cater to their audience. They can&amp;#39;t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple&amp;#39;s sample code won&amp;#39;t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.&lt;/p&gt;
 
@@ -248,8 +264,8 @@ init(imageProvider: ImageProvider) {
     
       <item>
         <title>A Debugging Story</title>
-        <link>http://marksands.github.io/2015/2/10/a-debugging-story.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2015/2/10/a-debugging-story.html</guid>
+        <link>http://localhost:4000/2015/2/10/a-debugging-story.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2015/2/10/a-debugging-story.html</guid>
         <description>&lt;h3 id=&quot;forward&quot;&gt;Forward&lt;/h3&gt;
 
 &lt;p&gt;The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I&amp;#39;ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you&amp;#39;ll have learned something along the way.&lt;/p&gt;
@@ -333,8 +349,8 @@ General Purpose Registers:
     
       <item>
         <title>Reacting to Reactive Cocoa Part IV</title>
-        <link>http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</guid>
+        <link>http://localhost:4000/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2015/2/7/reacting-to-reactive-cocoa-part-iv.html</guid>
         <description>&lt;h3 id=&quot;switching-gears&quot;&gt;Switching Gears&lt;/h3&gt;
 
 &lt;p&gt;You may not be surprised when I say that I&amp;#39;m taking a break from learning Reactive Cocoa. Several of my coworkers are diving into swift, and with the imminent release of Reactive Cocoa 3.0, I decided to switch gears.&lt;/p&gt;
@@ -350,8 +366,8 @@ General Purpose Registers:
     
       <item>
         <title>Reacting to Reactive Cocoa Part III</title>
-        <link>http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</guid>
+        <link>http://localhost:4000/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2015/1/7/reacting-to-reactive-cocoa-part-iii.html</guid>
         <description>&lt;h3 id=&quot;asynchronously-loading-images&quot;&gt;Asynchronously Loading Images&lt;/h3&gt;
 
 &lt;p&gt;One of my first endevours into the realm of expanding my &lt;code&gt;RACObserve&lt;/code&gt;-fu was to asynchronously load a &lt;code&gt;UIImage&lt;/code&gt; from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using &lt;code&gt;AFNetworking&lt;/code&gt;&amp;#39;s built-in mechanism or a third party caching library such as &lt;code&gt;SDWebImage&lt;/code&gt; would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I&amp;#39;ve so graciously poured.&lt;/p&gt;
@@ -376,7 +392,7 @@ General Purpose Registers:
 &lt;p&gt;All of this made intuitive sense to me, except the final two methods &lt;code&gt;publish&lt;/code&gt; and &lt;code&gt;autoconnect&lt;/code&gt;. An inspection of &lt;code&gt;publish&lt;/code&gt; shows that it wraps a signal into a &lt;code&gt;RACMulticastConnection&lt;/code&gt; object, while the &lt;code&gt;autoconnect&lt;/code&gt; returns the multicast connection object as a signal. The recurring mystery object that kept creeping up was this &lt;code&gt;RACDisposable&lt;/code&gt; object that I hadn&amp;#39;t bothered, at least at this point, to investigate.&lt;/p&gt;
 
 &lt;p&gt;Ultimately, this code never worked. Each time it ran, it would crash and throw this exception burried in the giant stack trace (have I mentioned how large the stack traces become when using Reactive Cocoa?):&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;2015-01-07 20:23:12.809 BestMovieDeal[5998:117268] *** Terminating app due to uncaught exception &#39;NSInvalidArgumentException&#39;, reason: &#39;-[RACDynamicSignal size]: unrecognized selector sent to instance 0x7f8ad1c6a180&#39;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;2015-01-07 20:23:12.809 BestMovieDeal[5998:117268] *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[RACDynamicSignal size]: unrecognized selector sent to instance 0x7f8ad1c6a180'
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h3 id=&quot;attempt-2&quot;&gt;Attempt 2&lt;/h3&gt;
 
@@ -458,9 +474,9 @@ General Purpose Registers:
     
       <item>
         <title>Reacting to Reactive Cocoa Part II</title>
-        <link>http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</guid>
-        <description>&lt;h3 id=&quot;baby-39-s-first-monad&quot;&gt;Baby&amp;#39;s First Monad&lt;/h3&gt;
+        <link>http://localhost:4000/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2015/1/2/reacting-to-reactive-cocoa-part-ii.html</guid>
+        <description>&lt;h3 id=&quot;babys-first-monad&quot;&gt;Baby&amp;#39;s First Monad&lt;/h3&gt;
 
 &lt;p&gt;Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&amp;#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&amp;#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&amp;#39;m supposed to be doing this the Reactive Cocoa way.&lt;/p&gt;
 
@@ -501,8 +517,8 @@ General Purpose Registers:
     
       <item>
         <title>Reacting to Reactive Cocoa Part I</title>
-        <link>http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html</guid>
+        <link>http://localhost:4000/2014/12/30/reacting-to-reactive-cocoa-part-i.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/12/30/reacting-to-reactive-cocoa-part-i.html</guid>
         <description>&lt;h3 id=&quot;rac-diary&quot;&gt;RAC Diary&lt;/h3&gt;
 
 &lt;p&gt;In the vain of Brent Simmons&amp;#39; &lt;a href=&quot;http://inessential.com/2013/10/01/vesper_sync_diary_1&quot;&gt;Vesper Sync Diary&lt;/a&gt;¹, my plan is to express my thoughts about learning Reactive Cocoa as I build an app from scratch using the framework. The app will be an iPhone targeted app that will serve as a feed to show current movie theater showtimes of a local movie theater from my home town. I&amp;#39;m using this as an opportunity to get my feet wet with reactive cocoa and to see what all the fuss is about.&lt;/p&gt;
@@ -527,8 +543,8 @@ General Purpose Registers:
     
       <item>
         <title>2015 Goals</title>
-        <link>http://marksands.github.io/2014/12/29/2015-goals.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/12/29/2015-goals.html</guid>
+        <link>http://localhost:4000/2014/12/29/2015-goals.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/12/29/2015-goals.html</guid>
         <description>&lt;h3 id=&quot;2015-goals&quot;&gt;2015 Goals&lt;/h3&gt;
 
 &lt;p&gt;As the new year approaches, I&amp;#39;ve began to think of some goals of mine. Rather than make goals, I&amp;#39;ve always tried to improve on an as-needed basis; why wait till the beginning of the new year? It&amp;#39;s close enough to the new year this time that I am willing to make an exception and wait a few days. Here are 3 goals of mine that I wish to accomplish over the following 12 months.&lt;/p&gt;
@@ -552,8 +568,8 @@ General Purpose Registers:
     
       <item>
         <title>Pragma Poison</title>
-        <link>http://marksands.github.io/2014/10/16/pragma-poison.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/10/16/pragma-poison.html</guid>
+        <link>http://localhost:4000/2014/10/16/pragma-poison.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/10/16/pragma-poison.html</guid>
         <description>&lt;h3 id=&quot;stringvalue&quot;&gt;stringValue&lt;/h3&gt;
 
 &lt;p&gt;It can be tempting to convert NSNumbers to strings by calling &lt;code&gt;stringValue&lt;/code&gt;. It&amp;#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&amp;#39;s necessary. You may think calling &lt;code&gt;[@8.8 stringValue]&lt;/code&gt; returns &amp;quot;8.8&amp;quot;, but you&amp;#39;d be wrong; it actually returns &amp;quot;8.800000000000001&amp;quot;. Let&amp;#39;s take a look at what&amp;#39;s going on behind the scenes when we call stringValue to find out why this is happening.&lt;/p&gt;
@@ -595,8 +611,8 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
     
       <item>
         <title>Aviator</title>
-        <link>http://marksands.github.io/2014/09/26/aviator.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/09/26/aviator.html</guid>
+        <link>http://localhost:4000/2014/09/26/aviator.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/09/26/aviator.html</guid>
         <description>&lt;h4 id=&quot;aviator&quot;&gt;Aviator&lt;/h4&gt;
 
 &lt;p&gt;Recently, I became interested in the process of building Xcode plugins, digging into the private headers, using hopper to dissect the framework, and experimenting with the existing plugins already available on the web. I switch back and forth quite a bit between AppCode and Xcode, mainly  using AppCode for its superior refactoring tools. Besides refactoring tools, AppCode has a lot of great shortcuts that I wish Xcode has. ⌥↩ adds missing imports and ⇧⌘T toggles between unit tests and source files. &lt;a href=&quot;https://github.com/markohlebar/Peckham&quot;&gt;Peckham&lt;/a&gt; is a plugin that already exists and does a decent job at adding missing imports, though I wish it was as simple as ⌥↩. That left me with ⇧⌘T as a good intro to Xcode plugin creation. If you&amp;#39;re interested in how to get started creating Xcode plugins, Artsy has a &lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;great blog post&lt;/a&gt;&lt;a href=&quot;http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
@@ -617,8 +633,8 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
     
       <item>
         <title>Effective Pair Programming</title>
-        <link>http://marksands.github.io/2014/05/30/effective-pair-programming.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/05/30/effective-pair-programming.html</guid>
+        <link>http://localhost:4000/2014/05/30/effective-pair-programming.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/05/30/effective-pair-programming.html</guid>
         <description>&lt;h4 id=&quot;episode-3-effective-pair-programming&quot;&gt;Episode 3 - Effective Pair Programming&lt;/h4&gt;
 
 &lt;p&gt;The ongoing effort by &lt;a href=&quot;http://www.effectiveprogramming.com/&quot;&gt;Effective Programming&lt;/a&gt; continues the saga with another episode, this time with a discussion around the pros and cons of pair programming. We talk about buying houses, Top Gun, and playing Warcraft III. Check it out! &lt;a href=&quot;https://itunes.apple.com/us/podcast/effective-programming-podcast/id878947397?mt=2&quot;&gt;Effective Pair Programming&lt;/a&gt;.&lt;/p&gt;
@@ -630,8 +646,8 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
     
       <item>
         <title>How Apple Cheats</title>
-        <link>http://marksands.github.io/2014/05/27/how-apple-cheats.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/05/27/how-apple-cheats.html</guid>
+        <link>http://localhost:4000/2014/05/27/how-apple-cheats.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/05/27/how-apple-cheats.html</guid>
         <description>&lt;p&gt;As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It&amp;#39;s not too surprising, after all, it is their domain and they are in control. However, Apple&amp;#39;s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse&lt;a href=&quot;http://www.marco.org/2010/04/06/ibooks-and-private-apis&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -684,8 +700,8 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
     
       <item>
         <title>Effective Programming</title>
-        <link>http://marksands.github.io/2014/05/20/effective-programming.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/05/20/effective-programming.html</guid>
+        <link>http://localhost:4000/2014/05/20/effective-programming.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2014/05/20/effective-programming.html</guid>
         <description>&lt;p&gt;Some friends and I have started up a new podcast at Effective Programming. We&amp;#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development&lt;a href=&quot;http://podcast.effectiveprogramming.com&quot;&gt;¹&lt;/a&gt;.&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -707,43 +723,6 @@ ClassUsingStringValue.m:62:12: Attempt to use a poisoned identifier
 &lt;/ul&gt;
 </description>
         <pubDate>Tue, 20 May 2014 00:00:00 -0500</pubDate>
-      </item>
-    
-      <item>
-        <title>Mocking is Tautological</title>
-        <link>http://marksands.github.io/2014/05/14/mocking-is-tautological.html</link>
-        <guid isPermaLink="true">http://marksands.github.io/2014/05/14/mocking-is-tautological.html</guid>
-        <description>&lt;h3 id=&quot;black-and-white&quot;&gt;Black and White&lt;/h3&gt;
-
-&lt;p&gt;When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;On the other hand, blackbox testing provides a much better hands off approach to implementation details, namely dependencies. In DI heavy software architecture, blockbox testing tends to be difficult without having the ability to mock and stub internal details. If you only rely on the Given-When-Then formula, then tests should only be concerned with input and output. Stated another way, mocks, expects, and verifies should be replaced with independent objects and assertions. Gary Bernhardt articulates this better than I can in his talk Boundaries.¹&lt;/p&gt;
-
-&lt;h3 id=&quot;dependencies-and-decisions&quot;&gt;Dependencies and Decisions&lt;/h3&gt;
-
-&lt;p&gt;When many dependencies, or units, are involved in a path or decision then you should write an integration test instead of mocking out dependencies for an &amp;quot;isolated&amp;quot; unit test. The only time this becomes painful is when multiple decisions in a path directly rely on multiple dependencies; this tends to reek of a code smell. One solution is to split dependencies and decisions into separate layers. Gary&amp;#39;s talk above calls this the functional core and the imperative shell. In the imperative shell, many dependencies work together to formulate a single path with zero conditionals and decisions, while the decisions are deferred to each individual unit formulating the functional core. This makes the majority of testing pains go away.&lt;/p&gt;
-
-&lt;p&gt;The functional core can be fully unit tested with every decision having a test. And instead of unit testing the imperative shell, a single integration test will suffice for each component. The rules I follow are: when you find yourself testing a component with many dependencies, don&amp;#39;t use mocks; instead, write an integration test. Refactor until most, if not all, decisions are deferred to each dependency and drive out the implementation using TDD.&lt;/p&gt;
-
-&lt;h3 id=&quot;a-rant&quot;&gt;A Rant&lt;/h3&gt;
-
-&lt;p&gt;This approach confirms most of my suspicions about using mocks in testing. Mocking (done wrong, and it is often done wrong) is tautological. I&amp;#39;ve both written code and I&amp;#39;ve seen code that mocks a dependency, stubs a method to return a result, and verifies that the method was called and the result was the expected output. I&amp;#39;ve never appreciated this style and it usually feels as though I&amp;#39;m ticking a box off of the test code coverage list. I remain unconvinced that this provides any benefits in opposition to an integration test.&lt;/p&gt;
-
-&lt;p&gt;With a test suite that reflects the style of mocks mocking mocks mocking mocks, refactoring can be a major testing pain. If you modify, add, or remove a dependency, chances are a lot of the mocks and method stubs in your tests will no longer be valid. I wouldn&amp;#39;t be surprised if such a simple change broke an entire test class littered with mocks.&lt;/p&gt;
-
-&lt;h3 id=&quot;a-resolution&quot;&gt;A Resolution&lt;/h3&gt;
-
-&lt;p&gt;1 Corinthians 1:13 says, &amp;quot;When I was a child, I spoke as a child, I understood as a child, I thought as a child: but when I became a man, I put away childish things.&amp;quot; Fortunately, I have put aside my days of mocking. I have felt the pains and drawn my losses, choosing to revisit testing and figure out how to fix the problem. I have been experimenting with a side project attempting to separate the functional core from the imperative shell. It is not easy to remove every conditional from the shell, but it has definitely been a relief for testing. And now that my unit tests only use real objects and assertions, I no longer have to choose between which testing and mocking framework to include in my project. I would encourage you to try this approach and see for yourself if it changes the way you test your code.&lt;/p&gt;
-
-&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.destroyallsoftware.com/talks/boundaries&quot;&gt;[1] Boundaries&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Wed, 14 May 2014 00:00:00 -0500</pubDate>
       </item>
     
   </channel>

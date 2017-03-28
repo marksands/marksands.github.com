@@ -2,7 +2,7 @@
 <html class="no-js">
   <head>
 	<meta charset="utf-8">
-	<title>About | Mark Sands</title>
+	<title> Mark Sands</title>
 	<meta name="description" content="Programming Tidbits">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-Frame-Options" content="sameorigin">
@@ -14,7 +14,7 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
 	<!-- Canonical -->
-	<link rel="canonical" href="http://localhost:4000/about/">
+	<link rel="canonical" href="http://localhost:4000/blog/5/">
 
 	<!-- RSS -->
 	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://localhost:4000/feed.xml" />
@@ -153,15 +153,53 @@
 </header>
 
     <div class="content">
-      <article class="feature-image">
-  <header style="background-image: url('/img/sample_feature_img_3.png')">
-    <h1 class="title">About</h1>
-  </header>
-  <section class="post-content"><p>Hi! Thanks for checking out my blog.</p>
+      <div class="home">
+  
 
-<p>I never really know what to write in these things anyway.</p>
-</section>
-</article>
+  <div class="posts">
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
+          <a class="post-link" href="/2012/05/18/raii.html">
+            RAII
+          </a>
+        </h1>
+        <p class="meta">
+          May 18, 2012
+        </p>
+      </header>
+      <div class="excerpt">
+        <p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it&#39;s a neat concept once you 
+understand what it means and how it&#39;s used. RAII was born out of C++ and invented 
+by its creator Bjarne Stroustrup.</p>
+
+<p>In C++, the only code that can be guaranteed to be executed after an exception is 
+thrown are the destructors of objects residing on the stack. Resource management 
+needs to be tied to the lifespan of suitable objects in order to gain automatic 
+allocation and reclamation. Resources are acquired during initialization, and 
+guaranteed to be released with the destruction of the same objects.</p>
+
+        <a class="button" href="/2012/05/18/raii.html">
+          Continue reading
+        </a>
+      </div>
+    </div>
+    
+  </div>
+
+  
+  <div class="pagination">
+    
+    <a href="/blog/4/" class="button" >
+      <i class="fa fa-chevron-left"></i>
+      Prev
+    </a>
+    
+    
+  </div>
+  
+</div>
 
     </div>
     

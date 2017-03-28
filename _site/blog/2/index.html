@@ -14,10 +14,10 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
 	<!-- Canonical -->
-	<link rel="canonical" href="http://marksands.github.io/blog/2/">
+	<link rel="canonical" href="http://localhost:4000/blog/2/">
 
 	<!-- RSS -->
-	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://localhost:4000/feed.xml" />
 
 	<!-- Font Awesome -->
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -81,10 +81,12 @@
 			
 			
 			
+			
+			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
-	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+	<a href="http://localhost:4000/feed.xml" title="Follow RSS feed">
 		<i class="fa fa-fw fa-rss"></i>
 	</a>
 </li>
@@ -159,6 +161,28 @@
     <div class="post-teaser">
       <header>
         <h1>
+          <a class="post-link" href="/2015/2/7/reacting-to-reactive-cocoa-part-iv.html">
+            Reacting to Reactive Cocoa Part IV
+          </a>
+        </h1>
+        <p class="meta">
+          February 7, 2015
+        </p>
+      </header>
+      <div class="excerpt">
+        <h3 id="switching-gears">Switching Gears</h3>
+
+<p>You may not be surprised when I say that I&#39;m taking a break from learning Reactive Cocoa. Several of my coworkers are diving into swift, and with the imminent release of Reactive Cocoa 3.0, I decided to switch gears.</p>
+
+        <a class="button" href="/2015/2/7/reacting-to-reactive-cocoa-part-iv.html">
+          Continue reading
+        </a>
+      </div>
+    </div>
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
           <a class="post-link" href="/2015/1/7/reacting-to-reactive-cocoa-part-iii.html">
             Reacting to Reactive Cocoa Part III
           </a>
@@ -190,7 +214,7 @@
         </p>
       </header>
       <div class="excerpt">
-        <h3 id="baby-39-s-first-monad">Baby&#39;s First Monad</h3>
+        <h3 id="babys-first-monad">Baby&#39;s First Monad</h3>
 
 <p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I&#39;d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn&#39;t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I&#39;m supposed to be doing this the Reactive Cocoa way.</p>
 
@@ -239,28 +263,6 @@
 <p>As the new year approaches, I&#39;ve began to think of some goals of mine. Rather than make goals, I&#39;ve always tried to improve on an as-needed basis; why wait till the beginning of the new year? It&#39;s close enough to the new year this time that I am willing to make an exception and wait a few days. Here are 3 goals of mine that I wish to accomplish over the following 12 months.</p>
 
         <a class="button" href="/2014/12/29/2015-goals.html">
-          Continue reading
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2014/10/16/pragma-poison.html">
-            Pragma Poison
-          </a>
-        </h1>
-        <p class="meta">
-          October 16, 2014
-        </p>
-      </header>
-      <div class="excerpt">
-        <h3 id="stringvalue">stringValue</h3>
-
-<p>It can be tempting to convert NSNumbers to strings by calling <code>stringValue</code>. It&#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&#39;s necessary. You may think calling <code>[@8.8 stringValue]</code> returns &quot;8.8&quot;, but you&#39;d be wrong; it actually returns &quot;8.800000000000001&quot;. Let&#39;s take a look at what&#39;s going on behind the scenes when we call stringValue to find out why this is happening.</p>
-
-        <a class="button" href="/2014/10/16/pragma-poison.html">
           Continue reading
         </a>
       </div>

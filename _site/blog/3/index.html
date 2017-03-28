@@ -14,10 +14,10 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
 	<!-- Canonical -->
-	<link rel="canonical" href="http://marksands.github.io/blog/3/">
+	<link rel="canonical" href="http://localhost:4000/blog/3/">
 
 	<!-- RSS -->
-	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://marksands.github.io/feed.xml" />
+	<link rel="alternate" type="application/atom+xml" title="Mark Sands" href="http://localhost:4000/feed.xml" />
 
 	<!-- Font Awesome -->
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -81,10 +81,12 @@
 			
 			
 			
+			
+			
 			<!-- Social icons from Font Awesome, if enabled -->
 			
 <li>
-	<a href="http://marksands.github.io/feed.xml" title="Follow RSS feed">
+	<a href="http://localhost:4000/feed.xml" title="Follow RSS feed">
 		<i class="fa fa-fw fa-rss"></i>
 	</a>
 </li>
@@ -155,6 +157,28 @@
   
 
   <div class="posts">
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/10/16/pragma-poison.html">
+            Pragma Poison
+          </a>
+        </h1>
+        <p class="meta">
+          October 16, 2014
+        </p>
+      </header>
+      <div class="excerpt">
+        <h3 id="stringvalue">stringValue</h3>
+
+<p>It can be tempting to convert NSNumbers to strings by calling <code>stringValue</code>. It&#39;s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that&#39;s necessary. You may think calling <code>[@8.8 stringValue]</code> returns &quot;8.8&quot;, but you&#39;d be wrong; it actually returns &quot;8.800000000000001&quot;. Let&#39;s take a look at what&#39;s going on behind the scenes when we call stringValue to find out why this is happening.</p>
+
+        <a class="button" href="/2014/10/16/pragma-poison.html">
+          Continue reading
+        </a>
+      </div>
+    </div>
     
     <div class="post-teaser">
       <header>
@@ -235,28 +259,6 @@
         <p>Some friends and I have started up a new podcast at Effective Programming. We&#39;re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development<a href="http://podcast.effectiveprogramming.com">¹</a>.</p>
 
         <a class="button" href="/2014/05/20/effective-programming.html">
-          Continue reading
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2014/05/14/mocking-is-tautological.html">
-            Mocking is Tautological
-          </a>
-        </h1>
-        <p class="meta">
-          May 14, 2014
-        </p>
-      </header>
-      <div class="excerpt">
-        <h3 id="black-and-white">Black and White</h3>
-
-<p>When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.</p>
-
-        <a class="button" href="/2014/05/14/mocking-is-tautological.html">
           Continue reading
         </a>
       </div>
