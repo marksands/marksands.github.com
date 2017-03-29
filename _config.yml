@@ -1,63 +1,63 @@
-# SITE CONFIGURATION
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://marksands.github.io" # the base hostname & protocol for your site
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing these this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
 
-# THEME-SPECIFIC CONFIGURATION
-theme:
-    title: "Mark Sands"
-    avatar: avatar.png
-    gravatar: "7a6e4cc366f8f533b056936cf9bcb85d"
-    description: Programming Tidbits
-    #header_text:
-    # Header and footer text
-    # header_text: >
-    # <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    # header_text_feature_image:
-    footer_text: >
-        Powered by <a href="http://jekyllrb.com">Jekyll</a>
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+rl: "http://marksands.github.io" # the base hostname & protocol for your site
 
-    # Icons
-    rss: true
-    email_address: marksands07@gmail.com
-    github: "marksands"
-    twitter: "marksands"
+title: "Mark Sands"
+avatar: avatar.png
+gravatar: "7a6e4cc366f8f533b056936cf9bcb85d"
+description: Programming Tidbits
+rss: true
 
-    # Scripts
-    google_analytics: "UA-41405801-1"
-    disqus_shortname: "marksandsgithub"
-    # katex: true # Enable if using math markup
+twitter_username: marksands
+github_username: marksands
 
-    # Localization strings
-    str_follow_on: "Follow on"
-    str_rss_follow: "Follow RSS feed"
-    str_email: "Email"
-    str_next: "Next"
-    str_prev: "Prev"
-    str_continue_reading: "Continue reading"
+# DISQUS
+disqus:
+  shortname: "marksandsgithub"
 
-    # Colours, typography and padding
-    # Open the "_sass > base" folder, and open "_variables.scss"
-    google_fonts: "Source+Sans+Pro:400,700,700italic,400italic"
+google_analytics: "UA-41405801-1"
 
-    #Post navigation
-    post_navigation: true
-
-gems: [jekyll-paginate]
-
-# PAGINATION
-paginate: 5
-paginate_path: "/blog/:num/"
-
-excerpt_separator: "<!-- more -->"
-
-# BUILD SETTINGS
+# Build settings
 markdown: kramdown
 
+# MARKDOWN
 kramdown:
     input: GFM
     syntax_highlighter: rouge
     extensions: ["tables", "autolink", "strikethrough", "space_after_headers", "with_toc_data", "fenced_code_blocks"]
 
-    sass:
-        sass_dir: _sass
-        style: :compressed
+# PAGINATION
+post_navigation: true
+paginate: 5
+paginate_path: "/blog/:num/"
+excerpt_separator: "<!-- more -->"
+
+theme: minima
+gems:
+  - jekyll-paginate
+  - jekyll-feed
+  
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+# Localization strings
+str_follow_on: "Follow on"
+str_rss_follow: "Follow RSS feed"
+str_email: "Email"
+str_next: "Next"
+str_prev: "Prev"
+str_continue_reading: "Continue reading"

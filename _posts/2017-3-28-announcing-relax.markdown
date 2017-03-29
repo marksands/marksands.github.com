@@ -15,4 +15,6 @@ showads: true
 
 #### [Meet Re:Lax - github.com/asynchrony/Re-Lax/](https://github.com/asynchrony/Re-Lax/)
 
+<!-- more -->
+
 Re:Lax was born out of a spontaneous decision to see what was possible and this is what we ended up with. We are extremely happy with the results and are excited to be able to share it with everyone. I plan on going into a deeper dive into the hows of reverse engineering the effect and the file format, so stay tuned for that.

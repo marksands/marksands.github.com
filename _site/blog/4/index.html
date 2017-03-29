@@ -10,7 +10,7 @@
   <meta name="description" content="Programming Tidbits">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="canonical" href="http://localhost:4000/blog/4/">
   <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
   
   
@@ -70,24 +70,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2017/3/28/announcing-relax.html">
-            Announcing Re:Lax
+          <a class="post-link" href="/2014/05/14/mocking-is-tautological.html">
+            Mocking is Tautological
           </a>
         </h1>
         <p class="meta">
-          March 28, 2017
+          May 14, 2014
         </p>
       </header>
       <div class="excerpt">
-        <div class="jekyll-twitter-plugin"><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My coworker <a href="https://twitter.com/JARinteractive">@JARinteractive</a> and I just successfully reverse engineered the LCR image format for tvOS. <a href="https://twitter.com/hashtag/humblebrag?src=hash">#humblebrag</a></p>&mdash; Mark Sands (@marksands) <a href="https://twitter.com/marksands/status/714494394401951748">March 28, 2016</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+        <h3 id="black-and-white">Black and White</h3>
 
-<p>1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.</p>
-
-<h4 id="meet-relax---githubcomasynchronyre-lax"><a href="https://github.com/asynchrony/Re-Lax/">Meet Re:Lax - github.com/asynchrony/Re-Lax/</a></h4>
+<p>When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.</p>
 
 
-        <a class="button" href="/2017/3/28/announcing-relax.html">
+        <a class="button" href="/2014/05/14/mocking-is-tautological.html">
           
         </a>
       </div>
@@ -96,19 +93,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
-            WWDC 2016 What You Might Have Missed
+          <a class="post-link" href="/2014/01/03/inspecting-third-party-apps.html">
+            Inspecting Third Party Apps
           </a>
         </h1>
         <p class="meta">
-          June 19, 2016
+          January 3, 2014
         </p>
       </header>
       <div class="excerpt">
-        <p>I was fortunate enough to attend WWDC 2016 this year having scored a lucky <a href="https://www.youtube.com/watch?v=6AicW3Xp9EM">golden ticket</a>. The week was mostly a blur, but I still had a blast and met a lot of really freaking cool people. Since I know first hand how hard it was to keep track of all the shiny new things Apple announced, I figured it would be worthwhile to point out some new technical features that you may have already forgotten about or not heard at all.</p>
+        <h3 id="an-alternative-approach">An Alternative Approach</h3>
+
+<p>This post is an overview of an alternative approach to attaching <a href="http://revealapp.com/">Reveal</a> or <a href="http://www.sparkinspector.com/">Spark</a> to third party apps on a jailbroken device. Peter Steinberger posted a <a href="http://petersteinberger.com/blog/2013/how-to-inspect-the-view-hierarchy-of-3rd-party-apps/">blog post</a> demonstrating how this works using MobileSubstrate. Unfortunately, this approach didn’t work for me and a few others that shared my woes via Twitter.</p>
 
 
-        <a class="button" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
+        <a class="button" href="/2014/01/03/inspecting-third-party-apps.html">
           
         </a>
       </div>
@@ -117,23 +116,22 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/2/12/model-view-binding.html">
-            Model View Binding
+          <a class="post-link" href="/2013/07/11/fixing-uicolor.html">
+            Fixing UIColor
           </a>
         </h1>
         <p class="meta">
-          February 12, 2016
+          July 11, 2013
         </p>
       </header>
       <div class="excerpt">
-        <p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
+        <h3 id="uicolor">UIColor</h3>
 
-<p>Since then, I’ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I’m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
+<p><code class="highlighter-rouge">UIColor</code> is a commonly used class that represents color and sometimes opacity. As it turns out, <code class="highlighter-rouge">UIColor</code> is a class cluster made up of a couple of private concrete subclasses. 
+Class clusters group a number of private concrete subclasses under a public abstract superclass; this is based on the abstract factory design pattern.<a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/CocoaObjects/CocoaObjects.html#//apple_ref/doc/uid/TP40002974-CH4-SW34">¹</a></p>
 
-<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here’s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
 
-
-        <a class="button" href="/2016/2/12/model-view-binding.html">
+        <a class="button" href="/2013/07/11/fixing-uicolor.html">
           
         </a>
       </div>
@@ -142,23 +140,23 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/1/14/paper-doll-app-development.html">
-            Paper Doll App Development
+          <a class="post-link" href="/2013/06/24/trampolines-and-higher-order-messaging.html">
+            Trampolines & Higher Order Messaging
           </a>
         </h1>
         <p class="meta">
-          January 14, 2016
+          June 24, 2013
         </p>
       </header>
       <div class="excerpt">
-        <p><em>This post is in response to the iOhYes podcast <a href="http://5by5.tv/iohyes/98">#98 We Heard You Like Rants</a></em></p>
+        <h3 id="trampolines">Trampolines</h3>
 
-<h3 id="apples-best-practices">Apple’s Best Practices</h3>
+<p>A trampoline is a small piece of code that is created at run time when the address of a nested function is taken. 
+It normally resides on the stack, in the stack frame of the containing function. The word trampoline is used because execution jumps 
+into the trampoline object and then immediately jumps out.<a href="http://gcc.gnu.org/onlinedocs/gccint/Trampolines.html">¹</a></p>
 
-<p>When Apple publishes sample code, they have to cater to their audience. They can’t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple’s sample code won’t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.</p>
 
-
-        <a class="button" href="/2016/1/14/paper-doll-app-development.html">
+        <a class="button" href="/2013/06/24/trampolines-and-higher-order-messaging.html">
           
         </a>
       </div>
@@ -167,21 +165,23 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2015/2/10/a-debugging-story.html">
-            A Debugging Story
+          <a class="post-link" href="/2013/05/31/builder-pattern.html">
+            Builder Pattern
           </a>
         </h1>
         <p class="meta">
-          February 10, 2015
+          May 31, 2013
         </p>
       </header>
       <div class="excerpt">
-        <h3 id="forward">Forward</h3>
+        <p>The builder pattern is a creational design pattern. It is used to abstract steps of the construction of complex objects from its representation so that the same construction process 
+can create different representations.<a href="http://c2.com/cgi/wiki?DesignPatternsBook">¹</a></p>
 
-<p>The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I’ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you’ll have learned something along the way.</p>
+<p>Complex objects that the builder pattern can be useful towards, for example, include building mazes, characters in video games, and perhaps even baking. However, these examples are 
+somewhat of a stretch and don’t provide any common ground for beginners. One thing I’ve found the builder pattern to be useful for is for building attributed labels.</p>
 
 
-        <a class="button" href="/2015/2/10/a-debugging-story.html">
+        <a class="button" href="/2013/05/31/builder-pattern.html">
           
         </a>
       </div>
@@ -192,13 +192,15 @@
 
 <div class="pagination">
   
-    <a href="/blog/2/">Older</a>
+    <a href="/blog/5/">Older</a>
   
   
   
+    <span>&#8212;</span>
   
   
-    <span></span>
+  
+    <a href="/blog/3/">Newer</a>
   
 </div>
 

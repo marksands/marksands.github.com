@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Mark Sands</title>
+    <title></title>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://localhost:4000/</link>
-    <description>Programming Tidbits</description>
-    <pubDate>Tue, 28 Mar 2017 14:45:40 -0500</pubDate>
+    <description></description>
+    <pubDate>Tue, 28 Mar 2017 19:47:13 -0500</pubDate>
     
       <item>
         <title>Announcing Re:Lax</title>
@@ -17,6 +17,8 @@
 &lt;p&gt;1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.&lt;/p&gt;
 
 &lt;h4 id=&quot;meet-relax---githubcomasynchronyre-lax&quot;&gt;&lt;a href=&quot;https://github.com/asynchrony/Re-Lax/&quot;&gt;Meet Re:Lax - github.com/asynchrony/Re-Lax/&lt;/a&gt;&lt;/h4&gt;
+
+&lt;!-- more --&gt;
 
 &lt;p&gt;Re:Lax was born out of a spontaneous decision to see what was possible and this is what we ended up with. We are extremely happy with the results and are excited to be able to share it with everyone. I plan on going into a deeper dive into the hows of reverse engineering the effect and the file format, so stay tuned for that.&lt;/p&gt;
 </description>

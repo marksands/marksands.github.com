@@ -10,7 +10,7 @@
   <meta name="description" content="Programming Tidbits">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="canonical" href="http://localhost:4000/blog/3/">
   <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
   
   
@@ -70,24 +70,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2017/3/28/announcing-relax.html">
-            Announcing Re:Lax
+          <a class="post-link" href="/2014/10/16/pragma-poison.html">
+            Pragma Poison
           </a>
         </h1>
         <p class="meta">
-          March 28, 2017
+          October 16, 2014
         </p>
       </header>
       <div class="excerpt">
-        <div class="jekyll-twitter-plugin"><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My coworker <a href="https://twitter.com/JARinteractive">@JARinteractive</a> and I just successfully reverse engineered the LCR image format for tvOS. <a href="https://twitter.com/hashtag/humblebrag?src=hash">#humblebrag</a></p>&mdash; Mark Sands (@marksands) <a href="https://twitter.com/marksands/status/714494394401951748">March 28, 2016</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+        <h3 id="stringvalue">stringValue</h3>
 
-<p>1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.</p>
-
-<h4 id="meet-relax---githubcomasynchronyre-lax"><a href="https://github.com/asynchrony/Re-Lax/">Meet Re:Lax - github.com/asynchrony/Re-Lax/</a></h4>
+<p>It can be tempting to convert NSNumbers to strings by calling <code class="highlighter-rouge">stringValue</code>. It’s definitely less verbose than creating an NSNumberFormatter, specifying the number style, removing the grouping separator, and any other setup that’s necessary. You may think calling <code class="highlighter-rouge">[@8.8 stringValue]</code> returns “8.8”, but you’d be wrong; it actually returns “8.800000000000001”. Let’s take a look at what’s going on behind the scenes when we call stringValue to find out why this is happening.</p>
 
 
-        <a class="button" href="/2017/3/28/announcing-relax.html">
+        <a class="button" href="/2014/10/16/pragma-poison.html">
           
         </a>
       </div>
@@ -96,19 +93,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
-            WWDC 2016 What You Might Have Missed
+          <a class="post-link" href="/2014/09/26/aviator.html">
+            Aviator
           </a>
         </h1>
         <p class="meta">
-          June 19, 2016
+          September 26, 2014
         </p>
       </header>
       <div class="excerpt">
-        <p>I was fortunate enough to attend WWDC 2016 this year having scored a lucky <a href="https://www.youtube.com/watch?v=6AicW3Xp9EM">golden ticket</a>. The week was mostly a blur, but I still had a blast and met a lot of really freaking cool people. Since I know first hand how hard it was to keep track of all the shiny new things Apple announced, I figured it would be worthwhile to point out some new technical features that you may have already forgotten about or not heard at all.</p>
+        <h4 id="aviator">Aviator</h4>
+
+<p>Recently, I became interested in the process of building Xcode plugins, digging into the private headers, using hopper to dissect the framework, and experimenting with the existing plugins already available on the web. I switch back and forth quite a bit between AppCode and Xcode, mainly  using AppCode for its superior refactoring tools. Besides refactoring tools, AppCode has a lot of great shortcuts that I wish Xcode has. ⌥↩ adds missing imports and ⇧⌘T toggles between unit tests and source files. <a href="https://github.com/markohlebar/Peckham">Peckham</a> is a plugin that already exists and does a decent job at adding missing imports, though I wish it was as simple as ⌥↩. That left me with ⇧⌘T as a good intro to Xcode plugin creation. If you’re interested in how to get started creating Xcode plugins, Artsy has a <a href="http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/">great blog post</a><a href="http://artsy.github.io/blog/2014/06/17/building-the-xcode-plugin-snapshots/">¹</a>.</p>
 
 
-        <a class="button" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
+        <a class="button" href="/2014/09/26/aviator.html">
           
         </a>
       </div>
@@ -117,23 +116,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/2/12/model-view-binding.html">
-            Model View Binding
+          <a class="post-link" href="/2014/05/30/effective-pair-programming.html">
+            Effective Pair Programming
           </a>
         </h1>
         <p class="meta">
-          February 12, 2016
+          May 30, 2014
         </p>
       </header>
       <div class="excerpt">
-        <p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
+        <h4 id="episode-3---effective-pair-programming">Episode 3 - Effective Pair Programming</h4>
 
-<p>Since then, I’ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I’m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
-
-<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here’s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
+<p>The ongoing effort by <a href="http://www.effectiveprogramming.com/">Effective Programming</a> continues the saga with another episode, this time with a discussion around the pros and cons of pair programming. We talk about buying houses, Top Gun, and playing Warcraft III. Check it out! <a href="https://itunes.apple.com/us/podcast/effective-programming-podcast/id878947397?mt=2">Effective Pair Programming</a>.</p>
 
 
-        <a class="button" href="/2016/2/12/model-view-binding.html">
+        <a class="button" href="/2014/05/30/effective-pair-programming.html">
           
         </a>
       </div>
@@ -142,23 +139,19 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/1/14/paper-doll-app-development.html">
-            Paper Doll App Development
+          <a class="post-link" href="/2014/05/27/how-apple-cheats.html">
+            How Apple Cheats
           </a>
         </h1>
         <p class="meta">
-          January 14, 2016
+          May 27, 2014
         </p>
       </header>
       <div class="excerpt">
-        <p><em>This post is in response to the iOhYes podcast <a href="http://5by5.tv/iohyes/98">#98 We Heard You Like Rants</a></em></p>
-
-<h3 id="apples-best-practices">Apple’s Best Practices</h3>
-
-<p>When Apple publishes sample code, they have to cater to their audience. They can’t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple’s sample code won’t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.</p>
+        <p>As every iOS developer knows, Apple can do whatever they want with their own native apps, meaning they can and do use private APIs. It’s not too surprising, after all, it is their domain and they are in control. However, Apple’s overuse of private APIs can make third-party apps second-class citizens; iBooks is notorious of such private API abuse<a href="http://www.marco.org/2010/04/06/ibooks-and-private-apis">¹</a>.</p>
 
 
-        <a class="button" href="/2016/1/14/paper-doll-app-development.html">
+        <a class="button" href="/2014/05/27/how-apple-cheats.html">
           
         </a>
       </div>
@@ -167,21 +160,19 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2015/2/10/a-debugging-story.html">
-            A Debugging Story
+          <a class="post-link" href="/2014/05/20/effective-programming.html">
+            Effective Programming
           </a>
         </h1>
         <p class="meta">
-          February 10, 2015
+          May 20, 2014
         </p>
       </header>
       <div class="excerpt">
-        <h3 id="forward">Forward</h3>
-
-<p>The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I’ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you’ll have learned something along the way.</p>
+        <p>Some friends and I have started up a new podcast at Effective Programming. We’re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development<a href="http://podcast.effectiveprogramming.com">¹</a>.</p>
 
 
-        <a class="button" href="/2015/2/10/a-debugging-story.html">
+        <a class="button" href="/2014/05/20/effective-programming.html">
           
         </a>
       </div>
@@ -192,13 +183,15 @@
 
 <div class="pagination">
   
-    <a href="/blog/2/">Older</a>
+    <a href="/blog/4/">Older</a>
   
   
   
+    <span>&#8212;</span>
   
   
-    <span></span>
+  
+    <a href="/blog/2/">Newer</a>
   
 </div>
 

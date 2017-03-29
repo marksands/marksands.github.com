@@ -10,7 +10,7 @@
   <meta name="description" content="Programming Tidbits">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="canonical" href="http://localhost:4000/blog/2/">
   <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
   
   
@@ -70,24 +70,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2017/3/28/announcing-relax.html">
-            Announcing Re:Lax
+          <a class="post-link" href="/2015/2/7/reacting-to-reactive-cocoa-part-iv.html">
+            Reacting to Reactive Cocoa Part IV
           </a>
         </h1>
         <p class="meta">
-          March 28, 2017
+          February 7, 2015
         </p>
       </header>
       <div class="excerpt">
-        <div class="jekyll-twitter-plugin"><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My coworker <a href="https://twitter.com/JARinteractive">@JARinteractive</a> and I just successfully reverse engineered the LCR image format for tvOS. <a href="https://twitter.com/hashtag/humblebrag?src=hash">#humblebrag</a></p>&mdash; Mark Sands (@marksands) <a href="https://twitter.com/marksands/status/714494394401951748">March 28, 2016</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+        <h3 id="switching-gears">Switching Gears</h3>
 
-<p>1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.</p>
-
-<h4 id="meet-relax---githubcomasynchronyre-lax"><a href="https://github.com/asynchrony/Re-Lax/">Meet Re:Lax - github.com/asynchrony/Re-Lax/</a></h4>
+<p>You may not be surprised when I say that I’m taking a break from learning Reactive Cocoa. Several of my coworkers are diving into swift, and with the imminent release of Reactive Cocoa 3.0, I decided to switch gears.</p>
 
 
-        <a class="button" href="/2017/3/28/announcing-relax.html">
+        <a class="button" href="/2015/2/7/reacting-to-reactive-cocoa-part-iv.html">
           
         </a>
       </div>
@@ -96,19 +93,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
-            WWDC 2016 What You Might Have Missed
+          <a class="post-link" href="/2015/1/7/reacting-to-reactive-cocoa-part-iii.html">
+            Reacting to Reactive Cocoa Part III
           </a>
         </h1>
         <p class="meta">
-          June 19, 2016
+          January 7, 2015
         </p>
       </header>
       <div class="excerpt">
-        <p>I was fortunate enough to attend WWDC 2016 this year having scored a lucky <a href="https://www.youtube.com/watch?v=6AicW3Xp9EM">golden ticket</a>. The week was mostly a blur, but I still had a blast and met a lot of really freaking cool people. Since I know first hand how hard it was to keep track of all the shiny new things Apple announced, I figured it would be worthwhile to point out some new technical features that you may have already forgotten about or not heard at all.</p>
+        <h3 id="asynchronously-loading-images">Asynchronously Loading Images</h3>
+
+<p>One of my first endevours into the realm of expanding my <code class="highlighter-rouge">RACObserve</code>-fu was to asynchronously load a <code class="highlighter-rouge">UIImage</code> from an image URL that was returned from the movie API in order to populate thumbnails in table view cells. Historically, using <code class="highlighter-rouge">AFNetworking</code>’s built-in mechanism or a third party caching library such as <code class="highlighter-rouge">SDWebImage</code> would work perfectly fine, but I wanted to stick to my guns and fully gulp the Reactive Cocoa punch that I’ve so graciously poured.</p>
 
 
-        <a class="button" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
+        <a class="button" href="/2015/1/7/reacting-to-reactive-cocoa-part-iii.html">
           
         </a>
       </div>
@@ -117,23 +116,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/2/12/model-view-binding.html">
-            Model View Binding
+          <a class="post-link" href="/2015/1/2/reacting-to-reactive-cocoa-part-ii.html">
+            Reacting to Reactive Cocoa Part II
           </a>
         </h1>
         <p class="meta">
-          February 12, 2016
+          January 2, 2015
         </p>
       </header>
       <div class="excerpt">
-        <p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
+        <h3 id="babys-first-monad">Baby’s First Monad</h3>
 
-<p>Since then, I’ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I’m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
-
-<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here’s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
+<p>Since this is an app designed to pull down recent showtime listings from the Internet¹, I realized I’d need a network request in order to fetch the data and populate a listing of showtimes. In this case, a simple array to populate a tableview with the movies that are playing for each theater. I didn’t want to waste time building the entire API before digging into the app, so I spun up a dummy heroku instance to return some hard coded values. At this point, my muscle memory is nearly wired to pull in something like AFNetworking and start making GET requests. Before I knew it, I had a podfile and a view model ready to go; but quickly realized that I’m supposed to be doing this the Reactive Cocoa way.</p>
 
 
-        <a class="button" href="/2016/2/12/model-view-binding.html">
+        <a class="button" href="/2015/1/2/reacting-to-reactive-cocoa-part-ii.html">
           
         </a>
       </div>
@@ -142,23 +139,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2016/1/14/paper-doll-app-development.html">
-            Paper Doll App Development
+          <a class="post-link" href="/2014/12/30/reacting-to-reactive-cocoa-part-i.html">
+            Reacting to Reactive Cocoa Part I
           </a>
         </h1>
         <p class="meta">
-          January 14, 2016
+          December 30, 2014
         </p>
       </header>
       <div class="excerpt">
-        <p><em>This post is in response to the iOhYes podcast <a href="http://5by5.tv/iohyes/98">#98 We Heard You Like Rants</a></em></p>
+        <h3 id="rac-diary">RAC Diary</h3>
 
-<h3 id="apples-best-practices">Apple’s Best Practices</h3>
-
-<p>When Apple publishes sample code, they have to cater to their audience. They can’t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple’s sample code won’t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.</p>
+<p>In the vain of Brent Simmons’ <a href="http://inessential.com/2013/10/01/vesper_sync_diary_1">Vesper Sync Diary</a>¹, my plan is to express my thoughts about learning Reactive Cocoa as I build an app from scratch using the framework. The app will be an iPhone targeted app that will serve as a feed to show current movie theater showtimes of a local movie theater from my home town. I’m using this as an opportunity to get my feet wet with reactive cocoa and to see what all the fuss is about.</p>
 
 
-        <a class="button" href="/2016/1/14/paper-doll-app-development.html">
+        <a class="button" href="/2014/12/30/reacting-to-reactive-cocoa-part-i.html">
           
         </a>
       </div>
@@ -167,21 +162,21 @@
     <div class="post-teaser">
       <header>
         <h1>
-          <a class="post-link" href="/2015/2/10/a-debugging-story.html">
-            A Debugging Story
+          <a class="post-link" href="/2014/12/29/2015-goals.html">
+            2015 Goals
           </a>
         </h1>
         <p class="meta">
-          February 10, 2015
+          December 29, 2014
         </p>
       </header>
       <div class="excerpt">
-        <h3 id="forward">Forward</h3>
+        <h3 id="2015-goals">2015 Goals</h3>
 
-<p>The following is a synopsis of a crash that stumped my team for several days, and the process we took to investigate such bizarre behavior and ultimately diagnose and fix the problem. I’ll go over how we arrived at our solution and the debugging steps we took to get there. Hopefully by the end of the story you’ll have learned something along the way.</p>
+<p>As the new year approaches, I’ve began to think of some goals of mine. Rather than make goals, I’ve always tried to improve on an as-needed basis; why wait till the beginning of the new year? It’s close enough to the new year this time that I am willing to make an exception and wait a few days. Here are 3 goals of mine that I wish to accomplish over the following 12 months.</p>
 
 
-        <a class="button" href="/2015/2/10/a-debugging-story.html">
+        <a class="button" href="/2014/12/29/2015-goals.html">
           
         </a>
       </div>
@@ -192,13 +187,15 @@
 
 <div class="pagination">
   
-    <a href="/blog/2/">Older</a>
+    <a href="/blog/3/">Older</a>
   
   
   
+    <span>&#8212;</span>
   
   
-    <span></span>
+  
+    <a href="/">Newer</a>
   
 </div>
 
