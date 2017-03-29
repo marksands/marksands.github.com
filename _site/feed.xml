@@ -5,7 +5,7 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://localhost:4000/</link>
     <description></description>
-    <pubDate>Tue, 28 Mar 2017 19:47:13 -0500</pubDate>
+    <pubDate>Wed, 29 Mar 2017 12:46:50 -0500</pubDate>
     
       <item>
         <title>Announcing Re:Lax</title>
@@ -21,6 +21,8 @@
 &lt;!-- more --&gt;
 
 &lt;p&gt;Re:Lax was born out of a spontaneous decision to see what was possible and this is what we ended up with. We are extremely happy with the results and are excited to be able to share it with everyone. I plan on going into a deeper dive into the hows of reverse engineering the effect and the file format, so stay tuned for that.&lt;/p&gt;
+
+&lt;p&gt;Let’s chat about this on &lt;a href=&quot;https://news.ycombinator.com/item?id=13988432&quot;&gt;Hacker News&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Tue, 28 Mar 2017 00:00:00 -0500</pubDate>
       </item>
