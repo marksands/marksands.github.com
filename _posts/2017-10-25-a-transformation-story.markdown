@@ -12,7 +12,7 @@ I work a lot with legacy code and frequently encounter strange and bizarre solut
 
 Today I encountered a function that looks more or less like this:
 
-```swift
+{% highlight swift %}
 struct Name {
     let firstName: String?
     let middleInitial: String?
@@ -32,7 +32,8 @@ func fullName(name: Name) -> String {
     }
     return fullName
 }
-```
+{% endhighlight %}
+
 
 Notice any bugs? What does `fullName` return when the `firstName` or the `middleInitial` is `nil`?
 
@@ -44,11 +45,11 @@ Functions like this one provide trivial insertion points to make changes to the 
 
 If we take a step back, it should be obvious that all we need to do is _join_ the name components with a space character. When stated aloud, it definitely sounds like an entire function to facilitate the join is overkill. There are two factors that are in our way of using a simple reduce operation: the name components are optional and we need to trim whitespace. Fortunately, the Swift standard library includes a [variation of `flatMap`](https://developer.apple.com/documentation/swift/array/2903427-flatmap) that can transform optionals over an array, so this shouldn't be a problem. Let's give it a shot:
 
-```swift
+{% highlight swift %}
 let fullName = [name.firstName, name.initial, name.lastName]
     .flatMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
     .joined(separator: " ")
-```
+{% endhighlight %}
 
 This makes me feel much better about the solution. We don't need a separate function any longer because we're doing a simple transformation over the three name properties. What's great is it's much more difficult to be _clever_ about it and introduce unintended side effects.
 
