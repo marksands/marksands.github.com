@@ -16,6 +16,7 @@
   
 </head>
 
+
   <body>
 
     <header class="site-header" role="banner">
@@ -66,7 +67,12 @@
 
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline">Model View Binding</h1>
-    <p class="post-meta"><time datetime="2016-02-12T00:00:00-06:00" itemprop="datePublished">Feb 12, 2016</time></p>
+    <p class="post-meta">
+      <time datetime="2016-02-12T00:00:00-06:00" itemprop="datePublished">
+        
+        Feb 12, 2016
+      </time>
+      </p>
   </header>
 
   <div class="post-content" itemprop="articleBody">
@@ -112,77 +118,67 @@
 
 <h2 id="binding">Binding</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>static func bindView(view:SearchyView, model:SearchyModel, selectionHandler:(SearchResult)-&gt;()) {
-    view.rxs.disposeBag
-        ++ view.searchResults &lt;~ model.searchResults
-        ++ model.searchTerm &lt;~ view.searchTerm
-        ++ selectionHandler &lt;~ view.selectionEvents
-}
-</code></pre>
-</div>
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">static</span> <span class="kd">func</span> <span class="nf">bindView</span><span class="p">(</span><span class="nv">view</span><span class="p">:</span><span class="kt">SearchyView</span><span class="p">,</span> <span class="nv">model</span><span class="p">:</span><span class="kt">SearchyModel</span><span class="p">,</span> <span class="nv">selectionHandler</span><span class="p">:(</span><span class="kt">SearchResult</span><span class="p">)</span><span class="o">-&gt;</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">rxs</span><span class="o">.</span><span class="n">disposeBag</span>
+        <span class="o">++</span> <span class="n">view</span><span class="o">.</span><span class="n">searchResults</span> <span class="o">&lt;~</span> <span class="n">model</span><span class="o">.</span><span class="n">searchResults</span>
+        <span class="o">++</span> <span class="n">model</span><span class="o">.</span><span class="n">searchTerm</span> <span class="o">&lt;~</span> <span class="n">view</span><span class="o">.</span><span class="n">searchTerm</span>
+        <span class="o">++</span> <span class="n">selectionHandler</span> <span class="o">&lt;~</span> <span class="n">view</span><span class="o">.</span><span class="n">selectionEvents</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>The code above is a simple binding using RxSugar and RxSwift, making it easy to see the flow of data through the binding with the <code class="highlighter-rouge">&lt;~</code> operator. It is possible to build this without the custom operators, as well:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>model.searchResults.bindTo(view.searchResults).addDisposableTo(view.rx_disposeBag)
-view.searchTerm.bindTo(model.searchTerm).addDisposableTo(view.rx_disposeBag)
-view.selectionEvents.subscribeNext(selectionHandler).addDisposableTo(view.rx_disposeBag)
-</code></pre>
-</div>
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">model</span><span class="o">.</span><span class="n">searchResults</span><span class="o">.</span><span class="nf">bindTo</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">searchResults</span><span class="p">)</span><span class="o">.</span><span class="nf">addDisposableTo</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">rx_disposeBag</span><span class="p">)</span>
+<span class="n">view</span><span class="o">.</span><span class="n">searchTerm</span><span class="o">.</span><span class="nf">bindTo</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">searchTerm</span><span class="p">)</span><span class="o">.</span><span class="nf">addDisposableTo</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">rx_disposeBag</span><span class="p">)</span>
+<span class="n">view</span><span class="o">.</span><span class="n">selectionEvents</span><span class="o">.</span><span class="nf">subscribeNext</span><span class="p">(</span><span class="n">selectionHandler</span><span class="p">)</span><span class="o">.</span><span class="nf">addDisposableTo</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">rx_disposeBag</span><span class="p">)</span></code></pre></figure>
 
 <p>As stated previously, the <code class="highlighter-rouge">&lt;~</code> operator exists for readability as a custom operator with several overloads that does the binding for us.</p>
 
 <h2 id="view-controller">View Controller</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>override func loadView() {
-    let searchyView = SearchyView(imageProvider: context.imageProvider)
-    SearchyBinding.bindView(searchyView, model: model, selectionHandler: self.selectionHandler)
-    view = searchyView
-}
-</code></pre>
-</div>
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">override</span> <span class="kd">func</span> <span class="nf">loadView</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">searchyView</span> <span class="o">=</span> <span class="kt">SearchyView</span><span class="p">(</span><span class="nv">imageProvider</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">imageProvider</span><span class="p">)</span>
+    <span class="kt">SearchyBinding</span><span class="o">.</span><span class="nf">bindView</span><span class="p">(</span><span class="n">searchyView</span><span class="p">,</span> <span class="nv">model</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span> <span class="nv">selectionHandler</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">selectionHandler</span><span class="p">)</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">searchyView</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>UIKit basically forces UIViewControllers to be involved in navigation and view lifecycle logic. That is more than enough for one unit to handle, if following the <em>Single Responsibility Principle</em>. Think of View Controllers as a way to plug into iOS’s navigation systems rather than as a home for an application’s logic or traditional “Controller” code. When using Storyboards or XIBs, the binding would be called in the <code class="highlighter-rouge">viewDidLoad()</code> method.</p>
 
 <h2 id="view">View</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>private let disposeBag = DisposeBag()
-private let tableHandler:TableHandler
-private let textField = UITextField()
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">private</span> <span class="k">let</span> <span class="nv">disposeBag</span> <span class="o">=</span> <span class="kt">DisposeBag</span><span class="p">()</span>
+<span class="kd">private</span> <span class="k">let</span> <span class="nv">tableHandler</span><span class="p">:</span><span class="kt">TableHandler</span>
+<span class="kd">private</span> <span class="k">let</span> <span class="nv">textField</span> <span class="o">=</span> <span class="kt">UITextField</span><span class="p">()</span>
 
-private let _searchResults = PublishSubject&lt;SearchResults&gt;([])
+<span class="kd">private</span> <span class="k">let</span> <span class="nv">_searchResults</span> <span class="o">=</span> <span class="kt">PublishSubject</span><span class="o">&lt;</span><span class="kt">SearchResults</span><span class="o">&gt;</span><span class="p">([])</span>
 
-let searchResults:AnyObserver&lt;SearchResults&gt;
-let selectionEvents:Observable&lt;SearchResult&gt;
+<span class="k">let</span> <span class="nv">searchResults</span><span class="p">:</span><span class="kt">AnyObserver</span><span class="o">&lt;</span><span class="kt">SearchResults</span><span class="o">&gt;</span>
+<span class="k">let</span> <span class="nv">selectionEvents</span><span class="p">:</span><span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">SearchResult</span><span class="o">&gt;</span>
 
-init(imageProvider: ImageProvider) {
-    tableHandler = TableHandler(imageProvider: imageProvider)
-    selectionEvents = tableHandler.selectionEvents
-    searchTerm = textField.rxs.text.debounce(0.33, scheduler: MainScheduler.instance)
-    searchResults = _searchResults.asObserver()
+<span class="nf">init</span><span class="p">(</span><span class="nv">imageProvider</span><span class="p">:</span> <span class="kt">ImageProvider</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">tableHandler</span> <span class="o">=</span> <span class="kt">TableHandler</span><span class="p">(</span><span class="nv">imageProvider</span><span class="p">:</span> <span class="n">imageProvider</span><span class="p">)</span>
+    <span class="n">selectionEvents</span> <span class="o">=</span> <span class="n">tableHandler</span><span class="o">.</span><span class="n">selectionEvents</span>
+    <span class="n">searchTerm</span> <span class="o">=</span> <span class="n">textField</span><span class="o">.</span><span class="n">rxs</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="nf">debounce</span><span class="p">(</span><span class="mf">0.33</span><span class="p">,</span> <span class="nv">scheduler</span><span class="p">:</span> <span class="kt">MainScheduler</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+    <span class="n">searchResults</span> <span class="o">=</span> <span class="n">_searchResults</span><span class="o">.</span><span class="nf">asObserver</span><span class="p">()</span>
 
-    super.init(frame: CGRectZero)
+    <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">frame</span><span class="p">:</span> <span class="kt">CGRectZero</span><span class="p">)</span>
 
-    disposeBag ++ tableHandler.data &lt;~ _searchResults
-</code></pre>
-</div>
+    <span class="n">disposeBag</span> <span class="o">++</span> <span class="n">tableHandler</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;~</span> <span class="n">_searchResults</span></code></pre></figure>
 
 <p>The searchResults is exposed as a public Observer for reading the output and a private Subject for passing the data to the tableHandler. Since the search result selection, which is simply an event that corresponds to tapping a collection view cell, is something internal to the view, it is exposed as an Observable. In Searchy, the Binding feeds the selection events to the selection handler closure.</p>
 
 <h2 id="model">Model</h2>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class SearchyModel {
-   let searchTerm = Variable&lt;String&gt;("")
-   let searchResults:Observable&lt;SearchResults&gt;
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">class</span> <span class="kt">SearchyModel</span> <span class="p">{</span>
+   <span class="k">let</span> <span class="nv">searchTerm</span> <span class="o">=</span> <span class="kt">Variable</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">""</span><span class="p">)</span>
+   <span class="k">let</span> <span class="nv">searchResults</span><span class="p">:</span><span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">SearchResults</span><span class="o">&gt;</span>
 
-   init(searchService:SearchService) {
-       searchResults = searchTerm.asObservable()
-           .map(SearchyModel.stripWhitespace)
-           .flatMapLatest(SearchyModel.searchTerm(searchService))
-           .catchErrorJustReturn([])
-           .share()
-   }
-</code></pre>
-</div>
+   <span class="nf">init</span><span class="p">(</span><span class="nv">searchService</span><span class="p">:</span><span class="kt">SearchService</span><span class="p">)</span> <span class="p">{</span>
+       <span class="n">searchResults</span> <span class="o">=</span> <span class="n">searchTerm</span><span class="o">.</span><span class="nf">asObservable</span><span class="p">()</span>
+           <span class="o">.</span><span class="nf">map</span><span class="p">(</span><span class="kt">SearchyModel</span><span class="o">.</span><span class="n">stripWhitespace</span><span class="p">)</span>
+           <span class="o">.</span><span class="nf">flatMapLatest</span><span class="p">(</span><span class="kt">SearchyModel</span><span class="o">.</span><span class="nf">searchTerm</span><span class="p">(</span><span class="n">searchService</span><span class="p">))</span>
+           <span class="o">.</span><span class="nf">catchErrorJustReturn</span><span class="p">([])</span>
+           <span class="o">.</span><span class="nf">share</span><span class="p">()</span>
+   <span class="p">}</span></code></pre></figure>
 
 <p>The searchTerm is exposed as a Variable since it is used as both input and output. This could also be achieved by exposing both an Observable<String> and an Observer<String>. SearchResults is exposed as an Observable since readonly data will flow out from this stream.</String></String></p>
 
@@ -218,10 +214,8 @@ init(imageProvider: ImageProvider) {
 
   
     
-
   
 </article>
-
       </div>
     </main>
 

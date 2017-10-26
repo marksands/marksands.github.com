@@ -50,40 +50,40 @@ Model-View-Binding relies heavily on the [Observer Pattern]. When using Objectiv
 
 ## Binding
 
-```
+{% highlight swift %}
 static func bindView(view:SearchyView, model:SearchyModel, selectionHandler:(SearchResult)->()) {
     view.rxs.disposeBag
         ++ view.searchResults <~ model.searchResults
         ++ model.searchTerm <~ view.searchTerm
         ++ selectionHandler <~ view.selectionEvents
 }
-```
+{% endhighlight %}
 
 The code above is a simple binding using RxSugar and RxSwift, making it easy to see the flow of data through the binding with the `<~` operator. It is possible to build this without the custom operators, as well:
 
-```
+{% highlight swift %}
 model.searchResults.bindTo(view.searchResults).addDisposableTo(view.rx_disposeBag)
 view.searchTerm.bindTo(model.searchTerm).addDisposableTo(view.rx_disposeBag)
 view.selectionEvents.subscribeNext(selectionHandler).addDisposableTo(view.rx_disposeBag)
-```
+{% endhighlight %}
 
 As stated previously, the `<~` operator exists for readability as a custom operator with several overloads that does the binding for us.
 
 ## View Controller
 
-```
+{% highlight swift %}
 override func loadView() {
     let searchyView = SearchyView(imageProvider: context.imageProvider)
     SearchyBinding.bindView(searchyView, model: model, selectionHandler: self.selectionHandler)
     view = searchyView
 }
-```
+{% endhighlight %}
 
 UIKit basically forces UIViewControllers to be involved in navigation and view lifecycle logic. That is more than enough for one unit to handle, if following the _Single Responsibility Principle_. Think of View Controllers as a way to plug into iOS's navigation systems rather than as a home for an application's logic or traditional "Controller" code. When using Storyboards or XIBs, the binding would be called in the `viewDidLoad()` method.
 
 ## View
 
-```
+{% highlight swift %}
 private let disposeBag = DisposeBag()
 private let tableHandler:TableHandler
 private let textField = UITextField()
@@ -102,13 +102,13 @@ init(imageProvider: ImageProvider) {
     super.init(frame: CGRectZero)
 
     disposeBag ++ tableHandler.data <~ _searchResults
-```
+{% endhighlight %}
 
 The searchResults is exposed as a public Observer for reading the output and a private Subject for passing the data to the tableHandler. Since the search result selection, which is simply an event that corresponds to tapping a collection view cell, is something internal to the view, it is exposed as an Observable. In Searchy, the Binding feeds the selection events to the selection handler closure.
 
 ## Model
 
-```
+{% highlight swift %}
 class SearchyModel {
    let searchTerm = Variable<String>("")
    let searchResults:Observable<SearchResults>
@@ -120,7 +120,7 @@ class SearchyModel {
            .catchErrorJustReturn([])
            .share()
    }
-```
+{% endhighlight %}
 
 The searchTerm is exposed as a Variable since it is used as both input and output. This could also be achieved by exposing both an Observable<String> and an Observer<String>. SearchResults is exposed as an Observable since readonly data will flow out from this stream.
 

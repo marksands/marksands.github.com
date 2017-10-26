@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Mark Sands</title>
-  <meta name="description" content="Programming Tidbits">
+  <title>A Transformation Story</title>
+  <meta name="description" content="I work a lot with legacy code and frequently encounter strange and bizarre solutions to otherwise simple problems. Most of the legacy projects I work with sh...">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="canonical" href="http://localhost:4000/2017/10/25/a-transformation-story.html">
   <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
   
   
@@ -63,24 +63,20 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div class="home">
-  
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <div class="posts">
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2017/10/25/a-transformation-story.html">
-            A Transformation Story
-          </a>
-        </h1>
-        <p class="meta">
-          October 25, 2017
-        </p>
-      </header>
-      <div class="excerpt">
-        <p>I work a lot with legacy code and frequently encounter strange and bizarre solutions to otherwise simple problems. Most of the legacy projects I work with share common architectural problems and a set of regular occurring bugs. While I don’t have an answer as to why these common patterns emerge from legacy projects, I will do my best to pull apart some of these issues and write about my findings.</p>
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">A Transformation Story</h1>
+    <p class="post-meta">
+      <time datetime="2017-10-25T00:00:00-05:00" itemprop="datePublished">
+        
+        Oct 25, 2017
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I work a lot with legacy code and frequently encounter strange and bizarre solutions to otherwise simple problems. Most of the legacy projects I work with share common architectural problems and a set of regular occurring bugs. While I don’t have an answer as to why these common patterns emerge from legacy projects, I will do my best to pull apart some of these issues and write about my findings.</p>
 
 <p>Today I encountered a function that looks more or less like this:</p>
 
@@ -108,127 +104,30 @@
 
 <p>Notice any bugs? What does <code class="highlighter-rouge">fullName</code> return when the <code class="highlighter-rouge">firstName</code> or the <code class="highlighter-rouge">middleInitial</code> is <code class="highlighter-rouge">nil</code>?</p>
 
+<!-- more -->
 
-        <a class="button" href="/2017/10/25/a-transformation-story.html">
-          
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2017/3/28/announcing-relax.html">
-            Announcing Re:Lax
-          </a>
-        </h1>
-        <p class="meta">
-          March 28, 2017
-        </p>
-      </header>
-      <div class="excerpt">
-        <div class="jekyll-twitter-plugin"><blockquote class="twitter-tweet"><p lang="en" dir="ltr">My coworker <a href="https://twitter.com/JARinteractive">@JARinteractive</a> and I just successfully reverse engineered the LCR image format for tvOS. <a href="https://twitter.com/hashtag/humblebrag?src=hash">#humblebrag</a></p>&mdash; Mark Sands (@marksands) <a href="https://twitter.com/marksands/status/714494394401951748">March 28, 2016</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+<p>If it’s not obvious to the developer that they can append a final <code class="highlighter-rouge">.trimmingCharacters(in: .whitespacesAndNewlines)</code> to the output in order to fix the whitespace bug, they might choose to fix the bug by disecting each individual conditional branch and increase the entropy of the code base.</p>
 
-<p>1 year ago today, we finished our efforts of reverse engineering the parallax effect for tvOS. Not only did we manage to create a near pixel perfect rendition of the parallax effect programmatically, but we also successfully reverse engineered the LCR file format as well. And today we are excited to officially open source the project.</p>
+<p>Functions like this one provide trivial insertion points to make changes to the output of the result. But for this non-localized name formatter, we shouldn’t need anything more than a simple transformation. While there’s nothing technically incorrect about the patched function, I’m still not a big fan. Any developer can introduce unintended side effects within this function, and that bothers me.</p>
 
-<h4 id="meet-relax---githubcomasynchronyre-lax"><a href="https://github.com/asynchrony/Re-Lax/">Meet Re:Lax - github.com/asynchrony/Re-Lax/</a></h4>
+<p>If we take a step back, it should be obvious that all we need to do is <em>join</em> the name components with a space character. When stated aloud, it definitely sounds like an entire function to facilitate the join is overkill. There are two factors that are in our way of using a simple reduce operation: the name components are optional and we need to trim whitespace. Fortunately, the Swift standard library includes a <a href="https://developer.apple.com/documentation/swift/array/2903427-flatmap">variation of <code class="highlighter-rouge">flatMap</code></a> that can transform optionals over an array, so this shouldn’t be a problem. Let’s give it a shot:</p>
 
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">let</span> <span class="nv">fullName</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">firstName</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">initial</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">lastName</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nv">$0</span><span class="p">?</span><span class="o">.</span><span class="nf">trimmingCharacters</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="o">.</span><span class="n">whitespacesAndNewlines</span><span class="p">)</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">joined</span><span class="p">(</span><span class="nv">separator</span><span class="p">:</span> <span class="s">" "</span><span class="p">)</span>
+</code></pre>
+</div>
 
-        <a class="button" href="/2017/3/28/announcing-relax.html">
-          
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
-            WWDC 2016 What You Might Have Missed
-          </a>
-        </h1>
-        <p class="meta">
-          June 19, 2016
-        </p>
-      </header>
-      <div class="excerpt">
-        <p>I was fortunate enough to attend WWDC 2016 this year having scored a lucky <a href="https://www.youtube.com/watch?v=6AicW3Xp9EM">golden ticket</a>. The week was mostly a blur, but I still had a blast and met a lot of really freaking cool people. Since I know first hand how hard it was to keep track of all the shiny new things Apple announced, I figured it would be worthwhile to point out some new technical features that you may have already forgotten about or not heard at all.</p>
+<p>This makes me feel much better about the solution. We don’t need a separate function any longer because we’re doing a simple transformation over the three name properties. What’s great is it’s much more difficult to be <em>clever</em> about it and introduce unintended side effects.</p>
 
+<p>Our functional transformation even scales better. If we need to add titles or multiple middle names, the new feature simply become extra components of the array–that’s cheap if you ask me.</p>
 
-        <a class="button" href="/2016/6/19/wwdc-2016-what-you-might-have-missed.html">
-          
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2016/2/12/model-view-binding.html">
-            Model View Binding
-          </a>
-        </h1>
-        <p class="meta">
-          February 12, 2016
-        </p>
-      </header>
-      <div class="excerpt">
-        <p>The functional reactive programming trend is at an all time high. With the advances of Swift, ReactiveCocoa recently shipped version 4.0 and RxSwift turned 1 year old a few days ago. Back in the days of <del>old</del> Objective-C, I gave <a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">Reactive Cocoa a shot</a>, but I ultimately gave up.<a href="http://marksands.github.io/2014/12/30/reacting-to-reactive-cocoa-part-i.html">¹</a></p>
-
-<p>Since then, I’ve reclaimed my lost courage and have tackled both ReactiveCocoa and RxSwift head on. I’m currently sticking with RxSwift for now, with the main advantage being that Rx is a cross language API. This makes it helpful when doing cross functional pairing between Android and iOS development.</p>
-
-<p>In any case, my coworker and I wrote a blog post on our company website detailing the architectural pattern we use to develop apps in a reactive manner. Here’s a link to the post <a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">http://blog.asynchrony.com/2016/02/model-view-binding-swift/</a> or continue reading for the full article.<a href="http://blog.asynchrony.com/2016/02/model-view-binding-swift/">²</a></p>
-
-
-        <a class="button" href="/2016/2/12/model-view-binding.html">
-          
-        </a>
-      </div>
-    </div>
-    
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2016/1/14/paper-doll-app-development.html">
-            Paper Doll App Development
-          </a>
-        </h1>
-        <p class="meta">
-          January 14, 2016
-        </p>
-      </header>
-      <div class="excerpt">
-        <p><em>This post is in response to the iOhYes podcast <a href="http://5by5.tv/iohyes/98">#98 We Heard You Like Rants</a></em></p>
-
-<h3 id="apples-best-practices">Apple’s Best Practices</h3>
-
-<p>When Apple publishes sample code, they have to cater to their audience. They can’t expect to publish sample code that only 1% of readers can immediately take it and roll with it. Intead they employ a common publishing tactic known as lowering literacy to minister to a broader audience. In this manner, Apple’s sample code won’t be glistening with SOLID design or highly composable elements but instead will be a popular, actionable source for most developers.</p>
-
-
-        <a class="button" href="/2016/1/14/paper-doll-app-development.html">
-          
-        </a>
-      </div>
-    </div>
-    
   </div>
 
-
-<div class="pagination">
   
-    <a href="/blog/2/">Older</a>
+    
   
-  
-  
-  
-  
-    <span></span>
-  
-</div>
-
-</div>
-
+</article>
       </div>
     </main>
 
