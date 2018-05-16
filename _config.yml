@@ -33,6 +33,8 @@ google_analytics: "UA-41405801-1"
 # Build settings
 markdown: kramdown
 
+excerpt_separator: ""
+
 # MARKDOWN
 kramdown:
     input: GFM
@@ -49,7 +51,7 @@ theme: minima
 gems:
   - jekyll-paginate
   - jekyll-feed
-  
+
 exclude:
   - Gemfile
   - Gemfile.lock

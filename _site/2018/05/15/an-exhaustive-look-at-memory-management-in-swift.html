@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>An Exhaustive Look At Memory Management in Swift</title>
+  <meta name="description" content="A Glossary of Terms ARC ARC, or Automatic Reference Counting, is the compiler provided solution to Manual Retain-Release. MRR required the developer to manua...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://localhost:4000/2018/05/15/an-exhaustive-look-at-memory-management-in-swift.html">
+  <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Mark Sands</a>
+
+    <nav class="site-nav">
+      <span class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </span>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">An Exhaustive Look At Memory Management in Swift</h1>
+    <p class="post-meta">
+      <time datetime="2018-05-15T00:00:00-05:00" itemprop="datePublished">
+        
+        May 15, 2018
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="a-glossary-of-terms">A Glossary of Terms</h2>
+
+<h3 id="arc">ARC</h3>
+
+<p>ARC, or Automatic Reference Counting, is the compiler provided solution to Manual Retain-Release. MRR required the developer to manually insert <code class="highlighter-rouge">retain</code> and <code class="highlighter-rouge">release</code> functions to track uses of references, which one can imagine is a recipe for disaster. This concoction made it easy to introduce memory leaks, led to error prone code, and added tedious boilerplate. And so along came ARC, because after all, Apple has to take steps to avoid Copland 2010.</p>
+
+<p>The original <a href="https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226">Transitioning to ARC Release Notes</a> dive into more detail about how ARC works, but this post will primarily focus on Swift, especially when it comes to dealing with memory in closures.</p>
+
+<!-- more -->
+
+<p>To ensure that instances of objects don’t disappear while they are still used, ARC tracks the usages of reference types that are referencing each instance. ARC will not deallocate an instance as long as at least one active reference to that instance still exists.</p>
+
+<h3 id="strong">strong</h3>
+
+<p>Strong references mean exactly that: a firm hold on a variable. Whenever one assigns a reference type to a variable, then that variable maintains a strong reference to that instance. That is, the strong reference keeps a firm grasp on the variable and will not allow it to be deallocated as long as the strong reference remains.</p>
+
+<p>Under ARC, strong is the default for object types. Unlike Objective-C, Swift has no keyword to specify that an object should be annotated as a strong reference. Instead, strong is the default.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Person</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">name</span> <span class="o">=</span> <span class="s">"Morgan"</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Note: In Objective-C, <code class="highlighter-rouge">strong</code> was used as a keyword to annotate a property as a strong reference. In Swift, there is no equivalent keyword as this is the default.</p>
+</blockquote>
+
+<h3 id="weak">weak</h3>
+
+<p>Conversely, weak references do not prevent ARC from deallocating their referred instances. Thus, a weak reference is a reference to an object that does not maintain a strong hold on the variable, which prevents strong reference cycles—more on that later.</p>
+
+<p>A weak reference does not extend the lifetime of the object it points to, and automatically becomes nil when the object is deallocated. Since ARC can automatically set weak references to nil at runtime, they can only be declared as optional variables.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Person</span> <span class="p">{</span>
+    <span class="k">weak</span> <span class="k">var</span> <span class="nv">parent</span><span class="p">:</span> <span class="kt">Parent</span><span class="p">?</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Note: In Objective-C, <code class="highlighter-rouge">weak</code> was used as a keyword to annotate a property as a weak reference. Swift uses the same keyword to annotate variables as weak references.</p>
+</blockquote>
+
+<h3 id="unowned">unowned</h3>
+
+<p>In Swift <code class="highlighter-rouge">unowned</code> variables will <em>always</em> contain a value without the possibility of it turning into a dangling pointer. If an unowned reference is accessed after the instance has been deallocated, then a runtime error will occur.</p>
+
+<p><code class="highlighter-rouge">unowned</code> is <em>safe</em>, in that if the instance is accessed after it has been deallocated, it will always stop the execution of the program on that line and will not access the memory location of where the instance used to live.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Page</span> <span class="p">{</span>
+    <span class="k">unowned</span> <span class="k">let</span> <span class="nv">document</span><span class="p">:</span> <span class="kt">Document</span>
+
+    <span class="nf">init</span><span class="p">(</span><span class="nv">document</span><span class="p">:</span> <span class="kt">Document</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">document</span> <span class="o">=</span> <span class="n">document</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>There has been a lot of confusion on when to use <code class="highlighter-rouge">weak</code> or <code class="highlighter-rouge">unowned</code> in Swift, to the degree that some developers simply never use <code class="highlighter-rouge">unowned</code> in fear of it causing the app to crash at runtime. When using <code class="highlighter-rouge">unowned</code>, it is important to be absolutely certain that the instance containing the <code class="highlighter-rouge">unowned</code> reference never outlives the <code class="highlighter-rouge">unowned</code> reference.</p>
+
+<blockquote>
+  <p>Note: There is no equivalent of <code class="highlighter-rouge">unowned</code> in Objective-C.</p>
+</blockquote>
+
+<h3 id="unownedunsafe">unowned(unsafe)</h3>
+
+<p>The <em>unsafe</em> equivalent of <code class="highlighter-rouge">unowned</code> is <code class="highlighter-rouge">unowned(unsafe)</code>. Accessing the reference of an <code class="highlighter-rouge">unowned(unsafe)</code> instance after it has been deallocated will result in accessing the memory location where the instance previously lived, which is deemed unsafe.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">ImageProcessor</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">processImage</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">CIImage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">imageFilter</span><span class="o">.</span><span class="nf">process</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">{</span> <span class="p">[</span><span class="kd">unowned(unsafe)</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+            <span class="c1">// process image</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Note: In Objective-C, <code class="highlighter-rouge">assign</code> or <code class="highlighter-rouge">unsafe_unretained</code> was used as a property attribute to specify that a reference does not keep the referred object alive nor does it set it to nil when there are no remaining strong references to the object. If the object it references is deallocated, then the pointer is left dangling. Swift uses the keyword <code class="highlighter-rouge">unowned(unsafe)</code> to mean the semantic equivalent.</p>
+</blockquote>
+
+<blockquote>
+  <p>After much searching to determine if <code class="highlighter-rouge">assign</code> and <code class="highlighter-rouge">unsafe_unretained</code> were indeed interchangeable with respect to memory ownership, this <a href="https://clang.llvm.org/docs/AutomaticReferenceCounting.html#property-declarations">clang documentation</a> and <a href="https://github.com/llvm-mirror/clang/blob/4d48be1aa7744f3e4f5b0a53dad7fdde7885da41/lib/Sema/SemaObjCProperty.cpp#L167-L173">this block of code in clang</a> validated this assumption.</p>
+</blockquote>
+
+<h3 id="unownedsafe">unowned(safe)</h3>
+
+<p>This is a very little known memory reference type that has zero documentation.</p>
+
+<blockquote>
+  <p>🤷🏼‍♀️ rdar://40080779</p>
+</blockquote>
+
+<h3 id="autoreleasepool">autoreleasepool</h3>
+
+<p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW2">Ownership of objects</a> is implemented through reference counting. Before ARC, reference counts, or retain counts, were manually managed by using the <code class="highlighter-rouge">retain</code> and <code class="highlighter-rouge">release</code> methods, which would increment or decrement the retain count. To defer releasing an object, the <code class="highlighter-rouge">autorelease</code> method was used which would decrement the retain count by 1 at the end of what’s called an autorelease pool.</p>
+
+<p>Since ARC manages the reference counts automatically, there is no equivalent <code class="highlighter-rouge">autorelease</code> method. However, there are still autoreleased objects so <code class="highlighter-rouge">autoreleasepool</code> blocks exist instead of directly interfacing with <code class="highlighter-rouge">NSAutoreleasePool</code>. Autorelease pool blocks provide a mechanism to relinquish ownership of an object without the possibility of it being immediately deallocated.</p>
+
+<p>Autorelease pools are great for <a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html#//apple_ref/doc/uid/20000047-SW2">reducing peak memory footprint</a>. Within a block of code, it’s possible to accumulate many temporary objects before the end of the current event-loop that add substantial memory overhead. In this situation, disposing of the objects sooner will reduce the memory overhead at the end of each block.</p>
+
+<p>Using an <code class="highlighter-rouge">autoreleasepool</code> block will reduce the memory overhead in the <code class="highlighter-rouge">for</code> loop below by disposing of the data after each iteration rather than continue to accumulate memory until the end of the event-loop iteration.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">for</span> <span class="n">file</span> <span class="k">in</span> <span class="n">files</span> <span class="p">{</span>
+    <span class="n">autoreleasepool</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="kt">Data</span><span class="p">(</span><span class="nv">contentsOfFile</span><span class="p">:</span> <span class="n">file</span><span class="p">)</span>
+        <span class="c1">// process data</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>See the <a href="https://developer.apple.com/documentation/foundation/nsautoreleasepool">NSAutoreleasePool documentation</a> and <a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html">Using Autorelease Pool Blocks</a> for more information.</p>
+
+<h3 id="strong-reference-cycles">Strong Reference Cycles</h3>
+
+<p>If two class instances hold a strong reference to each other, each keeping the other instance alive, then it’s possible that either instance could never get to a point where it has zero strong references. This is known as a <strong>strong reference cycle</strong> in ARC (<a href="https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4">formerly known</a> as a retain cycle).</p>
+
+<p>Here’s an example that shows a <code class="highlighter-rouge">Person</code> object holding a strong reference to their <code class="highlighter-rouge">Pet</code>, and a <code class="highlighter-rouge">Pet</code> holding a strong reference to a <code class="highlighter-rouge">Person</code>.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Person</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">pet</span><span class="p">:</span> <span class="kt">Pet</span><span class="p">?</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="kt">Pet</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">owner</span><span class="p">:</span> <span class="kt">Person</span><span class="p">?</span>
+<span class="p">}</span>
+
+<span class="n">person</span><span class="o">.</span><span class="n">pet</span> <span class="o">=</span> <span class="n">pet</span>
+<span class="n">pet</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">person</span>
+</code></pre>
+</div>
+
+<p>In the above sample code, the <code class="highlighter-rouge">person</code> instance holds a strong reference to the <code class="highlighter-rouge">pet</code> instance, which in turn holds a strong reference to the <code class="highlighter-rouge">person</code> instance, thus creating a strong reference cycle. Both object’s properties, being strong references by default, are keeping each other alive.</p>
+
+<h3 id="testing-for-strong-references">Testing for Strong References</h3>
+
+<p>It’s one thing to look at code and have confidence that a reference cycle exists, but it’s another thing to know for certain. Fortunately, it’s simple enough to write a unit test to check for strong reference cycles.</p>
+
+<p>Using our code sample from above, we can initialize our instances, assign the person instance to a weak reference, and assert that explicitly nilling out the strong reference also released the weak reference.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">person</span><span class="p">:</span> <span class="kt">Person</span><span class="p">?</span> <span class="o">=</span> <span class="kt">Person</span><span class="p">()</span>
+    <span class="k">var</span> <span class="nv">pet</span> <span class="o">=</span> <span class="kt">Pet</span><span class="p">()</span>
+
+    <span class="n">person</span><span class="o">.</span><span class="n">pet</span> <span class="o">=</span> <span class="n">pet</span>
+    <span class="n">pet</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">person</span>
+
+    <span class="k">weak</span> <span class="k">var</span> <span class="nv">weakPerson</span> <span class="o">=</span> <span class="n">person</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="kc">nil</span>
+
+    <span class="kt">XCTAssertNil</span><span class="p">(</span><span class="n">weakPerson</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Unfortunately, with the current state of our <code class="highlighter-rouge">Person</code> and <code class="highlighter-rouge">Pet</code> implementation, our assertion fails. The <code class="highlighter-rouge">weak</code> reference in the assertion is <em>not</em> nil, indicating that there’s a strong reference cycle.</p>
+
+<h3 id="resolving-strong-reference-cycles-with-weak">Resolving Strong Reference Cycles with Weak</h3>
+
+<p>From the <a href="https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4">ARC Release Notes</a>:</p>
+
+<blockquote>
+  <p>ARC does not guard against strong reference cycles. Judicious use of weak relationships will help to ensure you don’t create cycles.</p>
+</blockquote>
+
+<p>In order to break the strong reference cycle, we need to rely on <code class="highlighter-rouge">weak</code> references, since <code class="highlighter-rouge">weak</code> references will not retain the object longer than is necessary.</p>
+
+<p>In order to keep the object graph intact, there still needs to be at least one strong reference otherwise the instances are at risk of being deallocated.</p>
+
+<p>Cocoa <a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-1000810">establishes a convention</a> that a <em>parent</em> object should hold strong references to its <em>children</em>, and that the children should have weak references to their parents.</p>
+
+<p>By applying this knowledge, the strong reference cycle in sample code can be resolved by making the <code class="highlighter-rouge">Pet</code>’s owner a weak reference.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Pet</span> <span class="p">{</span>
+    <span class="k">weak</span> <span class="k">var</span> <span class="nv">owner</span><span class="p">:</span> <span class="kt">Person</span><span class="p">?</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>And if the unit test is updated with this code, then one can observe with definitive proof that the strong reference cycle is broken and the memory leak is gone.</p>
+
+<h3 id="resolving-strong-reference-cycles-with-unowned">Resolving Strong Reference Cycles with Unowned</h3>
+
+<p><code class="highlighter-rouge">unowned</code> can be used to resolve strong reference cycles, but should only be used when the other reference has the same or longer lifetime. Again, this is because <code class="highlighter-rouge">unowned</code> is not nilled out when the instance is deallocated, and referencing it after the fact will result in a runtime error.</p>
+
+<p>The previous example cannot use <code class="highlighter-rouge">unowned</code>, as the <code class="highlighter-rouge">Pet</code>’s owner was optional and <code class="highlighter-rouge">unowned</code> references are <a href="https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID54">defined using nonoptional types</a>. Instead, here’s an example using <code class="highlighter-rouge">unowned</code>.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">State</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">counties</span><span class="p">:</span> <span class="p">[</span><span class="kt">County</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="kt">County</span> <span class="p">{</span>
+    <span class="kd">private</span> <span class="k">unowned</span> <span class="k">let</span> <span class="nv">state</span><span class="p">:</span> <span class="kt">State</span>
+
+    <span class="nf">init</span><span class="p">(</span><span class="nv">state</span><span class="p">:</span> <span class="kt">State</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Using <code class="highlighter-rouge">unowned</code> has some improvements over <code class="highlighter-rouge">weak</code>. While there is is no strong reference cycle, the state property is both immutable and nonoptional.</p>
+
+<h4 id="closures">Closures</h4>
+
+<p>Reference counting also applies to functions and closures, which are also reference types. Structures and enumerations are value types, not reference types, and are not stored and passed by reference. This means that both closures and functions are managed by ARC and can also leak memory if used without care.</p>
+
+<h4 id="escaping">Escaping</h4>
+
+<p>A closure can be escaping if a closure is passed as an argument to a function that returns <em>before</em> the closure is called. If a closure is stored in a property, for instance, and is not called before the function returns then that is an escaping closure.</p>
+
+<p>This is also a common source of strong reference cycles. So much in fact, that if a closure is marked with <code class="highlighter-rouge">@escaping</code>, then <code class="highlighter-rouge">self</code> must be explicitly used within the closure as a reminder to the developer to avoid the strong reference cycle.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">var</span> <span class="nv">callbacks</span><span class="p">:</span> <span class="p">[()</span> <span class="o">-&gt;</span> <span class="p">()]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="kd">func</span> <span class="nf">storeCallback</span><span class="p">(</span><span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="p">{</span>
+    <span class="n">callbacks</span><span class="o">.</span><span class="nf">append</span><span class="p">(</span><span class="n">completionHandler</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h4 id="explicit-vs-implicit-self">Explicit vs Implicit Self</h4>
+
+<p>Closures require explicit self to make capture semantics explicit:</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">var</span> <span class="nv">block</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">var</span> <span class="nv">data</span> <span class="o">...</span>
+
+<span class="kd">func</span> <span class="nf">saveBlock</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">innerClosure</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">innerClosure</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This code results in a compiler error with the diagnostic: <strong>Reference to property ‘data’ in closure requires explicit ‘self.’ to make capture semantics explicit</strong></p>
+
+<p>Observe, instead, the following example:</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">var</span> <span class="nv">block</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">var</span> <span class="nv">data</span> <span class="o">...</span>
+
+<span class="kd">func</span> <span class="nf">saveBlock</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">innerFunction</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">innerFunction</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Here, there is no compiler error. Remember that <strong>functions are reference types</strong>, so the closure holding onto the function does in fact result in a strong reference cycle. Unfortunately, Swift does not warn about this error since only escaping closures require explicit self.</p>
+
+<h2 id="strong-reference-cycles-by-example">Strong Reference Cycles By Example</h2>
+
+<p>There are two obvious scenarios that demonstrate strong reference cycles: referencing self within an owning closure of a class instance and strong delegates between class instances.</p>
+
+<p>The example below demonstrates a strong reference cycle by capturing self strongly within a class instance that holds a strong reference to its closure.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">closure</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">captureSelf</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">closure</span> <span class="o">=</span> <span class="p">{</span> <span class="c1">// [weak self] in</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="k">self</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The strong reference cycle is easily resolved by using a <a href="https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID56">capture list</a> to pass <code class="highlighter-rouge">self</code> weakly within the closure. Capture Lists can contain more than one object and can even rename the variables they refer to.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">closure</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">captureSelf</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">closure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">weakSelf</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The example below demonstrates a strong reference cycle by capturing self strongly through delegates, or simply
+put, strong references to objects that own one another.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">protocol</span> <span class="kt">SomeDelegate</span><span class="p">:</span> <span class="kd">class</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="kt">One</span><span class="p">:</span> <span class="kt">SomeDelegate</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">two</span><span class="p">:</span> <span class="kt">Two</span><span class="p">?</span>
+
+    <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">two</span><span class="p">?</span><span class="o">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="k">self</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="kt">Two</span> <span class="p">{</span>
+    <span class="cm">/* weak */</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt">SomeDelegate</span><span class="p">?</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>In practice, delegates are typically made <code class="highlighter-rouge">weak</code> since they are usually optional and there are no guarantees about the lifetime of the delegate. It’s important to make protocols that provide the interface for a delegate conform to <code class="highlighter-rouge">class</code> so that the reference can be made <code class="highlighter-rouge">weak</code>.</p>
+
+<p>In the example below, the reference cycle is not as apparent since a capture list exists that captures <code class="highlighter-rouge">self</code> as a weak reference. However, the capture list only exists on the inner closure. Without the capture list on the <code class="highlighter-rouge">outerClosure</code>, <code class="highlighter-rouge">self</code> is passed strongly within the block. By the time <code class="highlighter-rouge">innerClosure</code> captures <code class="highlighter-rouge">self</code> weakly, it is too late. The only way to break the reference cycle in this example is to rely on an external collaborator to <code class="highlighter-rouge">nil</code> out the <code class="highlighter-rouge">outerClosure</code>–which is not okay!</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">outerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+    <span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+        <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">Example</span><span class="p">()</span>
+<span class="n">example</span><span class="o">.</span><span class="nf">testCycle</span><span class="p">()</span> <span class="c1">// Leak!</span>
+</code></pre>
+</div>
+
+<p>Let’s modify the example to pass <code class="highlighter-rouge">self</code> in weakly to the outer closure, preventing the strong reference cycle.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">outerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+    <span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+        <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+            <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">callAFunction</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">Example</span><span class="p">()</span>
+<span class="n">example</span><span class="o">.</span><span class="nf">testCycle</span><span class="p">()</span> <span class="c1">// All good!</span>
+</code></pre>
+</div>
+
+<p>It might be tempting to use optional binding to <code class="highlighter-rouge">guard</code> against a <code class="highlighter-rouge">weak self</code>, especially if a function takes a non-optional parameter that is owned by self. Observe the following:</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">outerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+    <span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+        <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+          <span class="k">guard</span> <span class="kd">let</span> <span class="err">`</span><span class="k">self</span><span class="err">`</span> <span class="o">=</span> <span class="k">self</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+            <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="k">self</span><span class="o">.</span><span class="nf">callAFunction</span><span class="p">(</span><span class="nv">withValue</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">Example</span><span class="p">()</span>
+<span class="n">example</span><span class="o">.</span><span class="nf">testCycle</span><span class="p">()</span> <span class="c1">// Leak!</span>
+</code></pre>
+</div>
+
+<p>Unfortunately, this introduces a strong reference cycle. Shadowing <code class="highlighter-rouge">self</code> is not the problem, instead, the optional binding with <code class="highlighter-rouge">guard let</code> unwraps the <code class="highlighter-rouge">weak self</code> as a strong reference, which is the default memory ownership in Swift. The solution here is to use another capture list in the <code class="highlighter-rouge">innerClosure</code> to pass the shadowed <code class="highlighter-rouge">self</code> weakly and optionally guard against the weak self for the same reasons as stated previously. Be careful not to abuse shadowed properties, especially in nested closures, as it can be confusing what <code class="highlighter-rouge">self</code> actually is.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">outerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+    <span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+        <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+            <span class="k">guard</span> <span class="kd">let</span> <span class="err">`</span><span class="k">self</span><span class="err">`</span> <span class="o">=</span> <span class="k">self</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+                <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+                    <span class="k">guard</span> <span class="kd">let</span> <span class="err">`</span><span class="k">self</span><span class="err">`</span> <span class="o">=</span> <span class="k">self</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+                    <span class="k">self</span><span class="o">.</span><span class="nf">callAFunction</span><span class="p">(</span><span class="nv">withValue</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">Example</span><span class="p">()</span>
+<span class="n">example</span><span class="o">.</span><span class="nf">testCycle</span><span class="p">()</span> <span class="c1">// All good!</span>
+</code></pre>
+</div>
+
+<p>Capture lists can also contain multiple arguments to improve readability. What’s interesting about capture lists is that variables are captured at the time of creation. To learn more, Olivier Halligon has a <a href="http://alisoftware.github.io/swift/closures/2016/07/25/closure-capture-1/">very thorough blog post</a> about the nuances of capture lists. Here, <code class="highlighter-rouge">value</code> is passed by value and allows the function to take a non-optional argument while removing the extraneous <code class="highlighter-rouge">guard</code> clauses.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+    <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+        <span class="k">guard</span> <span class="kd">let</span> <span class="err">`</span><span class="k">self</span><span class="err">`</span> <span class="o">=</span> <span class="k">self</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+            <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="k">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="k">in</span>
+                <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">callAFunction</span><span class="p">(</span><span class="nv">withValue</span><span class="p">:</span> <span class="n">value</span><span class="p">)</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Let’s again modify the first example to not reference self in the inner closure. Even though <code class="highlighter-rouge">self</code> is not used to read or write a property or call a method, there is still a strong reference cycle. The capture list passes <code class="highlighter-rouge">self</code> weakly to the <code class="highlighter-rouge">innerClosure</code> which means that <code class="highlighter-rouge">self</code> is implicitly captured strongly in the <code class="highlighter-rouge">outerClosure</code>. Thankfully, the compiler will warn against this with the diagnostic <strong>Variable ‘self’ was written to, but never read</strong>.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">outerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+    <span class="kd">func</span> <span class="nf">testCycle</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">innerClosure</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+        <span class="n">outerClosure</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">innerClosure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">Example</span><span class="p">()</span>
+<span class="n">example</span><span class="o">.</span><span class="nf">testCycle</span><span class="p">()</span> <span class="c1">// Leak!</span>
+</code></pre>
+</div>
+
+<h2 id="functions-are-reference-types">Functions Are Reference Types</h2>
+
+<p>Functions and closures are reference types in Swift. This is an important point to drive home, because it is very easy to cause strong reference cycles when passing functions as arguments. As of Swift 4.1, the compiler neither warns nor forces explicit capture semantics when referencing self in a function that is passed into an argument as a closure.</p>
+
+<p>This situation is exacerbated in RxSwift, when passing functions into arguments.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">UserService</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="kd">func</span> <span class="nf">setupBindings</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="c1">// ...</span>
+        <span class="n">serviceLayer</span>
+            <span class="o">.</span><span class="nf">fetchData</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">map</span><span class="p">(</span><span class="n">decodeUser</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">userSubject</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">disposed</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">disposeBag</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">decodeUser</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">User</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">try</span> <span class="kt">JSONDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">User</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>The aesthetics of passing the function into the closure parameter and thus omitting the curly braces is appealing. But the side effects come with a strong reference cycle, since <code class="highlighter-rouge">self</code> owns this function and functions are reference types.</p>
+
+<p>There are several means to mitigate the reference cycle. A lesser appealing solution is to capture <code class="highlighter-rouge">self</code> in a capture list within the <code class="highlighter-rouge">map</code>.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="n">serviceLayer</span>
+    <span class="o">.</span><span class="nf">fetchData</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="p">[</span><span class="k">unowned</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span> <span class="k">self</span><span class="o">.</span><span class="nf">decodeUser</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">userSubject</span><span class="p">)</span>
+    <span class="c1">// ...</span>
+</code></pre>
+</div>
+
+<p>Alternatively, since the function does not rely on internal state, it can be extracted into a “Type Method” such as a static function. Static functions are not owned by the class and as such prevent the strong reference cycle.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// ...</span>
+        <span class="n">serviceLayer</span>
+            <span class="o">.</span><span class="nf">fetchData</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">map</span><span class="p">(</span><span class="kt">UserService</span><span class="o">.</span><span class="n">decodeUser</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">userSubject</span><span class="p">)</span>
+            <span class="o">.</span><span class="nf">disposed</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">disposeBag</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">decodeUser</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">User</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">try</span> <span class="kt">JSONDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">User</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="n">data</span><span class="p">)</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Here’s another subtle example of capturing implicit <code class="highlighter-rouge">self</code> strongly when passing a function as an argument. At a glance, the code appears to have no problems. The developer reading the code could very easily miss the strong reference cycle, especially if the programmer is <em>only</em> looking for a weak capture list.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">Example</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="kd">func</span> <span class="nf">doStuff</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">closure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+            <span class="k">if</span> <span class="k">let</span> <span class="nv">block</span> <span class="o">=</span> <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="n">notifyListeners</span> <span class="p">{</span>
+                <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">performWithCompletion</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">notifyListeners</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">listeners</span><span class="o">.</span><span class="n">forEach</span> <span class="p">{</span>
+            <span class="nv">$0</span><span class="o">.</span><span class="nf">notify</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">performWithCompletion</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">completion</span> <span class="o">=</span> <span class="n">completion</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This contrived example isn’t completely out of the ordinary, and yet the subtlety makes it especially concerning. In a previous example, optional binding was used to unwrap <code class="highlighter-rouge">weak self</code> into a temporary, strong reference. The optional binding in this example, <code class="highlighter-rouge">if let block = self?.notifyListeners {</code>, similarly creates a strong, temporary reference to the function <code class="highlighter-rouge">self.notifyListeners</code>. For extra subtlety, the function <em>looks</em> like a variable since it is <em>assigned</em> to a variable rather than <em>called</em>, as functions typically are.</p>
+
+<p>For posterity, using a capture list with multiple, named arguments can also hide the issue.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">doStuff</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">closure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">,</span> <span class="n">block</span> <span class="o">=</span> <span class="k">self</span><span class="o">.</span><span class="n">notifyListeners</span><span class="p">]</span> <span class="k">in</span>
+        <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">performWithCompletion</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Instead of passing the function into the block as an argument, using an inline closure that calls the function will resolve the reference cycle, since <code class="highlighter-rouge">performWithCompletion</code> does not take an optional parameter.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">doStuff</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">closure</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+        <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">performWithCompletion</span><span class="p">({</span>
+            <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">notifyListeners</span><span class="p">()</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<h2 id="urlsession-dispatchqueues--animation-blocks">URLSession, DispatchQueues, &amp; Animation Blocks</h2>
+
+<p>The iOS SDK provides some block based APIs that use closures for a modern communication pattern. URLSession, DispatchQueues, and UIView block based animations provide APIs that take an escaping closure as a parameter to their function.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="k">in</span>
+    <span class="k">self</span><span class="o">.</span><span class="nf">handleResult</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="n">task</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+
+</code></pre>
+</div>
+
+<p>At a glance this appears to cause a strong reference cycle since there’s no capture list that passes <code class="highlighter-rouge">self</code> weakly. In fact, there is no reference cycle in this example. <code class="highlighter-rouge">URLSession</code>’s <code class="highlighter-rouge">dataTask</code> does capture the <code class="highlighter-rouge">completionHandler</code>, but explicitly <code class="highlighter-rouge">nil</code>s out the property after completion of the response, and we can verify this assumption through a unit test.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">let</span> <span class="nv">expectation</span> <span class="o">=</span> <span class="k">self</span><span class="o">.</span><span class="nf">expectation</span><span class="p">(</span><span class="nv">description</span><span class="p">:</span> <span class="s">""</span><span class="p">)</span>
+<span class="k">weak</span> <span class="k">var</span> <span class="nv">testObject</span><span class="p">:</span> <span class="kt">NetworkLayer</span><span class="p">?</span>
+
+<span class="n">autoreleasepool</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">NetworkLayer</span><span class="p">()</span>
+    <span class="n">example</span><span class="o">.</span><span class="nf">makeNetworkRequest</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">expectation</span><span class="o">.</span><span class="nf">fulfill</span><span class="p">()</span>
+    <span class="p">})</span>
+    <span class="n">testObject</span> <span class="o">=</span> <span class="n">example</span>
+<span class="p">}</span>
+
+<span class="c1">// the completion block is captured while the request is made</span>
+<span class="kt">XCTAssertNotNil</span><span class="p">(</span><span class="n">testObject</span><span class="p">)</span>
+
+<span class="c1">// the response completes</span>
+<span class="kt">XCTWaiter</span><span class="p">()</span><span class="o">.</span><span class="nf">wait</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="p">[</span><span class="n">expectation</span><span class="p">],</span> <span class="nv">timeout</span><span class="p">:</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1">// URLSession internally releases the completion block</span>
+<span class="kt">XCTAssertNil</span><span class="p">(</span><span class="n">testObject</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>This test proves that the completion block is captured during the request and finally released after the response completes. This is an important side effect to know to properly handle lifetime specific code that we’ll see an example of later on.</p>
+
+<p>If a library author wants to parrot the implicitly released closure API that <code class="highlighter-rouge">URLSession</code> demonstrates, it is straightforward to do so.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="k">var</span> <span class="nv">capturedClosure</span><span class="p">:</span> <span class="p">((</span><span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())?</span>
+
+<span class="kd">func</span> <span class="nf">doStuff</span><span class="p">(</span><span class="n">_</span> <span class="nv">closure</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="p">{</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">capturedClosure</span> <span class="o">=</span> <span class="n">closure</span>
+    <span class="nf">deferWork</span><span class="p">()</span> <span class="c1">// perform some long running task</span>
+<span class="p">}</span>
+
+<span class="kd">private</span> <span class="kd">func</span> <span class="nf">deferWork</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">result</span> <span class="o">=</span> <span class="c1">// perform work</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">closure</span> <span class="o">=</span> <span class="k">self</span><span class="o">.</span><span class="n">capturedClosure</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">capturedClosure</span> <span class="o">=</span> <span class="kc">nil</span>
+        <span class="nf">closure</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>This is not guaranteed to prevent strong reference cycles, though, so use with caution. It is also very possible for <code class="highlighter-rouge">URLSession</code>’s <code class="highlighter-rouge">dataTask</code> to create a strong reference cycle, for instance.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">ServiceLayer</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="kd">private</span> <span class="k">var</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionDataTask</span><span class="p">?</span>
+
+    <span class="kd">func</span> <span class="nf">enqueueTask</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="k">in</span>
+            <span class="k">self</span><span class="o">.</span><span class="nf">handleResult</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Here, <code class="highlighter-rouge">enqueueTask</code> queues a <code class="highlighter-rouge">dataTask</code> but might never call <code class="highlighter-rouge">resume()</code> on the task. <code class="highlighter-rouge">resume()</code> is necessary since that triggers the request to perform and the completion handler will only be set to <code class="highlighter-rouge">nil</code> after the response completes. Since the <code class="highlighter-rouge">completionHandler</code> captures <code class="highlighter-rouge">self</code> strongly, this does create a strong reference cycle.</p>
+
+<h3 id="dispatchqueue">DispatchQueue</h3>
+
+<p>The reverse of never using capture lists to resolve strong reference cycles is always using capture lists when there are no strong reference cycles.</p>
+
+<p><code class="highlighter-rouge">DispatchQueue</code>’s execution block does something similar to <code class="highlighter-rouge">URLSession</code>’s completion handler. Once the code block is executed, the escaping closure is released absolving the potential for a strong reference cycle. This is verifiable through another unit test.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">DispatchQueueExample</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="nf">captureSelfStrongly</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">asyncAfter</span><span class="p">(</span><span class="nv">deadline</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.05</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="k">self</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">weak</span> <span class="k">var</span> <span class="nv">testObject</span><span class="p">:</span> <span class="kt">DispatchQueueExample</span><span class="p">?</span>
+
+    <span class="n">autoreleasepool</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">example</span> <span class="o">=</span> <span class="kt">DispatchQueueExample</span><span class="p">()</span>
+        <span class="n">example</span><span class="o">.</span><span class="nf">captureSelfStrongly</span><span class="p">()</span>
+
+        <span class="n">testObject</span> <span class="o">=</span> <span class="n">example</span>
+    <span class="p">}</span>
+
+    <span class="c1">// self is still retained while the DispatchQueue's block waits to execute</span>
+    <span class="kt">XCTAssertNotNil</span><span class="p">(</span><span class="n">testObject</span><span class="p">)</span>
+
+    <span class="c1">// give the block enough time to fire</span>
+    <span class="kt">RunLoop</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="nv">until</span><span class="p">:</span> <span class="kt">Date</span><span class="p">()</span><span class="o">.</span><span class="nf">addingTimeInterval</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
+
+    <span class="c1">// verify the execution block was released</span>
+    <span class="kt">XCTAssertNil</span><span class="p">(</span><span class="n">testObject</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>While this code doesn’t cause strong reference cycles, it’s not unusual to capture <code class="highlighter-rouge">self</code> weakly in a capture list, if the intent is to avoid unnecessary code execution when the class instance is out of scope. What’s important is understanding the behavior rather than making guesses about when a capture list is required.</p>
+
+<h3 id="animation-blocks">Animation Blocks</h3>
+
+<p>Similarly to <code class="highlighter-rouge">DispatchQueue</code>s block handling, UIView’s animation blocks’ completion handlers are released after execution. This can also be verified through a unit test, using the same techniques as covered previously.</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kt">UIView</span><span class="o">.</span><span class="nf">animate</span><span class="p">(</span><span class="nv">withDuration</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="nv">animations</span><span class="p">:</span> <span class="p">{</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="k">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="nf">insetBy</span><span class="p">(</span><span class="nv">dx</span><span class="p">:</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="nv">dy</span><span class="p">:</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">},</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"</span><span class="se">\(</span><span class="k">self</span><span class="o">.</span><span class="n">frame</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre>
+</div>
+
+<p>When an animation block’s code executes, the <a href="https://developer.apple.com/library/content/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/AnimatingViews/AnimatingViews.html#//apple_ref/doc/uid/TP40009503-CH6-SW4">animations are started immediately on another thread</a> to avoid blocking the current thread or the main thread, so a capture list in a UIView’s animation closure does not have any practical benefits. Instead, the <code class="highlighter-rouge">completion</code> block does capture the closure until the execution completes which is where a capture list might be necessary.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Developer Kevin Ballard <a href="https://forums.swift.org/t/proposal-change-rules-for-implicit-captures-due-to-nested-closure-captures/316">presented this scenario on the Swift Evolution mailing list</a> several years ago (slightly modified from the original post):</p>
+
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="kt">ServiceLayer</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="kd">private</span> <span class="k">var</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionDataTask</span><span class="p">?</span>
+
+    <span class="kd">func</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+            <span class="k">let</span> <span class="nv">result</span> <span class="o">=</span> <span class="c1">// process data</span>
+            <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+                <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">handleResult</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">task</span><span class="p">?</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="kd">deinit</span> <span class="p">{</span>
+        <span class="n">task</span><span class="p">?</span><span class="o">.</span><span class="nf">cancel</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>An author of this code might expect that <code class="highlighter-rouge">self</code> is captured weakly in the data task, but it is not. Prior examples have shown that <code class="highlighter-rouge">self</code> is still implicitly captured strongly in the dataTask closure, so capturing <code class="highlighter-rouge">self</code> weakly in the dispatch queue closure will not give the <em>likely</em> intended behavior here.</p>
+
+<p>The author might have also intended to cancel the task on <code class="highlighter-rouge">deinit</code>, but that scenario can <em>never</em> happen since <code class="highlighter-rouge">URLSession</code>’s <code class="highlighter-rouge">dataTask</code> is strongly capturing <code class="highlighter-rouge">self</code> within the <code class="highlighter-rouge">completionhandler</code>. This sort of behavior can be tricky and easily overlooked.</p>
+
+<p>There can be many gotchas when taming capture semantics to avoid strong reference cycles or to abort early execution of a data task, for instance. There’s no such thing as magic when you know the rules and intimately understand the underlying behavior. For more examples of strong reference cycles and a deep exploration into various patterns with closures, view the accompanying GitHub Repo at <a href="https://github.com/marksands/SwiftMemoryByExample">github.com/marksands/SwiftMemoryByExample</a>.</p>
+
+  </div>
+
+  
+    
+  
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Mark Sands</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              Mark Sands
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/marksands"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">marksands</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/marksands"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">marksands</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+  </body>
+
+</html>
