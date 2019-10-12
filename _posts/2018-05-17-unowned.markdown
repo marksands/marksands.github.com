@@ -1,0 +1,246 @@
+---
+layout: post
+permalink: /2018/05/17/unowned.html
+title: Unowned
+category : Programming
+tags: [programming, swift, iOS]
+comments: true
+showads: true
+---
+
+This post is a followup to [An Exhaustive Look At Memory Management in Swift](http://marksands.github.io/2018/05/15/an-exhaustive-look-at-memory-management-in-swift.html).
+
+I have been asked when it is appropriate to use `unowned` versus `weak` and I think the answer is a little more complicated than providing best practice scenarios. In fact, this currently seems to be a hot debate in the Swift community.
+
+I'll provide several examples that demonstrate where `unowned` can be used and when it crashes when you least expect it. My goal is for the reader to gain a better understanding of the tradeoffs of using `unowned` and hopefully come away with a more informed opinion.
+
+<!-- more -->
+
+The following code examples can be [found on Github](https://github.com/marksands/SwiftMemoryByExample/blob/master/SwiftMemoryByExampleTests/UnownedByExample.swift).
+
+## Rules of Unowned
+
+Before we explore the rules of `unowned` references, we'll look at potential use cases and explore them in more detail throughout this post.
+
+Apple has [this to say](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID57) about `unowned` capture semantics in closures:
+
+> Define a capture in a closure as an unowned reference when the closure and the instance it captures will always refer to each other, and will always be deallocated at the same time.
+
+> Conversely, define a capture as a weak reference when the captured reference may become nil at some point in the future.
+
+> If the captured reference will never become nil, it should always be captured as an unowned reference, rather than a weak reference.
+
+Straight from the horses mouth.
+
+`unowned` is recommended over `weak` when the instance owns the `unowned` reference. When you are writing your own code for your application, you are in control of your own destiny. So while `unowned` might be safe under your defined constraints, a future developer might unknowingly introduce a runtime crash.
+
+## Parent-Child Hierarchy
+
+The example for using `unowned` that Apple provides in the Swift documentation is within a parent-child relationship. The parent maintains a strong ownership of the child while the child keeps an `unowned` reference to the parent. As long as the relationship dependencies are one-to-one for their lifetime, this is a safe use of `unowned`.
+
+```swift
+class Country {
+    let name: String
+    private var territories: [Territory] = []
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func addTerritory(name: String) {
+        let territory = Territory(name: name, country: self)
+        territories.append(territory)
+    }
+
+    func printTerritories() {
+        print(territories)
+    }
+}
+
+class Territory: CustomStringConvertible {
+    let name: String
+    unowned let country: Country
+
+    init(name: String, country: Country) {
+        self.name = name
+        self.country = country
+    }
+
+    var description: String {
+        return "Territory(name: \(name), origin: \(country.name))"
+    }
+}
+```
+
+In the above example, a `Territory` is initialized with the object that the `unowned` variable references, its `Country` of origin. `unowned` is more appealing in this example since the territory's country is immutable and non-optional, indicating that the country cannot change and is a necessary attribute of a territory.
+
+Using `weak` would communicate the wrong intent to a fellow developer. The `Country` would become mutable and optional. Without documentation, someone might assume the country can or should be `nil` at any moment or change for any reason.
+
+## Delegates
+
+It might seem that a delegate should be `unowned` if the lifetime of the delegate and the listener is expected to be one-to-one. While this can be safe, it's simple to create a scenario that exposes problems with using `unowned` delegates. (Shout out to [Peter Livesey](https://twitter.com/plivesey453) for giving me this example!)
+
+```swift
+protocol Delegate: class {
+    func foo()
+}
+
+class A: Delegate {
+    var b: B?
+    func foo() {}
+}
+
+class B {
+    private unowned let delegate: Delegate
+
+    init(delegate: Delegate) {
+        self.delegate = delegate
+    }
+
+    func callFoo() {
+        delegate.foo()
+    }
+}
+```
+
+At a glance, nothing jumps out as a serious danger. The problem with this code lies exclusively on external consumers of these objects. Let's examine what happens if someone invokes `callFoo()` in a background thread or at the end of the current runloop after the `A` instance is deallocated. In the following test, we would expect the code to not crash as our assertion.
+
+```swift
+func test() {
+    let a = A()
+    let b = B(delegate: a)
+    a.b = b
+
+    DispatchQueue.main.async {
+        b.callFoo()
+    }
+}
+```
+
+If you run this example, your app will trigger a `SIGABRT` at runtime with the following error **Fatal error: Attempted to read an unowned reference but object 0xabcdef012345 was already deallocated**.
+
+The `DispatchQueue.main.async` might sound contrived, but it's not completely out of the question to imagine invoking `callFoo` at the completion of a `UIView.animation` block or after a `URLSession` `dataTask` that has been kicked off. And if the listener is a `UIViewController` object, then it's certainly easy to dealloc during the backgrounded delegate execution by navigating back a screen.
+
+While it might defeat the purpose, one solution to the crash is to pass `b` in a capture list as `weak`, but it's probably best to make the delegate `weak` and live with the question marks.
+
+```swift
+DispatchQueue.main.async { [weak b] in
+    b?.callFoo()
+}
+```
+
+Since `B` did not create the `A` instance, it does not technically own the instance and breaks our guidelines for `unowned`. If you are the author of this code, you are in control of your own destiny so you may choose to use `unowned` in this situation despite the possibility of future misuse.
+
+asdfasfdjhasfjlasjflak;sdjfkl;ajsfl;
+// TODO!
+This example also demonstrates external delegates, which might be more common in a third party library.
+
+## Lazy
+
+Swift's [Automatic Reference Counting Document](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID57) details a few examples of where `unowned` can be a useful addition. In the example below, the `asHTML` closure property would normally capture `self` strongly since the body of the closure refers to `self` thus capturing the `HTMLElement` instance. Marking `asHTML` as a `lazy` property means that you can refer to `self` within the closure, since the property will not be accessed until after initialization and `self` is gauranteed to exist.
+
+The fix, as shown, is to use the `[unowned self]` capture list to avoid the strong reference cycle.
+
+```swift
+class HTMLElement {
+    private let name: String
+    private let text: String?
+
+    init(name: String, text: String? = nil) {
+        self.name = name
+        self.text = text
+    }
+
+    lazy var asHTML: () -> String = { [unowned self] in
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        } else {
+            return "<\(self.name) />"
+        }
+    }
+}
+```
+
+## Closures
+
+In WWDC 2014, [Session 403](https://developer.apple.com/videos/play/wwdc2014/403/), Apple presented a demo of using `unowned` in a closure capture list. Let's take a look at that example.
+
+```swift
+class TempNotifier {
+    var onChange: (Int) -> Void = { _ in }
+    var currentTemp = 72
+
+    init() {
+        onChange = { [unowned self] temp in
+            self.currentTemp = temp
+        }
+    }
+}
+```
+
+The lifetime of the `onChange` closure exists as long as its owning object, so in theory there should not be any issues with this code. Let's verify with a test.
+
+```swift
+func test() {
+    let notifier = TempNotifier()
+
+    DispatchQueue.main.async {
+        notifier.onChange(70)
+    }
+}
+```
+
+If we let this code run, it turns out that this does not crash. Our assumption was correct and we were able to execute a test that verified our assumption.
+
+Passing captured `unowned` objects in closures isn't always this easy. Let's look at a more common example.
+
+```swift
+class ServiceLayer {
+    private var task: URLSessionDataTask?
+
+    func fetchData(from url: URL, completion: @escaping (Data?) -> ()) {
+        task = URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
+            completion(data)
+        })
+        task?.resume()
+    }
+
+    func cancel() {
+        task?.cancel()
+    }
+}
+
+class AppleService {
+    private let service = ServiceLayer()
+    private var data: Data?
+
+    func fetchAppleDotCom() {
+        service.fetchData(from: URL(string: "https://www.apple.com")!, completion: { [unowned self] data in
+            self.data = data
+        })
+    }
+
+    deinit {
+        service.cancel()
+    }
+}
+```
+
+In our naive `ServiceLayer`, the `completionHandler` is called with the `data` returned from the response or `nil` if the request failed. We learned from the previous blog post that `URLSession` retains the completion block until after the request has executed. While our heart's in the right place, we have added code to cancel in flight network requests, and have chosen to use `unowned` to set `data` to the response of the service call. This might look safe since the `service` and the `completion` appear to have a one-to-one relationship with another, but we'll quickly learn that's not the case.
+
+```swift
+func test() {
+    autoreleasepool {
+        let object = AppleService()
+        object.fetchAppleDotCom()
+    }
+}
+```
+
+If we run this code we'll observe a runtime crash **Fatal error: Attempted to read an unowned reference but object 0x7fe353e2d580 was already deallocated**. If we debug the issue, we'll learn that our `deinit` does get executed on the `AppleService` instance, thus cancelling the request. What we'll also learn is that `URLSession`'s `completionHandler` is also called when a request is explicitly cancelled. Unfortunately, since the `completionHandler` is temporarily retained by `URLSession`, it is called after our service instance is deallocated and therefore references an `unowned` object that has been deinitialized.
+
+Using `unowned` like this is a big assumption. Especially if the service layer is closed source or does not document how its `completionHandler` is retained.
+
+## Wrapping It All Up
+
+`unowned` has a greater chance for success when the `unowned` reference is owned by its creator. At the very least, it's possible to write unit tests to add confidence that `unowned` is the right thing to do if you choose to go that route. But if performance isn't a concern, there's nothing wrong with sticking with `weak`.
