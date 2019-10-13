@@ -129,7 +129,7 @@
 
 <p>We might write a single test with a single assertion, observe a green suite, and call it a day patting ourselves on the back for being good test citizens, or something.</p>
 
-<p>The human element is still very much present when writing unit tests, and they can never provide as solid of a safety guarantee as compile time feedback. In my daily Swift, I have found myself writing much fewer unit tests than when I was using Ruby or Objective-C. Because as it turns out, Swift can provide much of that compile time saftey and guarantee through type safety that unit tests cannot.</p>
+<p>The human element is still very much present when writing unit tests, and they can never provide as solid of a safety guarantee as compile time feedback. In my daily Swift, I have found myself writing much fewer unit tests than when I was using Ruby or Objective-C. Because as it turns out, Swift can provide much of that compile time safety and guarantee through type safety that unit tests cannot.</p>
 
 <p>We can expand our unit test by using random <code class="highlighter-rouge">id</code> values, or adding more tests and assertions, but with the potential for this bug to creep in elsewhere in the code, is it worth it? Let’s see what happens when we swap out our <code class="highlighter-rouge">Int</code> type with our Phantom Type.</p>
 
@@ -155,7 +155,7 @@
 </code></pre>
 </div>
 
-<p>Now our <code class="highlighter-rouge">Cart</code> and <code class="highlighter-rouge">Item</code> can use our more expressive and type safe addition.</p>
+<p>You can read more about Phantom Types from the linked articles above, but the trick here is the generic type <code class="highlighter-rouge">T</code>. There’s no stored value of type <code class="highlighter-rouge">T</code> and instead the generic parameter is used purely to differentiate identifier types. We’ll use <code class="highlighter-rouge">Cart</code> and <code class="highlighter-rouge">Item</code> as generic parameters to create distinct <code class="highlighter-rouge">Identifier</code> types. Now our <code class="highlighter-rouge">Cart</code> and <code class="highlighter-rouge">Item</code> can use our more expressive and type safe addition.</p>
 
 <div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">struct</span> <span class="kt">Cart</span><span class="p">:</span> <span class="kt">Equatable</span> <span class="p">{</span>
     <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">Identifier</span><span class="o">&lt;</span><span class="kt">Cart</span><span class="p">,</span> <span class="kt">Int</span><span class="o">&gt;</span>
@@ -169,7 +169,7 @@
 </code></pre>
 </div>
 
-<p>Now that we have leveled up our type safety skills, we can revisit the extension from earlier and see what happens when we instantiate our new <code class="highlighter-rouge">Cart</code>. Since we’re no longer referring to plain old integer types for our identifiers, we pass in the new <code class="highlighter-rouge">Identifier&lt;Item, Int&gt;</code> type. I don’t know about you, but this feels more in tune with the spirit of Swift by passing in a specifc, narrow type geared at an <code class="highlighter-rouge">Item</code>’s identifier, than blindly tossing around integers that could mean anything.</p>
+<p>Now that we have leveled up our type safety skills, we can revisit the extension from earlier and see what happens when we instantiate our new <code class="highlighter-rouge">Cart</code>. Since we’re no longer referring to plain old integer types for our identifiers, we pass in the new <code class="highlighter-rouge">Identifier&lt;Item, Int&gt;</code> type. I don’t know about you, but this feels more in tune with the spirit of Swift by passing in a specific, narrow type geared at an <code class="highlighter-rouge">Item</code>’s identifier, than blindly tossing around integers that could mean anything.</p>
 
 <div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">removingItem</span><span class="p">(</span><span class="n">byId</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">Identifier</span><span class="o">&lt;</span><span class="kt">Item</span><span class="p">,</span> <span class="kt">Int</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Cart</span> <span class="p">{</span>
     <span class="k">guard</span> <span class="k">let</span> <span class="nv">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="nf">first</span><span class="p">(</span><span class="nv">where</span><span class="p">:</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">id</span> <span class="p">})</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="k">self</span> <span class="p">}</span>
@@ -184,7 +184,7 @@
 
 <p>You better believe we cannot mix <code class="highlighter-rouge">Cart</code> identifiers with <code class="highlighter-rouge">Item</code> identifiers! And what’s great is that this bug was caught at compile time, without having to run our application and trip over the bug or write superfluous unit tests in order to spot the issue. Maybe there’s a lesson in unit testing to be had here, I’m not really sure—another time, perhaps.</p>
 
-<p>I love stumbling upon these moments of enlightment and basking in the satisfaction they bring. And I’m more than satisfied with this simple and freeing addition. It increases the feedback loop of finding bugs as well as setting up the code base for success for by preventing this mistake from happening again. And if you’re not already using them, you should use Phantom Types!</p>
+<p>I love stumbling upon these moments of enlightenment and basking in the satisfaction they bring. And I’m more than satisfied with this simple and freeing addition. It increases the feedback loop of finding bugs as well as setting up the code base for success for by preventing this mistake from happening again. And if you’re not already using them, you should use Phantom Types!</p>
 
   </div>
 

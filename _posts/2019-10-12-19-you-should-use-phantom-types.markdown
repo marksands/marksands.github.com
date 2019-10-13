@@ -61,7 +61,7 @@ func testRemovingCartItemReturnsModifiedCart() {
 
 We might write a single test with a single assertion, observe a green suite, and call it a day patting ourselves on the back for being good test citizens, or something.
 
-The human element is still very much present when writing unit tests, and they can never provide as solid of a safety guarantee as compile time feedback. In my daily Swift, I have found myself writing much fewer unit tests than when I was using Ruby or Objective-C. Because as it turns out, Swift can provide much of that compile time saftey and guarantee through type safety that unit tests cannot.
+The human element is still very much present when writing unit tests, and they can never provide as solid of a safety guarantee as compile time feedback. In my daily Swift, I have found myself writing much fewer unit tests than when I was using Ruby or Objective-C. Because as it turns out, Swift can provide much of that compile time safety and guarantee through type safety that unit tests cannot.
 
 We can expand our unit test by using random `id` values, or adding more tests and assertions, but with the potential for this bug to creep in elsewhere in the code, is it worth it? Let's see what happens when we swap out our `Int` type with our Phantom Type.
 
@@ -87,7 +87,7 @@ extension Identifier: ExpressibleByIntegerLiteral where RawValue: ExpressibleByI
 }
 ```
 
-Now our `Cart` and `Item` can use our more expressive and type safe addition.
+You can read more about Phantom Types from the linked articles above, but the trick here is the generic type `T`. There's no stored value of type `T` and instead the generic parameter is used purely to differentiate identifier types. We'll use `Cart` and `Item` as generic parameters to create distinct `Identifier` types. Now our `Cart` and `Item` can use our more expressive and type safe addition.
 
 ```swift
 struct Cart: Equatable {
@@ -101,7 +101,7 @@ struct Item: Equatable {
 }
 ```
 
-Now that we have leveled up our type safety skills, we can revisit the extension from earlier and see what happens when we instantiate our new `Cart`. Since we're no longer referring to plain old integer types for our identifiers, we pass in the new `Identifier<Item, Int>` type. I don't know about you, but this feels more in tune with the spirit of Swift by passing in a specifc, narrow type geared at an `Item`'s identifier, than blindly tossing around integers that could mean anything.
+Now that we have leveled up our type safety skills, we can revisit the extension from earlier and see what happens when we instantiate our new `Cart`. Since we're no longer referring to plain old integer types for our identifiers, we pass in the new `Identifier<Item, Int>` type. I don't know about you, but this feels more in tune with the spirit of Swift by passing in a specific, narrow type geared at an `Item`'s identifier, than blindly tossing around integers that could mean anything.
 
 ```swift
 func removingItem(byId id: Identifier<Item, Int>) -> Cart {
@@ -116,4 +116,4 @@ Believe it or not, Swift actually provides a really good error message on our `r
 
 You better believe we cannot mix `Cart` identifiers with `Item` identifiers! And what's great is that this bug was caught at compile time, without having to run our application and trip over the bug or write superfluous unit tests in order to spot the issue. Maybe there's a lesson in unit testing to be had here, I'm not really sure—another time, perhaps.
 
-I love stumbling upon these moments of enlightment and basking in the satisfaction they bring. And I'm more than satisfied with this simple and freeing addition. It increases the feedback loop of finding bugs as well as setting up the code base for success for by preventing this mistake from happening again. And if you're not already using them, you should use Phantom Types!
+I love stumbling upon these moments of enlightenment and basking in the satisfaction they bring. And I'm more than satisfied with this simple and freeing addition. It increases the feedback loop of finding bugs as well as setting up the code base for success for by preventing this mistake from happening again. And if you're not already using them, you should use Phantom Types!
