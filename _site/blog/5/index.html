@@ -54,6 +54,8 @@
         
           
         
+          
+        
       </div>
     </nav>
 
@@ -67,6 +69,29 @@
   
 
   <div class="posts">
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
+          <a class="post-link" href="/2014/05/14/mocking-is-tautological.html">
+            Mocking is Tautological
+          </a>
+        </h1>
+        <p class="meta">
+          May 14, 2014
+        </p>
+      </header>
+      <div class="excerpt">
+        <h3 id="black-and-white">Black and White</h3>
+
+<p>When writing unit tests using mocks, it forces the developer into whitebox testing. As the tests are supposed to drive the design, one can argue that this allows them to define the dependencies of the business logic in which they are writing the tests. The quandary, though, is that these tests are no longer unit tests as there is a discrepancy between a single unit and a system of functions that interact with many units or dependencies. Furthermore, tests that rely heavily upon mocks wind up with a test suite that has mocks mocking mocks mocking mocks and so forth, which can lead to a broken test suite any time a programmer tries to refactor in, or out, another dependency.</p>
+
+
+        <a class="button" href="/2014/05/14/mocking-is-tautological.html">
+          
+        </a>
+      </div>
+    </div>
     
     <div class="post-teaser">
       <header>
@@ -165,43 +190,16 @@ somewhat of a stretch and don’t provide any common ground for beginners. One t
       </div>
     </div>
     
-    <div class="post-teaser">
-      <header>
-        <h1>
-          <a class="post-link" href="/2012/05/18/raii.html">
-            RAII
-          </a>
-        </h1>
-        <p class="meta">
-          May 18, 2012
-        </p>
-      </header>
-      <div class="excerpt">
-        <p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it’s a neat concept once you 
-understand what it means and how it’s used. RAII was born out of C++ and invented 
-by its creator Bjarne Stroustrup.</p>
-
-<p>In C++, the only code that can be guaranteed to be executed after an exception is 
-thrown are the destructors of objects residing on the stack. Resource management 
-needs to be tied to the lifespan of suitable objects in order to gain automatic 
-allocation and reclamation. Resources are acquired during initialization, and 
-guaranteed to be released with the destruction of the same objects.</p>
-
-
-        <a class="button" href="/2012/05/18/raii.html">
-          
-        </a>
-      </div>
-    </div>
-    
   </div>
 
 
 <div class="pagination">
   
-    <span></span>
+    <a href="/blog/6/">Older</a>
   
   
+  
+    <span>&#8212;</span>
   
   
   

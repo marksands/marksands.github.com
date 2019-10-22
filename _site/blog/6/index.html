@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Effective Programming</title>
-  <meta name="description" content="Some friends and I have started up a new podcast at Effective Programming. We’re a group of iOS developers who love exploring the platform, new technical cha...">
+  <title>Mark Sands</title>
+  <meta name="description" content="Programming Tidbits">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/2014/05/20/effective-programming.html">
+  <link rel="canonical" href="http://localhost:4000/blog/6/">
   <link rel="alternate" type="application/rss+xml" title="Mark Sands" href="/feed.xml">
   
   
@@ -65,45 +65,57 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="home">
+  
 
-  <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Effective Programming</h1>
-    <p class="post-meta">
-      <time datetime="2014-05-20T00:00:00-05:00" itemprop="datePublished">
-        
-        May 20, 2014
-      </time>
-      </p>
-  </header>
+  <div class="posts">
+    
+    <div class="post-teaser">
+      <header>
+        <h1>
+          <a class="post-link" href="/2012/05/18/raii.html">
+            RAII
+          </a>
+        </h1>
+        <p class="meta">
+          May 18, 2012
+        </p>
+      </header>
+      <div class="excerpt">
+        <p>RAII is <strong>Resource Acquisition Is Initialization</strong>, and it’s a neat concept once you 
+understand what it means and how it’s used. RAII was born out of C++ and invented 
+by its creator Bjarne Stroustrup.</p>
 
-  <div class="post-content" itemprop="articleBody">
-    <p>Some friends and I have started up a new podcast at Effective Programming. We’re a group of iOS developers who love exploring the platform, new technical challenges, agile software development, and the latest trend in test driven development<a href="http://podcast.effectiveprogramming.com">¹</a>.</p>
+<p>In C++, the only code that can be guaranteed to be executed after an exception is 
+thrown are the destructors of objects residing on the stack. Resource management 
+needs to be tied to the lifespan of suitable objects in order to gain automatic 
+allocation and reclamation. Resources are acquired during initialization, and 
+guaranteed to be released with the destruction of the same objects.</p>
 
-<!-- more -->
 
-<h4 id="episode-1---tdd-in-the-balance">Episode 1 - TDD in the Balance</h4>
-
-<p>Episode 1 was a healthy discussion of the pros and cons of <a href="http://podcast.effectiveprogramming.com/2014/05/15/tdd-in-the-balance.html">TDD</a>.</p>
-
-<h4 id="episode-2---ios-eventing-frameworks">Episode 2 - iOS Eventing Frameworks</h4>
-
-<p>Episode 2 was about <a href="http://podcast.effectiveprogramming.com/2014/05/19/ios-eventing-frameworks.html">iOS communication patterns</a> where we discussed 6 techniques of eventing in iOS while following along with a <a href="https://github.com/marksands/CommunicationPatterns">project</a> that I wrote to heed the discussion.</p>
-
-<p>We would love it if you would check us out, <a href="https://itunes.apple.com/us/podcast/effective-programming-podcast">subscribe on iTunes</a>, and give us a rating! Let us know what you think on twitter at <a href="http://www.twitter.com/effprog">@effprog</a>!</p>
-
-<h3 id="references">References</h3>
-
-<ul>
-  <li><a href="http://www.effectiveprogramming.com/">[1] Effective Programming</a></li>
-</ul>
-
+        <a class="button" href="/2012/05/18/raii.html">
+          
+        </a>
+      </div>
+    </div>
+    
   </div>
 
+
+<div class="pagination">
   
-    
+    <span></span>
   
-</article>
+  
+  
+  
+  
+    <a href="/blog/5/">Newer</a>
+  
+</div>
+
+</div>
+
       </div>
     </main>
 
