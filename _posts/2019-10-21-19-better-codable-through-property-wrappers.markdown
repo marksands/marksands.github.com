@@ -283,7 +283,7 @@ public struct DateValue<Formatter: DateValueCodableStrategy>: Codable {
 Any type that conforms to `DateValueCodableStrategy` and implements the decode/encode functions can serve as the storage type for the property wrapper. The simplest strategy is the unix timestamp implementation which decodes dates based on a numeric TimeInterval. Again, implementing a single decode and encode function is all it takes, no more verbose boilerplate 🙌.
 
 ```swift
-public struct TimestampDateStrategy: DateValueCodableStrategy {
+public struct TimestampStrategy: DateValueCodableStrategy {
     public static func decode(_ value: TimeInterval) throws -> Date {
         return Date(timeIntervalSince1970: value)
     }
@@ -294,7 +294,7 @@ public struct TimestampDateStrategy: DateValueCodableStrategy {
 }
 ```
 
-Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala `@DateValue<TimestampDateStrategy>`.
+Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala `@DateValue<TimestampStrategy>`.
 
 The nice thing about these property wrappers is the ability to mix multiple date wrappers as needed for a given Codable struct. Without a custom initializer, using the built in date decoding strategy is impossible. The following example throws an exception with the error **"Expected date string to be ISO8601-formatted."**.
 

@@ -352,7 +352,7 @@
 
 <p>Any type that conforms to <code class="highlighter-rouge">DateValueCodableStrategy</code> and implements the decode/encode functions can serve as the storage type for the property wrapper. The simplest strategy is the unix timestamp implementation which decodes dates based on a numeric TimeInterval. Again, implementing a single decode and encode function is all it takes, no more verbose boilerplate 🙌.</p>
 
-<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TimestampDateStrategy</span><span class="p">:</span> <span class="kt">DateValueCodableStrategy</span> <span class="p">{</span>
+<div class="language-swift highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TimestampStrategy</span><span class="p">:</span> <span class="kt">DateValueCodableStrategy</span> <span class="p">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">decode</span><span class="p">(</span><span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Date</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kt">Date</span><span class="p">(</span><span class="nv">timeIntervalSince1970</span><span class="p">:</span> <span class="n">value</span><span class="p">)</span>
     <span class="p">}</span>
@@ -364,7 +364,7 @@
 </code></pre>
 </div>
 
-<p>Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala <code class="highlighter-rouge">@DateValue&lt;TimestampDateStrategy&gt;</code>.</p>
+<p>Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala <code class="highlighter-rouge">@DateValue&lt;TimestampStrategy&gt;</code>.</p>
 
 <p>The nice thing about these property wrappers is the ability to mix multiple date wrappers as needed for a given Codable struct. Without a custom initializer, using the built in date decoding strategy is impossible. The following example throws an exception with the error <strong>“Expected date string to be ISO8601-formatted.”</strong>.</p>
 

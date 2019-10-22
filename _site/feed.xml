@@ -5,7 +5,7 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://localhost:4000/</link>
     <description></description>
-    <pubDate>Tue, 22 Oct 2019 12:36:44 -0500</pubDate>
+    <pubDate>Tue, 22 Oct 2019 12:38:47 -0500</pubDate>
     
       <item>
         <title>Better Codable Through Property Wrappers</title>
@@ -285,7 +285,7 @@
 
 &lt;p&gt;Any type that conforms to &lt;code class=&quot;highlighter-rouge&quot;&gt;DateValueCodableStrategy&lt;/code&gt; and implements the decode/encode functions can serve as the storage type for the property wrapper. The simplest strategy is the unix timestamp implementation which decodes dates based on a numeric TimeInterval. Again, implementing a single decode and encode function is all it takes, no more verbose boilerplate 🙌.&lt;/p&gt;
 
-&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;TimestampDateStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;DateValueCodableStrategy&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;TimestampStrategy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;DateValueCodableStrategy&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;TimeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;timeIntervalSince1970&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
@@ -297,7 +297,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala &lt;code class=&quot;highlighter-rouge&quot;&gt;@DateValue&amp;lt;TimestampDateStrategy&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala &lt;code class=&quot;highlighter-rouge&quot;&gt;@DateValue&amp;lt;TimestampStrategy&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;The nice thing about these property wrappers is the ability to mix multiple date wrappers as needed for a given Codable struct. Without a custom initializer, using the built in date decoding strategy is impossible. The following example throws an exception with the error &lt;strong&gt;“Expected date string to be ISO8601-formatted.”&lt;/strong&gt;.&lt;/p&gt;
 
