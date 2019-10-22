@@ -247,81 +247,54 @@ One common frustration with `Codable` is decoding entities that have mixed date 
 
 Property wrappers are a nice solution to the aforementioned issues. It allows tight binding of the date formatting strategy directly with the property of the entity, and allows the `JSONDecoder` to remain decoupled from the entities it decodes. Below are a few common Date strategies, but they also serve as a template to implement a custom property wrapper to suit your specific date format needs.
 
-The property wrapper implementation is heavily inspired by [Ian Keen](https://twitter.com/iankay). It uses an internal decodable storage value that tracks the date as well as the original decoded type. The strategy is generic to work against strings or numbers.
+The property wrapper implementation is heavily inspired by [Ian Keen](https://twitter.com/iankay); and double thanks to him for improving my original solution! It uses a DateValue struct that is generic across a custom DateFormattingCodableStrategy. This allows anyone to implement their own date decoding strategy and get the property wrapper behavior for free. I'll say that again because this is insanely cool—if you implement a custom `DateFormattingCodableStrategy`, specialized for your use case, then you get the nifty `@DateValue` property wrapper behavior for free!
+
+Here's the machinery.
 
 ```swift
-protocol DateFormattingCodableStrategy {
+public protocol DateFormattingCodableStrategy {
     associatedtype RawValue: Codable
 
     static func decode(_ value: RawValue) throws -> Date
     static func encode(_ date: Date) -> RawValue
 }
 
-struct DateCodableValue<Formatter: DateFormattingCodableStrategy>: Codable {
-    // we store the original value for encoding
-    let value: Formatter.RawValue
-    let date: Date
+@propertyWrapper
+public struct DateValue<Formatter: DateFormattingCodableStrategy>: Codable {
+    private let value: Formatter.RawValue
+    public var wrappedValue: Date
 
-    init(date: Date) {
-        self.date = date
-        self.value = Formatter.encode(date)
+    public init(wrappedValue: Date) {
+        self.wrappedValue = wrappedValue
+        self.value = Formatter.encode(wrappedValue)
     }
     
-    init(from decoder: Decoder) throws {
-        // our value is encoded as it otherwise would be from Codable
+    public init(from decoder: Decoder) throws {
         self.value = try Formatter.RawValue(from: decoder)
-        // our date is encoded by the custom implementation from our strategy
-        self.date = try Formatter.decode(value)
+        self.wrappedValue = try Formatter.decode(value)
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         try value.encode(to: encoder)
     }
 }
 ```
 
-Any type that conforms to `DateFormattingCodableStrategy` and implements the decode/encode functions can serve as the storage type for the property wrapper. The simplest strategy is the unix timestamp implementation which decodes dates based on a numeric TimeInterval.
+Any type that conforms to `DateFormattingCodableStrategy` and implements the decode/encode functions can serve as the storage type for the property wrapper. The simplest strategy is the unix timestamp implementation which decodes dates based on a numeric TimeInterval. Again, implementing a single decode and encode function is all it takes, no more verbose boilerplate 🙌.
 
 ```swift
-struct TimestampDateStrategy: DateFormattingCodableStrategy {
-    static func decode(_ value: TimeInterval) throws -> Date {
+public struct TimestampDateStrategy: DateFormattingCodableStrategy {
+    public static func decode(_ value: TimeInterval) throws -> Date {
         return Date(timeIntervalSince1970: value)
     }
     
-    static func encode(_ date: Date) -> TimeInterval {
+    public static func encode(_ date: Date) -> TimeInterval {
         return date.timeIntervalSince1970
     }
 }
 ```
 
-Marrying the storage with the strategy is the recipe needed to produce a desired property wrapper. Sadly this comes with a lot of redundant code across multiple property wrappers that only differ by the strategy type. For anyone reading, [hit me up](http://twitter.com/marksands) with improved solutions to this!
-
-```swift
-@propertyWrapper
-public struct TimestampDate: Codable {
-    // the engine of our wrapper using the TimestampDateStrategy to relay our date value
-    private var storage: DateCodableValue<TimestampDateStrategy>
-    
-    public var wrappedValue: Date
-    
-    public init(wrappedValue: Date) {
-        // initialize storage from a date
-        self.storage = DateCodableValue(date: wrappedValue)
-        self.wrappedValue = storage.date
-    }
-    
-    public init(from decoder: Decoder) throws {
-        // decode storage from data
-        self.storage = try DateCodableValue(from: decoder)
-        self.wrappedValue = storage.date
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        // encode our original value that's in our storage
-        try self.storage.encode(to: encoder)
-    }
-}
-```
+Marrying the storage with the strategy is the recipe needed to produce the desired, generic property wrapper, ala `@DateValue<TimestampDateStrategy>`.
 
 The nice thing about these property wrappers is the ability to mix multiple date wrappers as needed for a given Codable struct. Without a custom initializer, using the built in date decoding strategy is impossible. The following example throws an exception with the error **"Expected date string to be ISO8601-formatted."**.
 
@@ -342,8 +315,8 @@ Our hard work pays off. Multiple date wrappers to the rescue!
 
 ```swift
 struct Response: Codable {
-    @ISO8601Date var createdAt: Date
-    @YearMonthDayDate var birthday: Date
+    @DateValue<ISO8601DateStrategy> var createdAt: Date
+    @DateValue<YearMonthDayDateStrategy> var birthday: Date
 }
 
 let json = #"{ "createdAt": "2019-10-19T16:14:32-05:00", "birthday": "1984-01-22" }"#.data(using: .utf8)!
@@ -359,6 +332,5 @@ let result = try decoder.decode(Response.self, from: json) // ✅
 This has been an experiment in improving life with Codable, and property wrappers just so happens to be the latest trend in achieving that goal. There are many more patterns left to be explored and implemented here, and hopefully this is the inspiration someone needs to keep going down this path.
 
 * I have not toyed with property wrapper composition, which might yield even more impressive results.
-* I have chosen to limit the number of date strategy wrappers because date formats can be so unwieldy.
 * I tried really really hard to make a property wrapper that allows a single property to provide a custom CodingKey, without the enum, but it's just not possible. Hopefully future improvements to property wrappers allows possibility.
 * [Let me know](http://twitter.com/marksands) what I should add, what bugs I should fix, or what you've created!
