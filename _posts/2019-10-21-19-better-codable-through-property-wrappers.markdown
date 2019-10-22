@@ -29,13 +29,13 @@ struct UserResponse: Codable {
 }
 ```
 
-Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom Decodable initializer. But ideally, we really just don't want Users that don't satisfy valid data for all fields. Now we're left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we're looking for is essentially the Codable version of `arrayOfUses.compactMap { $0 }`, to filter out nils.
+Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom Decodable initializer. But ideally, we really just don't want Users that don't satisfy valid data for all fields. Now we're left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we're looking for is essentially the Codable version of `arrayOfUsers.compactMap { $0 }`, to filter out nils.
 
 There are a few hurdles to overcome for this seemingly simple task. If the goal is to keep all fields non-optional, then we need to implement a custom initializer on the `UserResponse` type. When decoding a User value, if a non-optional field is found to be null, then an exception is thrown and the _entire_ UserResponse fails to decode. In order to ignore or filter out failed User elements, we have to go really into the weeds with Codable.
 
 ## Decoding the Array
 
-First, we have to use an `unkeyedContainer()`, since we are decoding is a container of user values. This returns a container that conforms to `UnkeyedDecodingContainer`, which has a helpful property `isAtEnd` which indicates if the container has any further elements to decode. Once we iterate over the elements in the container, and decode them, ignoring failed User decodings, we set the users array to our intermediate elements array.
+First, we have to use an `unkeyedContainer()`, since we are decoding a container of user values. This returns a container that conforms to `UnkeyedDecodingContainer`, which has a helpful property `isAtEnd` which indicates if the container has any further elements to decode. Once we iterate over the elements in the container, and decode them, ignoring failed User decodings, we set the users array to our intermediate elements array.
 
 ```swift
 struct UserResponse: Codable {

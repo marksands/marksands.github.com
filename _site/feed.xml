@@ -5,7 +5,7 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
     <link>http://localhost:4000/</link>
     <description></description>
-    <pubDate>Mon, 21 Oct 2019 22:04:16 -0500</pubDate>
+    <pubDate>Tue, 22 Oct 2019 12:16:31 -0500</pubDate>
     
       <item>
         <title>Better Codable Through Property Wrappers</title>
@@ -32,13 +32,13 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom Decodable initializer. But ideally, we really just don’t want Users that don’t satisfy valid data for all fields. Now we’re left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we’re looking for is essentially the Codable version of &lt;code class=&quot;highlighter-rouge&quot;&gt;arrayOfUses.compactMap { $0 }&lt;/code&gt;, to filter out nils.&lt;/p&gt;
+&lt;p&gt;Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom Decodable initializer. But ideally, we really just don’t want Users that don’t satisfy valid data for all fields. Now we’re left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we’re looking for is essentially the Codable version of &lt;code class=&quot;highlighter-rouge&quot;&gt;arrayOfUsers.compactMap { $0 }&lt;/code&gt;, to filter out nils.&lt;/p&gt;
 
 &lt;p&gt;There are a few hurdles to overcome for this seemingly simple task. If the goal is to keep all fields non-optional, then we need to implement a custom initializer on the &lt;code class=&quot;highlighter-rouge&quot;&gt;UserResponse&lt;/code&gt; type. When decoding a User value, if a non-optional field is found to be null, then an exception is thrown and the &lt;em&gt;entire&lt;/em&gt; UserResponse fails to decode. In order to ignore or filter out failed User elements, we have to go really into the weeds with Codable.&lt;/p&gt;
 
 &lt;h2 id=&quot;decoding-the-array&quot;&gt;Decoding the Array&lt;/h2&gt;
 
-&lt;p&gt;First, we have to use an &lt;code class=&quot;highlighter-rouge&quot;&gt;unkeyedContainer()&lt;/code&gt;, since we are decoding is a container of user values. This returns a container that conforms to &lt;code class=&quot;highlighter-rouge&quot;&gt;UnkeyedDecodingContainer&lt;/code&gt;, which has a helpful property &lt;code class=&quot;highlighter-rouge&quot;&gt;isAtEnd&lt;/code&gt; which indicates if the container has any further elements to decode. Once we iterate over the elements in the container, and decode them, ignoring failed User decodings, we set the users array to our intermediate elements array.&lt;/p&gt;
+&lt;p&gt;First, we have to use an &lt;code class=&quot;highlighter-rouge&quot;&gt;unkeyedContainer()&lt;/code&gt;, since we are decoding a container of user values. This returns a container that conforms to &lt;code class=&quot;highlighter-rouge&quot;&gt;UnkeyedDecodingContainer&lt;/code&gt;, which has a helpful property &lt;code class=&quot;highlighter-rouge&quot;&gt;isAtEnd&lt;/code&gt; which indicates if the container has any further elements to decode. Once we iterate over the elements in the container, and decode them, ignoring failed User decodings, we set the users array to our intermediate elements array.&lt;/p&gt;
 
 &lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;UserResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Codable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
