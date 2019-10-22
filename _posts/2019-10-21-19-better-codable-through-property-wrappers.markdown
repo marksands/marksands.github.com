@@ -43,7 +43,7 @@ struct UserResponse: Codable {
     
     init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
-        var elements: [T] = []
+        var elements: [User] = []
         while !container.isAtEnd {
             ...
         }
@@ -64,7 +64,7 @@ Ignoring the erroneously decoded values is the interesting portion. If decoding 
     }
 ```
 
-The solution is rather clever. We simply need the container to decode _something_ so all it needs to know is that we have a Decodable type.
+The solution is rather clever. We simply need the container to decode _something_, so all it needs to know is that we have a Decodable type.
 
 ```swift
     private struct AnyDecodableValue: Decodable {}
@@ -227,7 +227,7 @@ Somtimes APIs can be unpredictable. They may treat some form of Identifiers or S
 
 I would love to dive into the source details of this wrapper, but this alone probably deserves its own post. It's rather dense and complex compared to the other wrappers. For the curious, [take a look at the source](https://github.com/marksands/BetterCodable/blob/99378904e47bc582acc45fd85ec738c24f61de30/Sources/BetterCodable/LosslessValue.swift) to see the machinery under the hood.
 
-As an example, suppose you have Product type that has a sku and an availability flag. Due to microservices, your backend team has waffled over whether or not the sku should be a string or an int, and the availability flag can be null because reasons. This might be one solution in this entirely hypothetical scenario.
+As an example, suppose you have a Product type that has a sku and an availability flag. Due to microservices, your backend team has waffled over whether or not the sku should be a string or an int, and the availability flag can be null because reasons. This might be one solution in this entirely hypothetical scenario.
 
 ```swift
 struct Product: Codable {
