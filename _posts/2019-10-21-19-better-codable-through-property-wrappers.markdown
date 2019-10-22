@@ -8,7 +8,7 @@ comments: true
 showads: true
 ---
 
-With the introduction of Codable in Swift 4, working with JSON has never been more pleasant. Until it's not. Codable definitely has its warts, and often the pain is introduced by suffering through boilerplate of implementing custom decoders and encoders.
+With the introduction of Codable in Swift 4, working with JSON has never been more pleasant. Until it's not. Codable definitely has its warts, and often the pain is introduced by suffering through boilerplate of implementing custom Decodable initializers.
 
 Fortunately, Swift 5.1 introduced a feature known as property wrappers that can take all of that boilerplate away. While it doesn't magically solve every painpoint with Codable, it definitely makes working with it much more pleasant. To that end, I've been accumulating my own wrappers on my GitHub at [github.com/marksands/BetterCodable](https://github.com/marksands/BetterCodable). Keep reading for a deep dive into their implementation and what it has to offer.
 
@@ -29,9 +29,9 @@ struct UserResponse: Codable {
 }
 ```
 
-Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom decoder. But ideally, we really just don't want Users that don't satisfy valid data for all fields. Now we're left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we're looking for is essentially the Codable version of `arrayOfUses.compactMap { $0 }`, to filter out nils.
+Needless to say, making every field an optional type was painful. One solution to the null data is to provide sensible defaults at the cost of implementing a custom Decodable initializer. But ideally, we really just don't want Users that don't satisfy valid data for all fields. Now we're left at a crossroad because we need the ability to decode an array of Users that might contain bad data yet discard the bad users. What we're looking for is essentially the Codable version of `arrayOfUses.compactMap { $0 }`, to filter out nils.
 
-There are a few hurdles to overcome for this seemingly simple task. If the goal is to keep all fields non-optional, then we need to implement a custom decoder on the `UserResponse` type. When decoding a User value, if a non-optional field is found to be null, then an exception is thrown and the _entire_ UserResponse fails to decode. In order to ignore or filter out failed User elements, we have to go really into the weeds with Codable.
+There are a few hurdles to overcome for this seemingly simple task. If the goal is to keep all fields non-optional, then we need to implement a custom initializer on the `UserResponse` type. When decoding a User value, if a non-optional field is found to be null, then an exception is thrown and the _entire_ UserResponse fails to decode. In order to ignore or filter out failed User elements, we have to go really into the weeds with Codable.
 
 ## Decoding the Array
 
@@ -168,7 +168,7 @@ print(result) // ["a": "A", "b": "B"]
 
 Creating a property wrapper to assign a sensible default for a Codable property just isn't possible in Swift 5.1. In the meantime, I've created a few helpers that one may find useful.
 
-Optional Bools are weird. A type that once meant true or false, now has three possible states: .some(true), .some(false), or .none. And the .none condition could indicate truthiness if BadDecisions™ were made. The weirdness of Optional Booleans extends to other types, such as Arrays. Soroush Khanlou has a [great blog post](http://khanlou.com/2016/10/emptiness/) explaining why you may want to avoid Optional Arrays.
+Optional Bools are weird. A type that once meant true or false, now has three possible states: `.some(true)`, `.some(false)`, or `.none`. And the .none condition could indicate truthiness if BadDecisions™ were made. The weirdness of Optional Booleans extends to other types, such as Arrays. Soroush Khanlou has a [great blog post](http://khanlou.com/2016/10/emptiness/) explaining why you may want to avoid Optional Arrays.
 
 Unfortunately, this idea doesn't come for free in Swift out of the box. Being forced to implement a custom initializer in order to nil coalesce nil booleans or nil arrays is no fun. That's why I added a few sane property wrappers that help provide sensible defaults for these disastrous situations.
 
